@@ -22,7 +22,7 @@ Inputs:
 - [ ] noise level - apply *after* we generate regression values/labels 
   - [x] gaussian white on X
   - [ ] percentage shuffled  (see e.g. `flip_y` in `make_classification`)
-- [ ] categorical features (stretch)
+- [x] categorical features (stretch)
 - [ ] outlier generation (stretch, *new*)
 - [ ] create fake PII with [pydbgen](https://github.com/tirthajyoti/pydbgen)  (stretch, *new*)
 
@@ -70,15 +70,30 @@ To run tests:
 $ python -m pytest tests/
 ```
 
+ <!--- 
 ### Use cases
-We are interested in the downstream task of post-hoc explainability - investigating methods that provide local attributions - to identify strengths, weaknesses, and suitability.  We expect this synthetic data to provide clarity for the use cases outlined for the visualisation collaboration with NYU (real data is messy, and hard to explain in short conference papers).  We anticipate creating a series of notebooks with increasing complexity to help individuals build intuition around explainability (starting in 2D with logistic regression).
+We are interested in the downstream task of post-hoc explainability - investigating methods that provide local attributions - to identify strengths, weaknesses, and suitability.  We expect this synthetic data to provide clarity.  We anticipate creating a series of notebooks with increasing complexity to help individuals build intuition around explainability (e.g. starting in 2D with logistic regression).
 
 This kind of synthetic dataset would also be of use for designing in-situ explainability - e.g. imposing monotonicity, regularization, etc.
+ -->
+
+### Referencing this library
+If you use this library in your work, please cite our paper:  
+```
+@inproceedings{barr:2020,
+  author    = {Brian Barr and Ke Xu and Claudio Silva and Enrico Bertini and Robert Reilly and  C. Bayan Bruss and Jason D. Wittenbach},
+  title     = {{Towards Ground Truth Explainability on Tabular Data}},
+  year      = {2020},
+  maintitle = {International Conference on Machine Learning},
+  booktitle = {2020 ICML Workshop on Human Interpretability in Machine Learning (WHI 2020)},
+  date = {2020-07-17},
+  pages = {362-367},
+}                             
+```
 
 ### Notes
 If you have tabular data, and want to fit a copula from it, consider this python library:  [copulas](https://sdv-dev.github.io/Copulas/index.html)  
 Quick [visual tutorial](https://twiecki.io/blog/2018/05/03/copulas/) of copulas and probability integral transform.
-
 
 ### References
 [1] Guyon, “Design of experiments for the NIPS 2003 variable selection benchmark”, 2003.
