@@ -14,32 +14,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from setuptools import setup, find_packages
+import os
+from io import open
 
+from setuptools import find_packages, setup
 
-def parse_requirements(filename):
-    """Loads requirements file and outputs an array of dependencies"""
-    lineiter = (line.strip() for line in open(filename))
-    return [line for line in lineiter if line and not line.startswith('#')]
+CURR_DIR = os.path.abspath(os.path.dirname(__file__))
 
-
-with open('README.md', 'r') as readme:
-    long_description = readme.read()
+with open(os.path.join(CURR_DIR, "README.md"), encoding="utf-8") as file_open:
+    LONG_DESCRIPTION = file_open.read()
 
 setup(
-    name='make_tabular_data',
-    version='0.0.1',
+    name='synthetic-data',
+    version='1.0.0',
     maintainer='Brian Barr',
     maintainer_email='brian.barr@capitalone.com',
     license='Apache License 2.0',
     description='Generates complex, nonlinear datasets for use \
         with deep learning/black box models',
-    long_description=long_description,
+    long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
-    install_requires=parse_requirements('requirements.txt'),
-    # test_requires=None,
-    url=None,
+    url='https://github.com/capitalone/synthetic-data',
     packages=find_packages(),
     include_package_data=True,
+    install_requires=[
+        "copulas > 0.3.2",
+        "shap > 0.34.0",
+        "sympy > 1.6.1",
+        "tensorflow > 2.3.0",
+        "qii-tool > 0.1.2"
+    ],
     python_requires=">=3.6"
 )
