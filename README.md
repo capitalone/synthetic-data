@@ -9,34 +9,6 @@ Copulas are a model for specifying
 the joint probability p(x1, x2, ..., xn) given a correlation structure along
 with specifications for the marginal distribution of each feature. The current implementation uses a multivariate normal distribution with specified covariance matrix.  Future work can expand this choice to other multivariate distributions. 
 
-### Features:
-Inputs:
-- [x] specify the marginal distribution of a column  
-- [x] correlation (correlated but not dependent)
-- [x] prescaled inputs using MinMaxScaler (TODO:  add StdScaler, etc.)
-- [ ] nuisance variables - carry no signal, set the lower limit on 'acceptable' feature importance
-- [ ] redundant (correlated and dependent - say by a linear combo of informative features)
-
-- [ ] separation between classes (can we filter +/- k% on either side of p_thresh to create separation?)
-- [ ] overlap - since we have ground truth probabilities, we could sample from a binomial distribution with probability of (py|x) to determine labels - this would work in conjuction with sig_k which controls the steepness of the sigmoid  
-- [ ] noise level - apply *after* we generate regression values/labels 
-  - [x] gaussian white on X
-  - [ ] percentage shuffled  (see e.g. `flip_y` in `make_classification`)
-- [x] categorical features (stretch)
-- [ ] outlier generation (stretch, *new*)
-- [ ] create fake PII with [pydbgen](https://github.com/tirthajyoti/pydbgen)  (stretch, *new*)
-
-
-Output:
-- [ ] functional dependence y_reg = f(x) where y_reg is a float - implemented via sympy symbolic expression
-- [ ] mapping from y_reg value to y_class 
-    - [ ] partition and label - e.g. `y_class = y_reg < np.median(y_reg)`
-    - [x] sigmoid
-    - [ ] Gompertz curve (a parameterized sigmoid - would give control over uncertainty?
-    - these last two provide ground truth P(y|x) (regression -> probability -> label)
-  -[ ] noise (e.g. `flip_y`)
-  -[ ] map class to probability using random draw from binomial distribution
-
 ### Parameters  
 | name          | type       | default        | description                                                                                                                      |
 | ------------- | ---------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -69,13 +41,6 @@ To run tests:
 ```bash
 $ python -m pytest tests/
 ```
-
- <!--- 
-### Use cases
-We are interested in the downstream task of post-hoc explainability - investigating methods that provide local attributions - to identify strengths, weaknesses, and suitability.  We expect this synthetic data to provide clarity.  We anticipate creating a series of notebooks with increasing complexity to help individuals build intuition around explainability (e.g. starting in 2D with logistic regression).
-
-This kind of synthetic dataset would also be of use for designing in-situ explainability - e.g. imposing monotonicity, regularization, etc.
- -->
 
 ### Referencing this library
 If you use this library in your work, please cite our paper:  
