@@ -40,7 +40,7 @@ setup(
     install_requires=[
         "copulas > 0.3.2",
         "shap > 0.34.0",
-        "mpmath @ git+https://github.com/fredrik-johansson/mpmath.git@c11db84b3237bd8fc6721f5a0c5d7c0c98a24dc1"
+        "mpmath @ git+https://github.com/tazitoo/mpmath.git@f7d776bca9bbb551179ace099ca04f30f4b185c5"
         "sympy @ git+https://github.com/sympy/sympy.git@17201c6327c307caaa1e1cdd6733f8004eacb719",
         "tensorflow >= 2.7.0",
         "qii-tool > 0.1.2",
