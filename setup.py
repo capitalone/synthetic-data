@@ -41,7 +41,7 @@ setup(
         "copulas > 0.3.2",
         "shap > 0.34.0",
         "mpmath @ git+https://github.com/tazitoo/mpmath.git@f7d776bca9bbb551179ace099ca04f30f4b185c5"
-        "sympy @ git+https://github.com/sympy/sympy.git@17201c6327c307caaa1e1cdd6733f8004eacb719",
+        "sympy>=1.6.1",
         "tensorflow >= 2.7.0",
         "qii-tool > 0.1.2",
     ],
