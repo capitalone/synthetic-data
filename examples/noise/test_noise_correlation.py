@@ -5,7 +5,7 @@ Test mapping y = f(X) using symbolic expression from sympy
 """
 
 from synthetic_data.synthetic_data import make_tabular_data
-from sympy import cos, sin, symbols
+# from sympy import cos, sin, symbols
 import numpy as np
 from math import pi
 import sys  # isort:skip
@@ -16,16 +16,16 @@ from synthetic_data.utils import resolve_output_path
 output_path = resolve_output_path(pathlib.Path(__file__).parent.absolute())
 
 # define symbols
-x1, x2 = symbols("x1 x2")
+# x1, x2 = symbols("x1 x2")
 
 # define expression
 # expr = x1 + 2 * x2
 # expr = x1 ** 2 + 1.5 * x2 ** 2
 # expr = cos(x1 * pi / 180.0) - sin(x2 * pi / 180.0)
-expr = cos(x1 ** 2 * pi / 180.0) - sin(x2 * pi / 180.0) + x1 * x2
+expr = "cos(x1 ** 2 * pi / 180.0) - sin(x2 * pi / 180.0) + x1 * x2"
 
 # define mapping from symbols to column of X
-col_map = {x1: 0, x2: 1}
+col_map = {"x1": 0, "x2": 1}
 
 
 # define correlations via covariance matrix

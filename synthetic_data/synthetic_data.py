@@ -24,6 +24,7 @@ With user specified control over:
 """
 
 import numpy as np
+from .parser import MathParser
 from scipy import stats
 from sklearn.preprocessing import MinMaxScaler
 
@@ -69,8 +70,8 @@ def eval_expr_for_sample(x, col_map, expr):
     for i, key_symbol in enumerate(col_map.keys()):
         my_sub[key_symbol] = x[i]
 
-    # print(my_sub)
-    out_value = expr.evalf(subs=my_sub)
+    parser = MathParser(my_sub)
+    out_value = parser.parse(expr)
 
     return out_value
 
