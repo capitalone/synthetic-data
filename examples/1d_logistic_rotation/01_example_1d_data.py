@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sympy import symbols
+# from sympy import symbols
 
 from synthetic_data.synthetic_data import make_tabular_data
 from synthetic_data.utils import resolve_output_path
@@ -19,13 +19,13 @@ from synthetic_data.utils import resolve_output_path
 output_path = resolve_output_path(pathlib.Path(__file__).parent.absolute())
 
 # define symbols
-x1, x2 = symbols("x1 x2")
+# x1, x2 = symbols("x1 x2")
 
 # define expression
-expr = x1 - x2
+expr = "x1 - x2"
 
 # define mapping from symbols to column of X
-col_map = {x1: 0, x2: 1}
+col_map = {"x1": 0, "x2": 1}
 
 
 # define correlations via covariance matrix

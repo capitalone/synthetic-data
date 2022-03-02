@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sympy import symbols
+# from sympy import symbols
 
 from synthetic_data.synthetic_data import make_tabular_data
 from synthetic_data.utils import resolve_output_path
@@ -43,13 +43,13 @@ def my_tricontour(ax, x1, x2, y, z, labels=None, title=None, scatter=True, cmap=
 
 
 # define symbols
-x1, x2 = symbols("x1 x2")
+# x1, x2 = symbols("x1 x2")
 
 # define expression
-expr = x1
+expr = "x1"
 
 # define mapping from symbols to column of X
-col_map = {x1: 0, x2: 1}
+col_map = {"x1": 0, "x2": 1}
 
 
 # define correlations via covariance matrix

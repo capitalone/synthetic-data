@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sympy import cos, sin, symbols
+# from sympy import cos, sin, symbols
 
 from synthetic_data.synthetic_data import make_tabular_data
 import pathlib
@@ -42,16 +42,16 @@ def my_tricontour(ax, x1, x2, y, z, labels=None, title=None):
 
 
 # define symbols
-x1, x2 = symbols("x1 x2")
+# x1, x2 = symbols("x1 x2")
 
 # define expression
 # expr = x1 + 2 * x2
 # expr = x1 ** 2 + 1.5 * x2 ** 2
 # expr = cos(x1 * pi / 180.0) - sin(x2 * pi / 180.0)
-expr = cos(x1 ** 2 * pi / 180.0) - sin(x2 * pi / 180.0) + x1 * x2
+expr = "cos(x1 ** 2 * pi / 180.0) - sin(x2 * pi / 180.0) + x1 * x2"
 
 # define mapping from symbols to column of X
-col_map = {x1: 0, x2: 1}
+col_map = {"x1": 0, "x2": 1}
 
 
 # define correlations via covariance matrix
