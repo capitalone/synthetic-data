@@ -8,7 +8,7 @@ The structure of X is columns of [informative, redundant, nuisance] features
 import numpy as np
 from scipy import stats
 from sklearn.preprocessing import MinMaxScaler
-from sympy import symbols
+# from sympy import symbols
 
 from synthetic_data.synthetic_data import (generate_redundant_features,
                                            make_tabular_data,
@@ -21,13 +21,13 @@ seed = 1234
 
 def test_redundant():
     # define symbols
-    x1, x2 = symbols("x1 x2")
+    # x1, x2 = symbols("x1 x2")
 
     # define expression
-    expr = x1
+    expr = "x1"
 
     # define mapping from symbols to column of X
-    col_map = {x1: 0, x2: 1}
+    col_map = {"x1": 0, "x2": 1}
 
     # baseline 2D data, no noise
     cov = np.array([[1.0, 0.0], [0.0, 1.0]])
