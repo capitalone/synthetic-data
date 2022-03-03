@@ -38,12 +38,6 @@ class MathParser:
         if not math:
             self._alt_name = self._no_alt_name
 
-    # def _Name(self, name):
-    #     try:
-    #         return self._vars[name]
-    #     except KeyError:
-    #         return self._alt_name(name)
-
     @staticmethod
     def _alt_name(name):
         if name.startswith("_"):
@@ -63,12 +57,7 @@ class MathParser:
         if isinstance(node, ast.Num):
             return node.n
         if isinstance(node, ast.Name):
-            # return self._Name(node.id)
-            return (
-                self._vars[node.id]
-                if node.id in self._vars
-                else self._alt_name(node.id)
-            )
+            return self._vars.get(node.id, self._alt_name(node.id))
         if isinstance(node, ast.BinOp):
             method = self._op_to_method[type(node.op)]
             return method(self.eval_(node.left), self.eval_(node.right))
@@ -77,7 +66,6 @@ class MathParser:
             return method(self.eval_(node.operand))
         if isinstance(node, ast.Attribute):
             return getattr(self.eval_(node.value), node.attr)
-
         if isinstance(node, ast.Call):
             return self.eval_(node.func)(
                 *(self.eval_(a) for a in node.args),
