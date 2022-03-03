@@ -57,7 +57,12 @@ class MathParser:
         if isinstance(node, ast.Num):
             return node.n
         if isinstance(node, ast.Name):
-            return self._vars.get(node.id, self._alt_name(node.id))
+            # return self._vars.get(node.id, self._alt_name(node.id))
+            return (
+                self._vars[node.id]
+                if node.id in self._vars
+                else self._alt_name(node.id)
+            )
         if isinstance(node, ast.BinOp):
             method = self._op_to_method[type(node.op)]
             return method(self.eval_(node.left), self.eval_(node.right))
