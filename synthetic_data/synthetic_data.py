@@ -24,7 +24,7 @@ With user specified control over:
 """
 
 import numpy as np
-from .parser import MathParser
+from synthetic_data.parser import MathParser
 from scipy import stats
 from sklearn.preprocessing import MinMaxScaler
 
