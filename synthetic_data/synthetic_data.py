@@ -57,7 +57,7 @@ def eval_expr_for_sample(x, col_map, expr):
     Inputs:
         x - 1D array with shape = number of symbols
         col_map - dictionary with keys = symbols, values = columns of X
-        expr - sympy expression that gives y = f(X)
+        expr - str expression that gives y = f(X)
     Output:
         evaluated expression
     """
@@ -145,7 +145,7 @@ def pre_data_generation_checks(n_informative, col_map, n_total):
 
     args:
         n_informative {int} -- n_informative - number of informative features - need to appear at least once in expression
-        col_map {dict} -- dictionary mapping sympy symbols to columns
+        col_map {dict} -- dictionary mapping str symbols to columns
         n_total {int} -- total number of samples in the dataset
     """
 
@@ -203,8 +203,8 @@ def make_tabular_data(
             suport for distributions available in  scipy stats:
             https://docs.scipy.org/doc/scipy/reference/stats.html
         cov - a symmetric matrix specifying covariance amongst features
-        col_map - dictionary mapping sympy symbols to columns
-        expr - sympy expression holding y = f(x)
+        col_map - dictionary mapping str symbols to columns
+        expr - str expression holding y = f(x)
         p_thresh - probability threshold for assigning class labels
         noise_level_x (float) - level of white noise (jitter) added to x
         noise_level_y (float) - level of white noise added to y (think flip_y)

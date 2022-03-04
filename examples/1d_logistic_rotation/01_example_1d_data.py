@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Test mapping y = f(X) using symbolic expression from sympy
+Test mapping y = f(X)
 """
 
 import pathlib
@@ -11,15 +11,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-# from sympy import symbols
 
 from synthetic_data.synthetic_data import make_tabular_data
 from synthetic_data.utils import resolve_output_path
 
 output_path = resolve_output_path(pathlib.Path(__file__).parent.absolute())
-
-# define symbols
-# x1, x2 = symbols("x1 x2")
 
 # define expression
 expr = "x1 - x2"

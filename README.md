@@ -28,7 +28,7 @@ Inputs:
 
 
 Output:
-- [ ] functional dependence y_reg = f(x) where y_reg is a float - implemented via sympy symbolic expression
+- [ ] functional dependence y_reg = f(x) where y_reg is a float - implemented via an expression as a string
 - [ ] mapping from y_reg value to y_class 
     - [ ] partition and label - e.g. `y_class = y_reg < np.median(y_reg)`
     - [x] sigmoid
@@ -46,7 +46,7 @@ Output:
 | n_clases      | int        | (default=2)    | the number of classes                                                                                                            |
 | dist          | list       |                | a list of the marginal distributions to apply to the features/columns                                                            |
 | cov           | matrix     |                | a square numpy array with dimensions (??? x ???) - should be n_total where n_total=n_informative + n_nuisance                    |
-| expr          | sympy expr |                | an expression providing y = f(X)                                                                                                 |
+| expr          | str |                | an expression providing y = f(X)                                                                                                 |
 | sig_k         | float      | (default=1.0)  | the steepness of the sigmoid used in mapping y_reg to y_prob                                                                     |
 | sig_x0        | float      | (default=None) | the center point of the sigmoid used in mappying y_reg to y_prob                                                                 |
 | p_thresh      | float      | (default=0.5)  | threshold probability that determines boundary between classes                                                                   |

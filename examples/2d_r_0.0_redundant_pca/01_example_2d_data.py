@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Test mapping y = f(X) using symbolic expression from sympy
+Test mapping y = f(X)
 """
 
 import pickle
@@ -12,7 +12,6 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.decomposition import PCA
-# from sympy import cos, sin, symbols
 
 from synthetic_data.synthetic_data import make_tabular_data
 import pathlib
@@ -27,9 +26,6 @@ output_path = resolve_output_path(pathlib.Path(__file__).parent.absolute())
 
 # sys.path.insert(0, "../../")  # isort:skip
 
-
-# define symbols
-# x1, x2 = symbols("x1 x2")
 
 # define expression
 # expr = x1 + 2 * x2
