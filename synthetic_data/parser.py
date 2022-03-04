@@ -57,7 +57,6 @@ class MathParser:
         if isinstance(node, ast.Num):
             return node.n
         if isinstance(node, ast.Name):
-            # return self._vars.get(node.id, self._alt_name(node.id))
             return (
                 self._vars[node.id]
                 if node.id in self._vars

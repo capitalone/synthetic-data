@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
 """
-Test mapping y = f(X) using symbolic expression from sympy
+Test mapping y = f(X
 """
 
 from synthetic_data.synthetic_data import make_tabular_data
-# from sympy import cos, sin, symbols
 import numpy as np
 from math import pi
 import sys  # isort:skip
@@ -14,9 +13,6 @@ import pathlib
 from synthetic_data.utils import resolve_output_path
 
 output_path = resolve_output_path(pathlib.Path(__file__).parent.absolute())
-
-# define symbols
-# x1, x2 = symbols("x1 x2")
 
 # define expression
 # expr = x1 + 2 * x2

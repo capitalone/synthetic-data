@@ -16,7 +16,6 @@ What could make this test fail?
 """
 
 import numpy as np
-# from sympy import symbols
 
 from synthetic_data.synthetic_data import generate_x_noise, make_tabular_data
 
@@ -26,9 +25,6 @@ seed = 1234
 
 
 def test_noise():
-    # define symbols
-    # x1, x2 = symbols("x1 x2")
-
     # define expression
     expr = "x1"
 
