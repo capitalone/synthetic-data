@@ -95,5 +95,10 @@ If you use this library in your work, please cite our paper:
 If you have tabular data, and want to fit a copula from it, consider this python library:  [copulas](https://sdv-dev.github.io/Copulas/index.html)  
 Quick [visual tutorial](https://twiecki.io/blog/2018/05/03/copulas/) of copulas and probability integral transform.
 
+To run the examples, you should run:
+```bash
+$ python -m pip install pytest pytest-cov seaborn shap tensorflow
+```
+
 ### References
 [1] Guyon, “Design of experiments for the NIPS 2003 variable selection benchmark”, 2003.
