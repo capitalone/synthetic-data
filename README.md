@@ -97,7 +97,7 @@ Quick [visual tutorial](https://twiecki.io/blog/2018/05/03/copulas/) of copulas 
 
 To run the examples, you should run:
 ```bash
-$ python -m pip install pytest pytest-cov seaborn shap tensorflow
+$ python -m pip install pandas pytest pytest-cov seaborn shap tensorflow
 ```
 
 ### References
