@@ -9,6 +9,7 @@ Copulas are a model for specifying
 the joint probability p(x1, x2, ..., xn) given a correlation structure along
 with specifications for the marginal distribution of each feature. The current implementation uses a multivariate normal distribution with specified covariance matrix.  Future work can expand this choice to other multivariate distributions. 
 
+
 ### Parameters  
 | name          | type       | default        | description                                                                                                                      |
 | ------------- | ---------- | -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -18,7 +19,7 @@ with specifications for the marginal distribution of each feature. The current i
 | n_clases      | int        | (default=2)    | the number of classes                                                                                                            |
 | dist          | list       |                | a list of the marginal distributions to apply to the features/columns                                                            |
 | cov           | matrix     |                | a square numpy array with dimensions (??? x ???) - should be n_total where n_total=n_informative + n_nuisance                    |
-| expr          | sympy expr |                | an expression providing y = f(X)                                                                                                 |
+| expr          | str |                | an expression providing y = f(X)                                                                                                 |
 | sig_k         | float      | (default=1.0)  | the steepness of the sigmoid used in mapping y_reg to y_prob                                                                     |
 | sig_x0        | float      | (default=None) | the center point of the sigmoid used in mappying y_reg to y_prob                                                                 |
 | p_thresh      | float      | (default=0.5)  | threshold probability that determines boundary between classes                                                                   |
@@ -59,6 +60,11 @@ If you use this library in your work, please cite our paper:
 ### Notes
 If you have tabular data, and want to fit a copula from it, consider this python library:  [copulas](https://sdv-dev.github.io/Copulas/index.html)  
 Quick [visual tutorial](https://twiecki.io/blog/2018/05/03/copulas/) of copulas and probability integral transform.
+
+To run the examples, you should run:
+```bash
+$ python -m pip install pandas pytest pytest-cov seaborn shap tensorflow
+```
 
 ### References
 [1] Guyon, “Design of experiments for the NIPS 2003 variable selection benchmark”, 2003.

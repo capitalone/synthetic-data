@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Test mapping y = f(X) using symbolic expression from sympy
+Test mapping y = f(X)
 """
 
 import pickle
@@ -12,7 +12,6 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.decomposition import PCA
-from sympy import cos, sin, symbols
 
 from synthetic_data.synthetic_data import make_tabular_data
 import pathlib
@@ -28,17 +27,14 @@ output_path = resolve_output_path(pathlib.Path(__file__).parent.absolute())
 # sys.path.insert(0, "../../")  # isort:skip
 
 
-# define symbols
-x1, x2 = symbols("x1 x2")
-
 # define expression
 # expr = x1 + 2 * x2
 # expr = x1 ** 2 + 1.5 * x2 ** 2
 # expr = cos(x1 * pi / 180.0) - sin(x2 * pi / 180.0)
-expr = cos(x1 ** 2 * pi / 180.0) - sin(x2 * pi / 180.0) + x1 * x2
+expr = "cos(x1 ** 2 * pi / 180.0) - sin(x2 * pi / 180.0) + x1 * x2"
 
 # define mapping from symbols to column of X
-col_map = {x1: 0, x2: 1}
+col_map = {"x1": 0, "x2": 1}
 
 
 # define correlations via covariance matrix

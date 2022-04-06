@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-Test mapping y = f(X) using symbolic expression from sympy
+Test mapping y = f(X)
 """
 
 import pathlib
@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sympy import cos, sin, symbols
 
 from synthetic_data.synthetic_data import make_tabular_data
 from synthetic_data.utils import resolve_output_path
@@ -47,16 +46,11 @@ def my_tricontour(ax, x1, x2, y, z, labels=None, title=None, scatter=True, cmap=
     return
 
 
-# define symbols
-x1, x2 = symbols("x1 x2")
-
 # define expression
-a = 1
-b = 10
-expr = (a - x1)**2 + b*(x2-x1**2)**2
+expr = "(1 - x1) ** 2 + 10 * (x2 - x1 ** 2) ** 2"
 
 # define mapping from symbols to column of X
-col_map = {x1: 0, x2: 1}
+col_map = {"x1": 0, "x2": 1}
 
 
 # define correlations via covariance matrix
@@ -156,10 +150,10 @@ fig.savefig(f"{output_path}/rosenbrock.png")
 
 
 # linear data set
-expr = x1
+expr = "x1"
 
 # define mapping from symbols to column of X
-col_map = {x1: 0, x2: 1}
+col_map = {"x1": 0, "x2": 1}
 
 
 # define correlations via covariance matrix
@@ -193,17 +187,15 @@ plt.show()
 #
 # 2D nonlinear boundary experiment
 #
-# define symbols
-x1, x2 = symbols("x1 x2")
 
 # define expression
 # expr = x1 + 2 * x2
 # expr = x1 ** 2 + 1.5 * x2 ** 2
 # expr = cos(x1 * pi / 180.0) - sin(x2 * pi / 180.0)
-expr = cos(x1 ** 2 * pi / 180.0) - sin(x2 * pi / 180.0) + x1 * x2
+expr = "cos(x1 ** 2 * pi / 180.0) - sin(x2 * pi / 180.0) + x1 * x2"
 
 # define mapping from symbols to column of X
-col_map = {x1: 0, x2: 1}
+col_map = {"x1": 0, "x2": 1}
 
 
 # define correlations via covariance matrix
@@ -227,8 +219,7 @@ plt.show()
 
 
 # rastrigin
-A = 20
-expr = 2*A + x1**2 + x2**2 - (A*(cos(2*pi*x1) + cos(2*pi*x2)))
+expr = "2*20 + x1**2 + x2**2 - (20*(cos(2*pi*x1) + cos(2*pi*x2)))"
 seed = 234
 
 
