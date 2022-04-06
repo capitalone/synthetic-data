@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-from sympy import symbols
 
 from synthetic_data.synthetic_data import (pre_data_generation_checks,
                                            resolve_covariant)
@@ -28,8 +27,7 @@ def test_resolve_covariant_provied_a_covariant():
 
 
 def test_pre_data_generation_checks():
-    x1, x2 = symbols("x1 x2")
-    col_map = {x1: 0, x2: 1}
+    col_map = {"x1": 0, "x2": 1}
 
     # This assertion checks that nothing is returned by the function, meaning no exceptions
     # were thrown and all asserts passed
@@ -37,8 +35,7 @@ def test_pre_data_generation_checks():
 
 
 def test_pre_data_generation_checks_0_n_total():
-    x1, x2 = symbols("x1 x2")
-    col_map = {x1: 0, x2: 1}
+    col_map = {"x1": 0, "x2": 1}
 
     with pytest.raises(Exception) as exec_info:
         pre_data_generation_checks(n_informative=2, n_total=-1, col_map=col_map)
@@ -47,8 +44,7 @@ def test_pre_data_generation_checks_0_n_total():
 
 
 def test_pre_data_generation_checks_col_and_n_informative_mismatch():
-    x1, x2 = symbols("x1 x2")
-    col_map = {x1: 0, x2: 1}
+    col_map = {"x1": 0, "x2": 1}
 
     with pytest.raises(Exception) as exec_info:
         pre_data_generation_checks(n_informative=3, n_total=3, col_map=col_map)
