@@ -9,9 +9,11 @@ import numpy as np
 from scipy import stats
 from sklearn.preprocessing import MinMaxScaler
 
-from synthetic_data.synthetic_data import (generate_redundant_features,
-                                           make_tabular_data,
-                                           transform_to_distribution)
+from synthetic_data.synthetic_data import (
+    generate_redundant_features,
+    make_tabular_data,
+    transform_to_distribution,
+)
 
 np.random.seed(111)
 np.set_printoptions(precision=11)
@@ -80,4 +82,6 @@ def test_redundant():
     # print(x_redundant)
 
     # check that they match
-    assert np.allclose(x_redundant_scaled, x_slice_redundant, rtol=1e-05, atol=1e-08)
+    assert np.allclose(
+        x_redundant_scaled, x_slice_redundant, rtol=1e-05, atol=1e-08
+    )

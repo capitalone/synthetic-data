@@ -3,7 +3,7 @@ Laying out feature enhancements to add.
 
 ### Features:
 Inputs:
-- [ ] scaled inputs using other preprocessing scaler
+- [x] scaled inputs using other preprocessing scaler
 - [ ] redundant (correlated and dependent - say by a linear combo of informative features)
 
 - [ ] separation between classes (can we filter +/- k% on either side of p_thresh to create separation?)

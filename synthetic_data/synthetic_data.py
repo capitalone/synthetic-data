@@ -26,6 +26,7 @@ With user specified control over:
 import numpy as np
 from synthetic_data.parser import MathParser
 from scipy import stats
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import MinMaxScaler
 
 
@@ -131,10 +132,9 @@ def resolve_covariant(n_total, covariant=None):
         covariant = np.diag(np.ones(n_total))
 
     # test for symmetry on covariance matrix by comparing the matrix to its transpose
-    try:
-        assert np.all(covariant == covariant.T)
-    except AssertionError:
-        print("Assertion error - please check covariance matrix is symmetric.")
+    assert np.all(
+        covariant == covariant.T
+    ), "Assertion error - please check covariance matrix is symmetric."
 
     return covariant
 
@@ -148,14 +148,13 @@ def pre_data_generation_checks(n_informative, col_map, n_total):
         col_map {dict} -- dictionary mapping str symbols to columns
         n_total {int} -- total number of samples in the dataset
     """
+    assert n_informative == len(
+        col_map
+    ), "number of dictionary keys in col_map not equal to n_informative."
 
-    try:
-        err = "number of dictionary keys in col_map not equal to n_informative."
-        assert n_informative == len(col_map)
-        err = "total number of samples (n_informative + n_nuisance) must be greater than 0"
-        assert n_total > 0
-    except AssertionError:
-        raise Exception(f"Error - {err}")
+    assert (
+        n_total > 0
+    ), "total number of samples (n_informative + n_nuisance) must be greater than 0"
 
 
 def generate_redundant_features(x, n_informative, n_redundant, seed):
@@ -173,6 +172,18 @@ def generate_redundant_features(x, n_informative, n_redundant, seed):
     return x_redundant
 
 
+def scaler_check(scaler):
+
+    if (
+        not (
+            issubclass(scaler.__class__, BaseEstimator)
+            and issubclass(scaler.__class__, TransformerMixin)
+        )
+        and scaler is not None
+    ):
+        raise TypeError("Please provide a valid sklearn scaler.")
+
+
 def make_tabular_data(
     n_samples=1000,
     n_informative=2,
@@ -188,6 +199,7 @@ def make_tabular_data(
     p_thresh=0.5,
     noise_level_x=0.0,
     noise_level_y=0.0,
+    scaler=MinMaxScaler(feature_range=(-1, 1)),
     seed=None,
 ):
     """
@@ -208,6 +220,8 @@ def make_tabular_data(
         p_thresh - probability threshold for assigning class labels
         noise_level_x (float) - level of white noise (jitter) added to x
         noise_level_y (float) - level of white noise added to y (think flip_y)
+        scaler (sklearn scaler) - sklearn style scaler. Defaults to MinMaxScaler(feature_range = (-1,1)).
+                              If None, no feature scaling is performed. 
         seed - numpy random state object for repeatability
 
 
@@ -224,6 +238,7 @@ def make_tabular_data(
     pre_data_generation_checks(
         n_informative=n_informative, col_map=col_map, n_total=n_total
     )
+    scaler_check(scaler)
 
     # generate covariance matrix if not handed one
     cov = resolve_covariant(n_informative, covariant=cov)
@@ -269,9 +284,9 @@ def make_tabular_data(
     #    else:
     #        x_final = x_cont
 
-    # rescale to -1 to 1
-    scaler = MinMaxScaler(feature_range=[-1, 1])
-    x_final = scaler.fit_transform(x_final)
+    # Rescale to feature range
+    if scaler is not None:
+        x_final = scaler.fit_transform(x_final)
 
     # apply expression to each sample of X[mapped_cols,:]
     #    y_reg, y_prob, y_labels = calculate_y(X, p_thresh=0.5)
@@ -290,7 +305,9 @@ def make_tabular_data(
     #
 
     if noise_level_x > 0.0:
-        x_noise = generate_x_noise(x_final[:, :n_informative], noise_level_x, seed=seed)
+        x_noise = generate_x_noise(
+            x_final[:, :n_informative], noise_level_x, seed=seed
+        )
         x_final[:, :n_informative] = x_final[:, :n_informative] + x_noise
 
     return x_final, y_reg, y_prob, y_labels
