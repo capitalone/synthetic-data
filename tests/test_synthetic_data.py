@@ -1,9 +1,13 @@
 import numpy as np
 import pytest
-from sympy import symbols
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
-from synthetic_data.synthetic_data import (pre_data_generation_checks,
-                                           resolve_covariant)
+from synthetic_data.synthetic_data import (
+    eval_expr_for_sample,
+    make_tabular_data,
+    pre_data_generation_checks,
+    resolve_covariant,
+)
 
 
 def test_resolve_covariant_provided_no_covariant():
@@ -14,43 +18,69 @@ def test_resolve_covariant_provided_no_covariant():
 
 
 def test_resolve_covariant_provied_a_covariant():
-    cov = np.array([
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9]
-    ])
+    cov = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
 
-    covariant = resolve_covariant(n_total=3, covariant=cov)
+    with pytest.raises(Exception) as exec_info:
+        covariant = resolve_covariant(n_total=3, covariant=cov)
 
-    assert covariant[0][0] == 1
-    assert covariant[1][1] == 5
-    assert covariant[2][2] == 9
+    err = "Assertion error - please check covariance matrix is symmetric."
+    assert err in str(exec_info.value)
 
 
 def test_pre_data_generation_checks():
-    x1, x2 = symbols("x1 x2")
-    col_map = {x1: 0, x2: 1}
+    col_map = {"x1": 0, "x2": 1}
 
     # This assertion checks that nothing is returned by the function, meaning no exceptions
     # were thrown and all asserts passed
-    assert not pre_data_generation_checks(n_informative=2, n_total=1, col_map=col_map)
+    assert not pre_data_generation_checks(
+        n_informative=2, n_total=1, col_map=col_map
+    )
 
 
 def test_pre_data_generation_checks_0_n_total():
-    x1, x2 = symbols("x1 x2")
-    col_map = {x1: 0, x2: 1}
+    col_map = {"x1": 0, "x2": 1}
 
     with pytest.raises(Exception) as exec_info:
-        pre_data_generation_checks(n_informative=2, n_total=-1, col_map=col_map)
-    err = 'total number of samples (n_informative + n_nuisance) must be greater than 0'
+        pre_data_generation_checks(
+            n_informative=2, n_total=-1, col_map=col_map
+        )
+    err = "total number of samples (n_informative + n_nuisance) must be greater than 0"
     assert err in str(exec_info.value)
 
 
 def test_pre_data_generation_checks_col_and_n_informative_mismatch():
-    x1, x2 = symbols("x1 x2")
-    col_map = {x1: 0, x2: 1}
+    col_map = {"x1": 0, "x2": 1}
 
     with pytest.raises(Exception) as exec_info:
         pre_data_generation_checks(n_informative=3, n_total=3, col_map=col_map)
-    err = 'number of dictionary keys in col_map not equal to n_informative.'
+    err = "number of dictionary keys in col_map not equal to n_informative."
+    assert err in str(exec_info.value)
+
+
+def test_data_scaling():
+    col_map = {"x1": 0, "x2": 1, "x3": 2, "x4": 3}
+    expr = "x1 + x2 + x3 + x4"
+
+    x_final, _, _, _ = make_tabular_data(
+        n_informative=4, expr=expr, col_map=col_map, scaler=StandardScaler(),
+    )
+    assert np.all(np.isclose(x_final.mean(axis=0), np.zeros(4)))
+
+    x_final, _, _, _ = make_tabular_data(
+        n_informative=4,
+        expr=expr,
+        col_map=col_map,
+        scaler=MinMaxScaler(feature_range=(0, 1)),
+    )
+    assert (x_final.max() == 1) and (x_final.min() == 0)
+
+    x_final, _, _, _ = make_tabular_data(
+        n_informative=4, expr=expr, col_map=col_map, scaler=None,
+    )
+
+    with pytest.raises(Exception) as exec_info:
+        x_final, _, _, _ = make_tabular_data(
+            n_informative=4, expr=expr, col_map=col_map, scaler=lambda x: x,
+        )
+    err = "Please provide a valid sklearn scaler."
     assert err in str(exec_info.value)
