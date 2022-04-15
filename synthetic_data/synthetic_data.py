@@ -24,6 +24,7 @@ With user specified control over:
 """
 
 import numpy as np
+import pandas as pd
 from synthetic_data.parser import MathParser
 from scipy import stats
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -78,7 +79,7 @@ def eval_expr_for_sample(x, col_map, expr):
 
 
 def sigmoid(x, k=1.0, x0=None):
-    """ sigmoid/logistic function """
+    """sigmoid/logistic function"""
 
     if x0 is None:
         x0 = x.mean()
@@ -221,7 +222,7 @@ def make_tabular_data(
         noise_level_x (float) - level of white noise (jitter) added to x
         noise_level_y (float) - level of white noise added to y (think flip_y)
         scaler (sklearn scaler) - sklearn style scaler. Defaults to MinMaxScaler(feature_range = (-1,1)).
-                              If None, no feature scaling is performed. 
+                              If None, no feature scaling is performed.
         seed - numpy random state object for repeatability
 
 
@@ -305,9 +306,106 @@ def make_tabular_data(
     #
 
     if noise_level_x > 0.0:
-        x_noise = generate_x_noise(
-            x_final[:, :n_informative], noise_level_x, seed=seed
-        )
+        x_noise = generate_x_noise(x_final[:, :n_informative], noise_level_x, seed=seed)
         x_final[:, :n_informative] = x_final[:, :n_informative] + x_noise
 
     return x_final, y_reg, y_prob, y_labels
+
+
+def make_data_from_report(
+    report: dict,
+    n_samples: int = None,
+    noise_level: float = 0.0,
+    seed=None,
+) -> pd.DataFrame:
+    """
+    Use a DataProfiler report to generate a synthetic data set to mimic the report.
+    args:
+        report (dict) - DataProfiler report
+        n_samples (int) - number of samples to generate
+        noise_level (float) - level of white noise (jitter) added to x
+        seed - numpy random state object for repeatability
+
+    returns X: DataFrame of shape [n_samples, n_total]
+    """
+
+    # make sure correlation matrix was generated
+    if report["global_stats"]["correlation_matrix"] is None:
+        raise Exception("The report must have the correlation matrix enabled")
+
+    # make sure no non-numerical columns exist
+    for stat in report["data_stats"]:
+        if stat["data_type"] not in ["int", "float"]:
+            raise Exception("The function only supports numerical variables")
+
+    # if n_samples not provided, generate same samples as original dataset
+    if not n_samples:
+        n_samples = report["global_stats"]["samples_used"]
+
+    n_informative = len(report["data_stats"])
+    # setting to 0 to skip logic below
+    n_redundant = 0
+    n_nuisance = 0
+
+    n_total = n_informative + n_redundant + n_nuisance
+    x_final = np.zeros((n_samples, n_total))
+
+    if n_total < 1:
+        raise Exception("The data set has no variables")
+
+    R = report["global_stats"]["correlation_matrix"]
+
+    stddevs = [stat["statistics"]["stddev"] for stat in report["data_stats"]]
+    D = np.diag(stddevs)
+
+    cov = D @ R @ D
+    cov = cov.round(decimals=8)  # need to round to avoid failing symmetry check
+    cov = resolve_covariant(n_informative, covariant=cov)
+
+    # initialize X array
+    means = np.zeros(n_informative)
+    mvnorm = stats.multivariate_normal(mean=means, cov=cov)
+    x = mvnorm.rvs(n_samples, random_state=seed)
+
+    # now tranform marginals back to uniform distribution
+    norm = stats.norm()
+    x_cont = norm.cdf(x)
+
+    # apply marginal distributions (skip)
+    # for a_dist in dist:
+    #     col = a_dist["column"]
+    #     x_cont[:, col] = transform_to_distribution(x_cont[:, col], a_dist)
+
+    x_final[:, :n_informative] = x_cont
+
+    if n_redundant > 0:
+        x_redundant = generate_redundant_features(
+            x_cont, n_informative, n_redundant, seed
+        )
+        x_final[:, n_informative : n_informative + n_redundant] = x_redundant
+
+    if n_nuisance > 0:
+        x_nuis = np.random.rand(n_samples, n_nuisance)
+        x_final[:, -n_nuisance:] = x_nuis
+
+    # generate scalers
+    scalers = {}
+    for col, stat in enumerate(report["data_stats"]):
+        _min = stat["statistics"]["min"]
+        _max = stat["statistics"]["max"]
+        scalers[col] = MinMaxScaler(feature_range=(_min, _max))
+
+    # rescale to feature range
+    for col in scalers:
+        x_final[:, col] = (
+            scalers[col].fit_transform(x_final[:, col].reshape(-1, 1)).flatten()
+        )
+
+    # post processing steps - e.g. add noise
+    if noise_level > 0.0:
+        x_noise = generate_x_noise(x_final[:, :n_informative], noise_level, seed=seed)
+        x_final[:, :n_informative] = x_final[:, :n_informative] + x_noise
+
+    return pd.DataFrame(
+        x_final, columns=[stat["column_name"] for stat in report["data_stats"]]
+    )
