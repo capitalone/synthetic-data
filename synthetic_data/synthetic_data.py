@@ -406,6 +406,12 @@ def make_data_from_report(
         x_noise = generate_x_noise(x_final[:, :n_informative], noise_level, seed=seed)
         x_final[:, :n_informative] = x_final[:, :n_informative] + x_noise
 
+    # find number of decimals for each column and round the data to match
+    precisions = [stat["samples"][0][::-1].find(".") for stat in report["data_stats"]]
+
+    for i, precision in enumerate(precisions):
+        x_final[:, i] = np.around(x_final[:, i], precision if precision > 0 else 0)
+
     return pd.DataFrame(
         x_final, columns=[stat["column_name"] for stat in report["data_stats"]]
     )
