@@ -306,7 +306,9 @@ def make_tabular_data(
     #
 
     if noise_level_x > 0.0:
-        x_noise = generate_x_noise(x_final[:, :n_informative], noise_level_x, seed=seed)
+        x_noise = generate_x_noise(
+            x_final[:, :n_informative], noise_level_x, seed=seed
+        )
         x_final[:, :n_informative] = x_final[:, :n_informative] + x_noise
 
     return x_final, y_reg, y_prob, y_labels
@@ -359,7 +361,7 @@ def make_data_from_report(
     D = np.diag(stddevs)
 
     cov = D @ R @ D
-    cov = cov.round(decimals=8)  # need to round to avoid failing symmetry check
+    cov = cov.round(decimals=8) # round to avoid failing symmetry check
     cov = resolve_covariant(n_informative, covariant=cov)
 
     # initialize X array
@@ -398,19 +400,27 @@ def make_data_from_report(
     # rescale to feature range
     for col in scalers:
         x_final[:, col] = (
-            scalers[col].fit_transform(x_final[:, col].reshape(-1, 1)).flatten()
+            scalers[col]
+            .fit_transform(x_final[:, col].reshape(-1, 1))
+            .flatten()
         )
 
     # post processing steps - e.g. add noise
     if noise_level > 0.0:
-        x_noise = generate_x_noise(x_final[:, :n_informative], noise_level, seed=seed)
+        x_noise = generate_x_noise(
+            x_final[:, :n_informative], noise_level, seed=seed
+        )
         x_final[:, :n_informative] = x_final[:, :n_informative] + x_noise
 
     # find number of decimals for each column and round the data to match
-    precisions = [stat["samples"][0][::-1].find(".") for stat in report["data_stats"]]
+    precisions = [
+        stat["samples"][0][::-1].find(".") for stat in report["data_stats"]
+    ]
 
     for i, precision in enumerate(precisions):
-        x_final[:, i] = np.around(x_final[:, i], precision if precision > 0 else 0)
+        x_final[:, i] = np.around(
+            x_final[:, i], precision if precision > 0 else 0
+        )
 
     return pd.DataFrame(
         x_final, columns=[stat["column_name"] for stat in report["data_stats"]]
