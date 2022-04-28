@@ -25,10 +25,11 @@ With user specified control over:
 
 import numpy as np
 import pandas as pd
-from synthetic_data.parser import MathParser
 from scipy import stats
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import MinMaxScaler
+
+from synthetic_data.parser import MathParser
 
 
 def transform_to_distribution(x, adict):
@@ -65,6 +66,10 @@ def eval_expr_for_sample(x, col_map, expr):
     """
     # print(type(x), type(col_map), type(expr))
     # print(x.shape)
+
+    # exit clause when expr not provided
+    if not expr:
+        return
 
     # for a sample, build a dictionary of symbol:value
     my_sub = {}
@@ -345,52 +350,32 @@ def make_data_from_report(
         n_samples = report["global_stats"]["samples_used"]
 
     n_informative = len(report["data_stats"])
-    # setting to 0 to skip logic below
-    n_redundant = 0
-    n_nuisance = 0
 
-    n_total = n_informative + n_redundant + n_nuisance
-    x_final = np.zeros((n_samples, n_total))
-
-    if n_total < 1:
-        raise Exception("The data set has no variables")
-
+    # build covariance matrix
     R = report["global_stats"]["correlation_matrix"]
 
     stddevs = [stat["statistics"]["stddev"] for stat in report["data_stats"]]
     D = np.diag(stddevs)
 
     cov = D @ R @ D
-    cov = cov.round(decimals=8) # round to avoid failing symmetry check
+    cov = cov.round(decimals=8)  # round to avoid failing symmetry check
     cov = resolve_covariant(n_informative, covariant=cov)
 
-    # initialize X array
-    means = np.zeros(n_informative)
-    mvnorm = stats.multivariate_normal(mean=means, cov=cov)
-    x = mvnorm.rvs(n_samples, random_state=seed)
+    # create col_map of appropriate length to pass pre_data_generation_checks
+    col_map = {}
+    for i in range(n_informative):
+        col_map[f"x{i+1}"] = i
 
-    # now tranform marginals back to uniform distribution
-    norm = stats.norm()
-    x_cont = norm.cdf(x)
+    x_final, _, _, _ = make_tabular_data(
+        n_samples=n_samples,
+        n_informative=n_informative,
+        cov=cov,
+        col_map=col_map,
+        noise_level_x=noise_level,
+        seed=seed,
+    )
 
-    # apply marginal distributions (skip)
-    # for a_dist in dist:
-    #     col = a_dist["column"]
-    #     x_cont[:, col] = transform_to_distribution(x_cont[:, col], a_dist)
-
-    x_final[:, :n_informative] = x_cont
-
-    if n_redundant > 0:
-        x_redundant = generate_redundant_features(
-            x_cont, n_informative, n_redundant, seed
-        )
-        x_final[:, n_informative : n_informative + n_redundant] = x_redundant
-
-    if n_nuisance > 0:
-        x_nuis = np.random.rand(n_samples, n_nuisance)
-        x_final[:, -n_nuisance:] = x_nuis
-
-    # generate scalers
+    # generate scalers by range of values in original data
     scalers = {}
     for col, stat in enumerate(report["data_stats"]):
         _min = stat["statistics"]["min"]
@@ -405,13 +390,6 @@ def make_data_from_report(
             .flatten()
         )
 
-    # post processing steps - e.g. add noise
-    if noise_level > 0.0:
-        x_noise = generate_x_noise(
-            x_final[:, :n_informative], noise_level, seed=seed
-        )
-        x_final[:, :n_informative] = x_final[:, :n_informative] + x_noise
-
     # find number of decimals for each column and round the data to match
     precisions = [
         stat["samples"][0][::-1].find(".") for stat in report["data_stats"]
@@ -422,6 +400,7 @@ def make_data_from_report(
             x_final[:, i], precision if precision > 0 else 0
         )
 
+    # return x_final in a DataFrame with the original column names
     return pd.DataFrame(
         x_final, columns=[stat["column_name"] for stat in report["data_stats"]]
     )
