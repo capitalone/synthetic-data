@@ -359,7 +359,6 @@ def make_data_from_report(
 
     cov = D @ R @ D
     cov = cov.round(decimals=8)  # round to avoid failing symmetry check
-    cov = resolve_covariant(n_informative, covariant=cov)
 
     # create col_map of appropriate length to pass pre_data_generation_checks
     col_map = {}
