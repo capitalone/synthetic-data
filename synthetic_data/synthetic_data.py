@@ -24,10 +24,12 @@ With user specified control over:
 """
 
 import numpy as np
-from synthetic_data.parser import MathParser
+import pandas as pd
 from scipy import stats
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import MinMaxScaler
+
+from synthetic_data.parser import MathParser
 
 
 def transform_to_distribution(x, adict):
@@ -65,6 +67,10 @@ def eval_expr_for_sample(x, col_map, expr):
     # print(type(x), type(col_map), type(expr))
     # print(x.shape)
 
+    # exit clause when expr not provided
+    if not expr:
+        return
+
     # for a sample, build a dictionary of symbol:value
     my_sub = {}
 
@@ -78,7 +84,7 @@ def eval_expr_for_sample(x, col_map, expr):
 
 
 def sigmoid(x, k=1.0, x0=None):
-    """ sigmoid/logistic function """
+    """sigmoid/logistic function"""
 
     if x0 is None:
         x0 = x.mean()
@@ -221,7 +227,7 @@ def make_tabular_data(
         noise_level_x (float) - level of white noise (jitter) added to x
         noise_level_y (float) - level of white noise added to y (think flip_y)
         scaler (sklearn scaler) - sklearn style scaler. Defaults to MinMaxScaler(feature_range = (-1,1)).
-                              If None, no feature scaling is performed. 
+                              If None, no feature scaling is performed.
         seed - numpy random state object for repeatability
 
 
@@ -311,3 +317,89 @@ def make_tabular_data(
         x_final[:, :n_informative] = x_final[:, :n_informative] + x_noise
 
     return x_final, y_reg, y_prob, y_labels
+
+
+def make_data_from_report(
+    report: dict,
+    n_samples: int = None,
+    noise_level: float = 0.0,
+    seed=None,
+) -> pd.DataFrame:
+    """
+    Use a DataProfiler report to generate a synthetic data set to mimic the report.
+    args:
+        report (dict) - DataProfiler report
+        n_samples (int) - number of samples to generate
+        noise_level (float) - level of white noise (jitter) added to x
+        seed - numpy random state object for repeatability
+
+    returns X: DataFrame of shape [n_samples, n_total]
+    """
+
+    # make sure correlation matrix was generated
+    if report["global_stats"]["correlation_matrix"] is None:
+        raise Exception("The report must have the correlation matrix enabled")
+
+    # make sure no non-numerical columns exist
+    for stat in report["data_stats"]:
+        if stat["data_type"] not in ["int", "float"]:
+            raise Exception("The function only supports numerical variables")
+
+    # if n_samples not provided, generate same samples as original dataset
+    if not n_samples:
+        n_samples = report["global_stats"]["samples_used"]
+
+    n_informative = len(report["data_stats"])
+
+    # build covariance matrix
+    R = report["global_stats"]["correlation_matrix"]
+
+    stddevs = [stat["statistics"]["stddev"] for stat in report["data_stats"]]
+    D = np.diag(stddevs)
+
+    cov = D @ R @ D
+    cov = cov.round(decimals=8)  # round to avoid failing symmetry check
+
+    # create col_map of appropriate length to pass pre_data_generation_checks
+    col_map = {}
+    for i in range(n_informative):
+        col_map[f"x{i+1}"] = i
+
+    x_final, _, _, _ = make_tabular_data(
+        n_samples=n_samples,
+        n_informative=n_informative,
+        cov=cov,
+        col_map=col_map,
+        noise_level_x=noise_level,
+        seed=seed,
+    )
+
+    # generate scalers by range of values in original data
+    scalers = {}
+    for col, stat in enumerate(report["data_stats"]):
+        _min = stat["statistics"]["min"]
+        _max = stat["statistics"]["max"]
+        scalers[col] = MinMaxScaler(feature_range=(_min, _max))
+
+    # rescale to feature range
+    for col in scalers:
+        x_final[:, col] = (
+            scalers[col]
+            .fit_transform(x_final[:, col].reshape(-1, 1))
+            .flatten()
+        )
+
+    # find number of decimals for each column and round the data to match
+    precisions = [
+        stat["samples"][0][::-1].find(".") for stat in report["data_stats"]
+    ]
+
+    for i, precision in enumerate(precisions):
+        x_final[:, i] = np.around(
+            x_final[:, i], precision if precision > 0 else 0
+        )
+
+    # return x_final in a DataFrame with the original column names
+    return pd.DataFrame(
+        x_final, columns=[stat["column_name"] for stat in report["data_stats"]]
+    )
