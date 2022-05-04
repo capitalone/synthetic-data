@@ -1,7 +1,7 @@
 import ast
 import math
 import operator as op
-
+import numpy
 
 class MathParser:
     """Basic parser with local variable and math functions
