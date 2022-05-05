@@ -1,5 +1,5 @@
-# make_tabular_data
-Inspired by `sklearn.datasets.make_classification`, which in turn is based on work for NIPS 2003 feature selection challenge [1] - targeting linear classifiers.  Here the focus is on generating more complex, nonlinear datasets appropriate for use with deep learning/black box models which 'need' nonlinearity - otherwise you would/should use a simpler model.
+# synthetic-data
+Inspired by `sklearn.datasets.make_classification`, which in turn is based on work for the NIPS 2003 feature selection challenge [1] - targeting linear classifiers.  Here the focus is on generating more complex, nonlinear datasets appropriate for use with deep learning/black box models which 'need' nonlinearity - otherwise you would/should use a simpler model.
 
 
 ### Approach
@@ -38,9 +38,16 @@ pip install -e .
 ```
 
 ### Tests
+
+Test/Lint Dependencies
+
+```bash
+$ pip install pandas pytest pytest-cov flake8
+```
+
 To run tests:
 ```bash
-$ python -m pytest tests/
+$ make test_local
 ```
 
 ### Referencing this library
