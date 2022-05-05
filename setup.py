@@ -27,8 +27,8 @@ with open('README.md', 'r') as readme:
     long_description = readme.read()
 
 setup(
-    name='make_tabular_data',
-    version='0.0.1',
+    name='synthetic-data',
+    version='1.1.0',
     maintainer='Brian Barr',
     maintainer_email='brian.barr@capitalone.com',
     license='Apache License 2.0',
@@ -37,8 +37,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     install_requires=parse_requirements('requirements.txt'),
-    # test_requires=None,
-    url=None,
+    url='https://github.com/capitalone/synthetic-data',
     packages=find_packages(),
     include_package_data=True,
     python_requires=">=3.6"
