@@ -1,5 +1,6 @@
 import numpy as np
-from scipy.stats import multivariate_normal as mvn
+from scipy.stats import multivariate_normal as mvn, norm
+
 class MultivariateSkewNorm():
     '''
     Class to sample data from a Multivariate Skew-Normal Distribution
@@ -19,34 +20,54 @@ class MultivariateSkewNorm():
     def __init__(self, cov, skew):
         self.cov = np.asarray(cov)
         self.skew = np.asarray(skew)
+        self.dim = len(self.skew)
+
         self.delta = self._calc_delta()
-        self.uppercase_delta = self._calc_uppercase_delta()
+        # self.capital_delta represents a diagonal matrix. Storing only the diagonal values for space efficiency.
+        # If used in computation convert to diagonal matrix first by, capital_delta = np.diag(self.capital_delta)
+        self.capital_delta = self._calc_capital_delta()
         self.omega = self._calc_omega()
+
+        # Calculate only when it is needed.
+        self.alpha = None
 
     def _calc_omega(self):
         """
         Calculate omega matrix as described in equation 2.6 in (Azzalini & Dalla Valle, 1996)
         """
-        u_delta = np.diag(self.uppercase_delta)
+        capital_delta = np.diag(self.capital_delta)
         skew = np.atleast_2d(self.skew)
-        return u_delta @ (self.cov + skew.T @ skew) @ u_delta
+        return capital_delta @ (self.cov + skew.T @ skew) @ capital_delta
 
     def _calc_delta(self):
         """
         Calculate array of delta values as a function of skew values as described in equation 1.3 in (Azzalini & Dalla Valle, 1996)
         """
         skew_squared = np.square(self.skew)
-        denominator = np.sqrt(1+skew_squared)
-        return self.skew / denominator
+        bottom = np.sqrt(1+skew_squared)
+        return self.skew / bottom
 
-    def _calc_uppercase_delta(self):
+    def _calc_capital_delta(self):
         """
-        Calculate array of uppercase delta values as a function of delta values as described in equation 2.4 in (Azzalini & Dalla Valle, 1996)
+        Calculate array of uppercase delta values as a function of delta values as described in equation 2.4 in (Azzalini & Dalla Valle, 1996).
         """
         delta_squared = np.square(self.delta)
         diag_vals = np.sqrt(1-delta_squared)
         return diag_vals
-    
+
+    def _calc_alpha(self):
+        """
+        Calculate array of alpha as described in equation 2.4 in (Azzalini & Dalla Valle, 1996)
+        """
+        capital_delta = np.diag(self.capital_delta)
+        inv_cov = np.linalg.inv(self.cov)
+        skew_inv_cov = self.skew @ inv_cov
+        top = skew_inv_cov @ np.linalg.inv(capital_delta)
+        bottom = np.sqrt(1+(skew_inv_cov @ self.skew))
+        alpha = top/bottom
+        return alpha.flatten()
+
+
     def rvs(self, n_samples: int=1):
         """
         Draw random samples from a Multivariate Skew-Normal Distribution
@@ -57,8 +78,20 @@ class MultivariateSkewNorm():
         assert type(n_samples) is int and n_samples > 0, "Number of samples to generate must be a positive integer"
         omega_star = np.block([[np.ones(1),     self.delta],
                             [self.delta[:, None], self.omega]])
-        x        = mvn(np.zeros(len(self.skew)+1), omega_star).rvs(n_samples)
+        x        = mvn(np.zeros(self.dim+1), omega_star).rvs(n_samples)
         x0, x1   = x[:, 0], x[:, 1:]
         inds     = x0 <= 0
         x1[inds] = -1 * x1[inds]
         return x1
+
+    def pdf(self, x):
+        """
+        pdf of the distribution. Mainly for testing whether distribution samples match the pdf contour.
+        """
+        mean = np.zeros(self.dim)
+        if self.alpha is None:
+            self.alpha = self._calc_alpha()
+
+        pdf = mvn(mean, self.omega).pdf(x)
+        cdf = norm(0, 1).cdf(x @ self.alpha)
+        return 2*np.multiply(pdf, cdf)
