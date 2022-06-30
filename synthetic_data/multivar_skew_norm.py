@@ -68,17 +68,18 @@ class MultivariateSkewNorm():
         return alpha.flatten()
 
 
-    def rvs(self, n_samples: int=1):
+    def rvs(self, n_samples = 1, seed = None):
         """
         Draw random samples from a Multivariate Skew-Normal Distribution
 
         Args:
             n_samples (int): Number of random samples to draw
+            seed (int): Numpy random state for repeatability
         """
         assert type(n_samples) is int and n_samples > 0, "Number of samples to generate must be a positive integer"
         omega_star = np.block([[np.ones(1),     self.delta],
                             [self.delta[:, None], self.omega]])
-        x        = mvn(np.zeros(self.dim+1), omega_star).rvs(n_samples)
+        x        = mvn(np.zeros(self.dim+1), omega_star).rvs(n_samples, random_state=seed)
         x0, x1   = x[:, 0], x[:, 1:]
         inds     = x0 <= 0
         x1[inds] = -1 * x1[inds]
