@@ -28,14 +28,16 @@ def test_repeatability():
     assert np.all(X == X_repeat), "The same samples must be generated if given the same seed"
 
 def test_marginal_dist():
-    X = mvsn.rvs(10000)
+    SAMPLE_SIZE = pow(10, 6)
+
+    X = mvsn.rvs(SAMPLE_SIZE)
     X0, X1 = X[:,0], X[:,1]
-    Y0, Y1 = skewnorm.rvs(FIRST_VAR_SKEW, size=10000), skewnorm.rvs(SECOND_VAR_SKEW, size=10000)
+    Y0, Y1 = skewnorm.rvs(FIRST_VAR_SKEW, size=SAMPLE_SIZE), skewnorm.rvs(SECOND_VAR_SKEW, size=SAMPLE_SIZE)
 
     # The skew, mean and variance of the marginal distributions of the mvsn should be similar to those of the univariate skew normal distributions
     assert np.abs(skew(X0) - skew(Y0)) <= 0.2 and np.abs(skew(X1) - skew(Y1)) <= 0.2, "skew difference exceeds threshold"
-    assert np.abs(np.mean(X0) - np.mean(Y0)) <= 0.2 and np.abs(np.mean(X1) - np.mean(Y1)) <= 0.2, "mean difference exceeds threshold"
-    assert np.abs(np.std(X0) - np.std(Y0)) <= 0.2 and np.abs(np.std(X1) - np.std(Y1)) <= 0.2, "standard deviation difference exceeds threshold"
+    assert np.abs(np.mean(X0) - np.mean(Y0)) <= 0.05 and np.abs(np.mean(X1) - np.mean(Y1)) <= 0.05, "mean difference exceeds threshold"
+    assert np.abs(np.std(X0) - np.std(Y0)) <= 0.1 and np.abs(np.std(X1) - np.std(Y1)) <= 0.1, "standard deviation difference exceeds threshold"
 
 def test_kl_divergence():
     PRECISION = 2
@@ -55,4 +57,4 @@ def test_kl_divergence():
     groundtruth_prob = mvsn.pdf(X)
     groundtruth_prob *= dx
 
-    assert sum(kl_div(groundtruth_prob, empirical_prob)) < 0.5
+    assert sum(kl_div(groundtruth_prob, empirical_prob)) < 0.05
