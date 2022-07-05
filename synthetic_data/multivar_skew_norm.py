@@ -89,6 +89,7 @@ class MultivariateSkewNorm():
         """
         pdf of the distribution. Mainly for testing whether distribution samples match the pdf contour.
         """
+        x = np.asarray(x)
         mean = np.zeros(self.dim)
         if self.alpha is None:
             self.alpha = self._calc_alpha()

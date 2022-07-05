@@ -1,6 +1,8 @@
 from synthetic_data.multivar_skew_norm import MultivariateSkewNorm
 import numpy as np
 from scipy.stats import skew, skewnorm
+from scipy.special import kl_div
+from collections import Counter
 
 # Covariance matrices must be positive semi-definite
 cov = np.asarray([[1.5,-0.9],[-0.9,1.5]])
@@ -34,3 +36,23 @@ def test_marginal_dist():
     assert np.abs(skew(X0) - skew(Y0)) <= 0.2 and np.abs(skew(X1) - skew(Y1)) <= 0.2, "skew difference exceeds threshold"
     assert np.abs(np.mean(X0) - np.mean(Y0)) <= 0.2 and np.abs(np.mean(X1) - np.mean(Y1)) <= 0.2, "mean difference exceeds threshold"
     assert np.abs(np.std(X0) - np.std(Y0)) <= 0.2 and np.abs(np.std(X1) - np.std(Y1)) <= 0.2, "standard deviation difference exceeds threshold"
+
+def test_kl_divergence():
+    PRECISION = 2
+    SAMPLE_SIZE = pow(10, 6)
+
+    X = mvsn.rvs(SAMPLE_SIZE)
+    X = np.round(X, PRECISION)
+
+    freq = Counter([tuple(x) for x in X])
+    empirical_prob = [freq[x] / SAMPLE_SIZE for x in freq]
+
+    X = [x for x in freq]
+
+    # Discretize Probability Density Functions to (approximate) Probability Mass Functions by multiplying PDF with dx
+    # i.e For the univariate case, Riemann Sum approximation of area under a PDF to get probability
+    dx = pow(10, (-1 * 2 * PRECISION))
+    groundtruth_prob = mvsn.pdf(X)
+    groundtruth_prob *= dx
+
+    assert sum(kl_div(groundtruth_prob, empirical_prob)) < 0.5
