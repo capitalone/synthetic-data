@@ -22,22 +22,22 @@ def _detect_dist_continuous(col_stats):
     # Distributions to test against (must be a continuous distribution from scipy.stats)
     # Distribution name -> list of positional arguments for the distribution
     # If the observed histogram is centered around 0, means of distributions set to 0
-    test_dists = {
+    test_dists = (
 
         # norm(loc, scale)
-        'norm': (0, col_stats['stddev']),
+        ('norm', (0, col_stats['stddev'])),
 
         # skewnorm(a, loc, scale)
-        'skewnorm': (col_stats['skewness'], 0, col_stats['stddev']),
+        ('skewnorm', (col_stats['skewness'], 0, col_stats['stddev'])),
 
         # uniform(loc, scale)
-        'uniform': (col_stats['min'], col_stats['max'] - col_stats['min'])
-    }
+        ('uniform', (col_stats['min'], col_stats['max'] - col_stats['min']))
+    )
 
     dist = {}
     max_p = 0
 
-    for dist_name, dist_args in test_dists.items():
+    for dist_name, dist_args in test_dists:
 
         # overfitting on purpose for testing
         # method = getattr(stats, dist_name)
@@ -70,30 +70,29 @@ def _detect_dist_discrete(col_stats):
 
     # Distributions to test against (must be a discrete distribution from scipy.stats)
     # Distribution name -> list of positional arguments for the distribution    
-    test_dists = {
+    test_dists = (
 
         # binom(n, p)
-        'binom': [(categories[-1], p*0.25) for p in range(1,4)],
+        *[('binom', (categories[-1], p*0.25)) for p in range(1,4)],
 
         # randint(low, high)
-        'randint': [(categories[0], categories[-1]+1)]
-    }
+        ('randint', (categories[0], categories[-1]+1))
+    )
 
     dist = {}
     max_p = 0
 
-    for dist_name, args_list in test_dists.items():
-        for args in args_list:
-            dist_method = getattr(stats, dist_name)
-            dist_method_specific = dist_method(*args)
-            test_samples = dist_method_specific.rvs(size=sample_size)
-            test_samples_count = Counter(test_samples)
-            expected_freq = [test_samples_count[category] for category in categories]
-            p = stats.chisquare(observed_freq, expected_freq)[1]
-            if p > max_p:
-                dist['dist'] = dist_name
-                dist['args'] = args
-                max_p = p
+    for dist_name, args in test_dists:
+        dist_method = getattr(stats, dist_name)
+        dist_method_specific = dist_method(*args)
+        test_samples = dist_method_specific.rvs(size=sample_size)
+        test_samples_count = Counter(test_samples)
+        expected_freq = [test_samples_count[category] for category in categories]
+        p = stats.chisquare(observed_freq, expected_freq)[1]
+        if p > max_p:
+            dist['dist'] = dist_name
+            dist['args'] = args
+            max_p = p
 
     return dist
             
