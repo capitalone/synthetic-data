@@ -29,8 +29,8 @@ from scipy import stats
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import MinMaxScaler
 
-from synthetic_data.parser import MathParser
 from synthetic_data.marginal_dist import detect_dist
+from synthetic_data.parser import MathParser
 
 
 def transform_to_distribution(x, adict):
@@ -190,6 +190,7 @@ def scaler_check(scaler):
     ):
         raise TypeError("Please provide a valid sklearn scaler.")
 
+
 def marginal_dist_check(dist, num_cols):
     """
     Checks if dist argument passed to make_tabular_data is valid.
@@ -199,7 +200,10 @@ def marginal_dist_check(dist, num_cols):
     if dist is None:
         raise ValueError("Please provide a valid list of marginal distributions.")
     if len(dist) != num_cols:
-        raise ValueError("Please provide a marginal distribution dictionary for each of n_informative columns.")
+        raise ValueError(
+            "Please provide a marginal distribution dictionary for each of n_informative columns."
+        )
+
 
 def make_tabular_data(
     n_samples=1000,
@@ -323,9 +327,7 @@ def make_tabular_data(
     #
 
     if noise_level_x > 0.0:
-        x_noise = generate_x_noise(
-            x_final[:, :n_informative], noise_level_x, seed=seed
-        )
+        x_noise = generate_x_noise(x_final[:, :n_informative], noise_level_x, seed=seed)
         x_final[:, :n_informative] = x_final[:, :n_informative] + x_noise
 
     return x_final, y_reg, y_prob, y_labels
@@ -386,7 +388,7 @@ def make_data_from_report(
         col_map=col_map,
         noise_level_x=noise_level,
         seed=seed,
-        dist=dist
+        dist=dist,
     )
 
     # generate scalers by range of values in original data
@@ -399,20 +401,14 @@ def make_data_from_report(
     # rescale to feature range
     for col in scalers:
         x_final[:, col] = (
-            scalers[col]
-            .fit_transform(x_final[:, col].reshape(-1, 1))
-            .flatten()
+            scalers[col].fit_transform(x_final[:, col].reshape(-1, 1)).flatten()
         )
 
     # find number of decimals for each column and round the data to match
-    precisions = [
-        stat["samples"][0][::-1].find(".") for stat in report["data_stats"]
-    ]
+    precisions = [stat["samples"][0][::-1].find(".") for stat in report["data_stats"]]
 
     for i, precision in enumerate(precisions):
-        x_final[:, i] = np.around(
-            x_final[:, i], precision if precision > 0 else 0
-        )
+        x_final[:, i] = np.around(x_final[:, i], precision if precision > 0 else 0)
 
     # return x_final in a DataFrame with the original column names
     return pd.DataFrame(

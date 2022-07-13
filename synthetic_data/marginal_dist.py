@@ -1,15 +1,20 @@
-from scipy import stats
 from collections import Counter
+
+from scipy import stats
+
 
 def _detect_dist_continuous(col_stats):
     """
     Detects type of continuous distribution based on Kolmogorov-Smirnov Goodness-of-fit test, https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test.
     Args:
-        col_stats (dict): Column data statistics. The column data must be of a continuous numerical random variable. 
+        col_stats (dict): Column data statistics. The column data must be of a continuous numerical random variable.
     Returns:
         dist (dict): Dictionary stating distribution type along with other parameters for the distribution.
     """
-    bin_counts, bin_edges = col_stats['histogram']['bin_counts'], col_stats['histogram']['bin_edges']
+    bin_counts, bin_edges = (
+        col_stats["histogram"]["bin_counts"],
+        col_stats["histogram"]["bin_edges"],
+    )
 
     # Create a continuous distribution from the histogram and sample data from it
     hist_dist = stats.rv_histogram((bin_counts, bin_edges))
@@ -23,15 +28,12 @@ def _detect_dist_continuous(col_stats):
     # Distribution name -> list of positional arguments for the distribution
     # If the observed histogram is centered around 0, means of distributions set to 0
     test_dists = (
-
         # norm(loc, scale)
-        ('norm', (0, col_stats['stddev'])),
-
+        ("norm", (0, col_stats["stddev"])),
         # skewnorm(a, loc, scale)
-        ('skewnorm', (col_stats['skewness'], 0, col_stats['stddev'])),
-
+        ("skewnorm", (col_stats["skewness"], 0, col_stats["stddev"])),
         # uniform(loc, scale)
-        ('uniform', (col_stats['min'], col_stats['max'] - col_stats['min']))
+        ("uniform", (col_stats["min"], col_stats["max"] - col_stats["min"])),
     )
 
     dist = {}
@@ -45,38 +47,36 @@ def _detect_dist_continuous(col_stats):
 
         p = stats.kstest(observed_samples, dist_name, dist_args)[1]
         if p > max_p:
-            dist['dist'] = dist_name
-            dist['args'] = dist_args
+            dist["dist"] = dist_name
+            dist["args"] = dist_args
             max_p = p
-    
+
     return dist
 
-    
+
 def _detect_dist_discrete(col_stats):
     """
     Detects type of discrete distribution based on Pearson's Chi-Squared Goodness-of-fit test, https://en.wikipedia.org/wiki/Chi-squared_test.
     Args:
-        col_stats (dict): Column data statistics. The column data must be of a discrete numerical random variable. 
+        col_stats (dict): Column data statistics. The column data must be of a discrete numerical random variable.
     Returns:
         dist (dict): Dictionary stating distribution type along with other parameters for the distribution.
     """
     # Convert strings to ints, ideally DataProfiler should be handling this
-    categories = [int(category) for category in col_stats['categories']]
-    categorical_count = {int(k): v for k, v in col_stats['categorical_count'].items()}
+    categories = [int(category) for category in col_stats["categories"]]
+    categorical_count = {int(k): v for k, v in col_stats["categorical_count"].items()}
 
     categories.sort()
     observed_freq = [categorical_count[category] for category in categories]
-    sample_size = col_stats['sample_size']
+    sample_size = col_stats["sample_size"]
 
     # Distributions to test against (must be a discrete distribution from scipy.stats)
-    # Distribution name -> list of positional arguments for the distribution    
+    # Distribution name -> list of positional arguments for the distribution
     test_dists = (
-
         # binom(n, p)
-        *[('binom', (categories[-1], p*0.25)) for p in range(1,4)],
-
+        *[("binom", (categories[-1], p * 0.25)) for p in range(1, 4)],
         # randint(low, high)
-        ('randint', (categories[0], categories[-1]+1))
+        ("randint", (categories[0], categories[-1] + 1)),
     )
 
     dist = {}
@@ -90,16 +90,18 @@ def _detect_dist_discrete(col_stats):
         expected_freq = [test_samples_count[category] for category in categories]
         p = stats.chisquare(observed_freq, expected_freq)[1]
         if p > max_p:
-            dist['dist'] = dist_name
-            dist['args'] = args
+            dist["dist"] = dist_name
+            dist["args"] = args
             max_p = p
 
     return dist
-            
+
+
 def detect_dist(report):
     """
     Detects type of distribution modeled by each column of a DataProfiler report.
-    Type of distribution selected for each column based on goodness-of-fit test (Chi-Squared test for discrete variables, Kolmogorov-Smirnov test for continuous variables). 
+    Type of distribution selected for each column based on goodness-of-fit test 
+    (Chi-Squared test for discrete variables, Kolmogorov-Smirnov test for continuous variables).
 
     Args:
         report (dict): DataProfiler report
@@ -107,10 +109,14 @@ def detect_dist(report):
         dist_list (list): List of dictionaries stating distribution type for each column
     """
     dist_list = []
-    for col_num, col_dict in enumerate(report['data_stats']):
-        col_stats = col_dict['statistics']
-        is_continuous = col_dict['data_type'] == 'float'
-        dist = _detect_dist_continuous(col_stats) if is_continuous else _detect_dist_discrete(col_stats)
+    for col_num, col_dict in enumerate(report["data_stats"]):
+        col_stats = col_dict["statistics"]
+        is_continuous = col_dict["data_type"] == "float"
+        dist = (
+            _detect_dist_continuous(col_stats)
+            if is_continuous
+            else _detect_dist_discrete(col_stats)
+        )
         dist["column"] = col_num
         dist["column_name"] = col_dict["column_name"]
         dist_list.append(dist)
