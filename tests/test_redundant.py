@@ -10,7 +10,6 @@ from scipy import stats
 from sklearn.preprocessing import MinMaxScaler
 
 from synthetic_data.synthetic_data import (
-    generate_redundant_features,
     make_tabular_data,
     transform_to_distribution,
 )
@@ -37,6 +36,9 @@ def test_redundant():
     n_samples = 3
     n_informative = 2
     n_redundant = 2
+
+    dist = [{"dist": "norm", "column": col} for col in range(2)]
+
     X, _, _, _ = make_tabular_data(
         n_samples=n_samples,
         n_informative=n_informative,
@@ -48,6 +50,7 @@ def test_redundant():
         p_thresh=0.5,
         # random_state=generator,
         seed=seed,
+        dist=dist,
     )
     print("in test results for X - ")
     print(X)
@@ -60,6 +63,10 @@ def test_redundant():
     x = mvnorm.rvs(n_samples, random_state=seed)
     norm = stats.norm()
     x_cont = norm.cdf(x)
+
+    for a_dist in dist:
+        col = a_dist["column"]
+        x_cont[:, col] = transform_to_distribution(x_cont[:, col], a_dist)
 
     # this duplicates the generate_redundant_features function
     B = 2 * generator.rand(n_informative, n_redundant) - 1
@@ -82,6 +89,4 @@ def test_redundant():
     # print(x_redundant)
 
     # check that they match
-    assert np.allclose(
-        x_redundant_scaled, x_slice_redundant, rtol=1e-05, atol=1e-08
-    )
+    assert np.allclose(x_redundant_scaled, x_slice_redundant, rtol=1e-05, atol=1e-08)
