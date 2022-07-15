@@ -29,6 +29,7 @@ from scipy import stats
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import MinMaxScaler
 
+from synthetic_data.marginal_dist import detect_dist
 from synthetic_data.parser import MathParser
 
 
@@ -42,14 +43,14 @@ def transform_to_distribution(x, adict):
         x_samples - the transformed vector with desired distribution
     """
 
-    if "args" not in adict.keys():
-        adict["args"] = {}
+    if "args" not in adict:
+        adict["args"] = []
 
-    if "kwargs" not in adict.keys():
+    if "kwargs" not in adict:
         adict["kwargs"] = {}
 
     method_gen = getattr(stats, adict["dist"])
-    method_specific = method_gen(**adict["args"], **adict["kwargs"])
+    method_specific = method_gen(*adict["args"], **adict["kwargs"])
     x_samples = method_specific.ppf(x)
 
     return x_samples
@@ -190,13 +191,27 @@ def scaler_check(scaler):
         raise TypeError("Please provide a valid sklearn scaler.")
 
 
+def marginal_dist_check(dist, num_cols):
+    """
+    Checks if dist argument passed to make_tabular_data is valid.
+    args:
+        dist - list of dicts for marginal distributions to apply to columns
+    """
+    if dist is None:
+        raise ValueError("Please provide a valid list of marginal distributions.")
+    if len(dist) != num_cols:
+        raise ValueError(
+            "Please provide a marginal distribution dictionary for each of n_informative columns."
+        )
+
+
 def make_tabular_data(
     n_samples=1000,
     n_informative=2,
     n_redundant=0,
     n_nuisance=0,
     n_classes=2,
-    dist=[],
+    dist=None,
     cov=None,
     col_map={},
     expr=None,
@@ -245,6 +260,7 @@ def make_tabular_data(
         n_informative=n_informative, col_map=col_map, n_total=n_total
     )
     scaler_check(scaler)
+    marginal_dist_check(dist, n_informative)
 
     # generate covariance matrix if not handed one
     cov = resolve_covariant(n_informative, covariant=cov)
@@ -311,9 +327,7 @@ def make_tabular_data(
     #
 
     if noise_level_x > 0.0:
-        x_noise = generate_x_noise(
-            x_final[:, :n_informative], noise_level_x, seed=seed
-        )
+        x_noise = generate_x_noise(x_final[:, :n_informative], noise_level_x, seed=seed)
         x_final[:, :n_informative] = x_final[:, :n_informative] + x_noise
 
     return x_final, y_reg, y_prob, y_labels
@@ -365,6 +379,8 @@ def make_data_from_report(
     for i in range(n_informative):
         col_map[f"x{i+1}"] = i
 
+    dist = detect_dist(report)
+
     x_final, _, _, _ = make_tabular_data(
         n_samples=n_samples,
         n_informative=n_informative,
@@ -372,6 +388,7 @@ def make_data_from_report(
         col_map=col_map,
         noise_level_x=noise_level,
         seed=seed,
+        dist=dist,
     )
 
     # generate scalers by range of values in original data
@@ -384,20 +401,14 @@ def make_data_from_report(
     # rescale to feature range
     for col in scalers:
         x_final[:, col] = (
-            scalers[col]
-            .fit_transform(x_final[:, col].reshape(-1, 1))
-            .flatten()
+            scalers[col].fit_transform(x_final[:, col].reshape(-1, 1)).flatten()
         )
 
     # find number of decimals for each column and round the data to match
-    precisions = [
-        stat["samples"][0][::-1].find(".") for stat in report["data_stats"]
-    ]
+    precisions = [stat["samples"][0][::-1].find(".") for stat in report["data_stats"]]
 
     for i, precision in enumerate(precisions):
-        x_final[:, i] = np.around(
-            x_final[:, i], precision if precision > 0 else 0
-        )
+        x_final[:, i] = np.around(x_final[:, i], precision if precision > 0 else 0)
 
     # return x_final in a DataFrame with the original column names
     return pd.DataFrame(

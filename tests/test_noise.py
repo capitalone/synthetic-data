@@ -34,6 +34,9 @@ def test_noise():
     # baseline 2D data, no noise
     cov = np.array([[1.0, 0.0], [0.0, 1.0]])
 
+    # dummy dist arg to bypass dist requirement
+    dist = [{"dist": "norm", "column": col} for col in range(2)]
+
     n_samples = 3
     X, _, _, _ = make_tabular_data(
         n_samples=n_samples,
@@ -42,6 +45,7 @@ def test_noise():
         expr=expr,
         p_thresh=0.5,
         seed=seed,
+        dist=dist,
     )
 
     # the noise matrix
@@ -57,6 +61,7 @@ def test_noise():
         p_thresh=0.5,
         noise_level_x=noise_level_x,
         seed=seed,
+        dist=dist,
     )
     # delta from noise to no noise
     delta = X_noise - X

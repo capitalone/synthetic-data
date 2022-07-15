@@ -3,7 +3,6 @@ import pytest
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 from synthetic_data.synthetic_data import (
-    eval_expr_for_sample,
     make_tabular_data,
     pre_data_generation_checks,
     resolve_covariant,
@@ -32,18 +31,14 @@ def test_pre_data_generation_checks():
 
     # This assertion checks that nothing is returned by the function, meaning no exceptions
     # were thrown and all asserts passed
-    assert not pre_data_generation_checks(
-        n_informative=2, n_total=1, col_map=col_map
-    )
+    assert not pre_data_generation_checks(n_informative=2, n_total=1, col_map=col_map)
 
 
 def test_pre_data_generation_checks_0_n_total():
     col_map = {"x1": 0, "x2": 1}
 
     with pytest.raises(Exception) as exec_info:
-        pre_data_generation_checks(
-            n_informative=2, n_total=-1, col_map=col_map
-        )
+        pre_data_generation_checks(n_informative=2, n_total=-1, col_map=col_map)
     err = "total number of samples (n_informative + n_nuisance) must be greater than 0"
     assert err in str(exec_info.value)
 
@@ -61,8 +56,10 @@ def test_data_scaling():
     col_map = {"x1": 0, "x2": 1, "x3": 2, "x4": 3}
     expr = "x1 + x2 + x3 + x4"
 
+    dist = [{"dist": "norm", "column": col} for col in range(4)]
+
     x_final, _, _, _ = make_tabular_data(
-        n_informative=4, expr=expr, col_map=col_map, scaler=StandardScaler(),
+        n_informative=4, expr=expr, col_map=col_map, scaler=StandardScaler(), dist=dist
     )
     assert np.all(np.isclose(x_final.mean(axis=0), np.zeros(4)))
 
@@ -71,16 +68,31 @@ def test_data_scaling():
         expr=expr,
         col_map=col_map,
         scaler=MinMaxScaler(feature_range=(0, 1)),
+        dist=dist,
     )
     assert (x_final.max() == 1) and (x_final.min() == 0)
 
     x_final, _, _, _ = make_tabular_data(
-        n_informative=4, expr=expr, col_map=col_map, scaler=None,
+        n_informative=4, expr=expr, col_map=col_map, scaler=None, dist=dist
     )
 
     with pytest.raises(Exception) as exec_info:
         x_final, _, _, _ = make_tabular_data(
-            n_informative=4, expr=expr, col_map=col_map, scaler=lambda x: x,
+            n_informative=4, expr=expr, col_map=col_map, scaler=lambda x: x, dist=dist
         )
     err = "Please provide a valid sklearn scaler."
+    assert err in str(exec_info.value)
+
+
+def test_marginal_dist_check():
+    col_map = {"x1": 0, "x2": 1, "x3": 2, "x4": 3}
+
+    with pytest.raises(Exception) as exec_info:
+        make_tabular_data(n_informative=4, col_map=col_map)
+    err = "Please provide a valid list of marginal distributions."
+    assert err in str(exec_info.value)
+
+    with pytest.raises(Exception) as exec_info:
+        make_tabular_data(n_informative=4, col_map=col_map, dist=[])
+    err = "Please provide a marginal distribution dictionary for each of n_informative columns."
     assert err in str(exec_info.value)
