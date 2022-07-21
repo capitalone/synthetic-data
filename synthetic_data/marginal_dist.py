@@ -70,13 +70,16 @@ def _detect_dist_discrete(col_stats):
     observed_freq = [categorical_count[category] for category in categories]
     sample_size = col_stats["sample_size"]
 
+    # Shift categories so they start at 0
+    categories = list(range(len(categories)))
+
     # Distributions to test against (must be a discrete distribution from scipy.stats)
     # Distribution name -> list of positional arguments for the distribution
     test_dists = (
         # binom(n, p)
         *[("binom", (categories[-1], p * 0.25)) for p in range(1, 4)],
         # randint(low, high)
-        ("randint", (categories[0], categories[-1] + 1)),
+        ("randint", (0, categories[-1] + 1)),
     )
 
     dist = {}
