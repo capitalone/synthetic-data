@@ -1,7 +1,6 @@
 from collections import Counter
 
 from scipy import stats
-import numpy as np
 
 
 def _detect_dist_continuous(col_stats):
