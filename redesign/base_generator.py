@@ -2,6 +2,7 @@
 
 import abc
 
+
 class BaseGenerator(metaclass=abc.ABCMeta):
     """Abstract generator class."""
 
