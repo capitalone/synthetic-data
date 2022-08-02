@@ -1,11 +1,11 @@
-"""Contains generator wrapper class that picks generator based on its profile type."""
+"""Contains generator factory class that picks generator based on its profile type."""
 
 from .generators import GraphGenerator, TabularGenerator, UnstructuredGenerator
+from dataprofiler import StructuredProfiler, UnstructuredProfiler, GraphProfiler
 
 
 class Generator:
-    """Generator-wrapper class."""
-
+    """Generator-factory class."""
     @classmethod
     def pick(profile):
         """Pick a generator."""
@@ -26,7 +26,7 @@ class Generator:
     def __init__(self, profile):
         """Initialize wrapper object."""
         self.profile = profile
-        self.generator = pick(profile)
+        self.generator = self.pick(profile)
 
     def data(self):
         """Make synthetic data."""
