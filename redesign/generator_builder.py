@@ -25,10 +25,9 @@ class Generator:
 
     def __init__(self, profile):
         """Initialize wrapper object."""
+        self.profile = profile
         self.generator = pick(profile)
-        self.data = self.generator(profile).synthesize()
 
-    @property
     def data(self):
-        """Get synthetic data."""
-        return self.data
+        """Make synthetic data."""
+        return self.generator(self.profile).synthesize()
