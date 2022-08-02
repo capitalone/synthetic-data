@@ -21,7 +21,7 @@ class Generator():
         self.data = self.generator(profile).synthesize()
 
     @property
-    def data():
+    def data(self):
         """Get synthetic data."""
         return self.data
 

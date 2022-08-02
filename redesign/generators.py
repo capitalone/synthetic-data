@@ -16,7 +16,7 @@ class TabularGenerator(BaseGenerator):
 class GraphGenerator(BaseGenerator):
     """Class for generating synthetic graph data."""
     
-    def __init__(self):
+    def __init__(self, profile):
         """Initialize graph generator object."""
         super().__init__(profile)
 
@@ -27,7 +27,7 @@ class GraphGenerator(BaseGenerator):
 class UnstructuredGenerator(BaseGenerator):
     """Class for generating synthetic tabular data."""
     
-    def __init__(self):
+    def __init__(self, profile):
         """Initialize unstructured generator object."""
         super().__init__(profile)
 
