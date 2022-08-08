@@ -30,6 +30,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import MinMaxScaler
 
 from synthetic_data.marginal_dist import detect_dist
+from synthetic_data.null_replication import replicate_null
 from synthetic_data.parser import MathParser
 
 
@@ -409,6 +410,9 @@ def make_data_from_report(
 
     for i, precision in enumerate(precisions):
         x_final[:, i] = np.around(x_final[:, i], precision if precision > 0 else 0)
+
+    # replicate null values if they exist in the original report
+    x_final = replicate_null(x_final, report["data_stats"], cov)
 
     # return x_final in a DataFrame with the original column names
     return pd.DataFrame(
