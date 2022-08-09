@@ -1,14 +1,13 @@
 """Contains generator factory class that picks generator based on its profile type."""
 
 from generators import GraphGenerator, TabularGenerator, UnstructuredGenerator
-from dataprofiler import StructuredProfiler, UnstructuredProfiler #, GraphProfiler
+from dataprofiler import StructuredProfiler, UnstructuredProfiler
 
 class Generator:
     """Generator class."""
 
     valid_data_types = {
-        StructuredProfiler: TabularGenerator,
-        #GraphProfiler: GraphGenerator, 
+        StructuredProfiler: TabularGenerator, 
         UnstructuredProfiler: UnstructuredGenerator
     }
 
@@ -21,7 +20,7 @@ class Generator:
         if config:
             try:
                 return config(profile, options)
-            except Exception:
+            except Exception as e:
                 print("Warning: profile doesn't match user setting. \
                         Proceeding with automatic generator selection...")
                         
