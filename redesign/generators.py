@@ -1,6 +1,6 @@
 """Contains generators for tabular, graph, and unstructured data profiles."""
 
-from base_generator import BaseGenerator
+from .base_generator import BaseGenerator
 
 
 class TabularGenerator(BaseGenerator):
