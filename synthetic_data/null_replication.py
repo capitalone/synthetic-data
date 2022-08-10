@@ -1,23 +1,21 @@
 import numpy as np
 
 
-def replicate_null(data_array, data_stats, cov):
+def replicate_null(data_array, null_metrics, cov):
     """
     Incorporates null values into synthetic data to replicate null values from original data
+
     Args:
-        data_array (np.ndarray): synthetic data
-        data_stats (list): 'data_stats' field from original data report
+        data_array (np.ndarray): data to incorporate null values into
+        null_metrics (dict): dict mapping column id to their 'null_replication_metrics' (if exists)
         cov (np.ndarray): covariance matrix from original data report
     Returns:
         data_array (np.ndarray): synthetic data with null values
     """
     col_null_indices = dict()
-    for col_id, col_dict in enumerate(data_stats):
-        if "null_replication_metrics" not in col_dict:
-            # no null values to replicate
-            continue
-        class_prior = col_dict["null_replication_metrics"]["class_prior"]
-        class_mean = col_dict["null_replication_metrics"]["class_mean"]
+    for col_id, col_null_metrics in null_metrics.items():
+        class_prior = col_null_metrics["class_prior"]
+        class_mean = col_null_metrics["class_mean"]
         shared_cov = np.delete(cov, col_id, 0)
         shared_cov = np.delete(shared_cov, col_id, 1)
         X = np.delete(data_array, col_id, 1)
@@ -36,7 +34,7 @@ def _lda_predict(X, priors, means, cov):
 
     Posterior calculation formula based on: 'https://scikit-learn.org/stable/modules/lda_qda.html'.
 
-    P(x) removed from above formula as the value remains same among different classes and therefore do not need it
+    P(x) omitted from above formula as the value remains same among different classes and therefore do not need it
     for relative comparison of posterior values.
 
     Args:
