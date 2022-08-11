@@ -1,27 +1,48 @@
-
+'''Generate a synthetic graph using a profile'''
+from cmath import nan
 import math
 
+import dataprofiler as dp
 import networkx as nx
 import scipy.stats as st
 import numpy as np
 
 class GraphDataGenerator():
+    '''
+    Synthesize graph data from a GraphProfiler or graph profile.
 
-    def __init__(self, graph_profile, options=None):
+    params:
+    graph_profile
 
-        if not isinstance(graph_profile, dict):
-            raise ValueError("Profile must be a dict.")
+    params type:
+    graph_profile: GraphProfiler object/graph_profile
 
-        self._num_nodes = graph_profile.get("num_nodes")
-        self._num_edges = graph_profile.get("num_edges")
-        self._avg_node_degree = graph_profile.get("avg_node_degree")
-        self._categorical_attributes = graph_profile.get("categorical_attributes")
-        self._continuous_attributes = graph_profile.get("continuous_attributes")
-        self._global_max_component_size = graph_profile.get("global_max_component_size")
-        self._continuous_distributions = graph_profile.get("continuous_distribution")
-        self._categorical_distributions = graph_profile.get("categorical_distribution")
+    return:
+    None
+    '''
 
-    def _synthesize(self):
+    def __init__(self, graph):
+
+        if not isinstance(graph, dp.GraphProfiler) or not isinstance(graph, dict):
+            raise NotImplementedError("Graph Profile must be a GraphProfiler object or a dict")
+
+        if isinstance(graph, nx.Graph):
+            data = dp.Data(graph)
+            profiler = dp.GraphProfiler(data)
+            self.profile = profiler.report()
+        else:
+            self.profile = graph
+
+        self._num_nodes = self.profile.get('num_nodes')
+        self._num_edges = self.profile.get('num_edges')
+        self._avg_node_degree = self.profile.get("avg_node_degree")
+        self._categorical_attributes = self.profile.get("categorical_attributes")
+        self._continuous_attributes = self.profile.get("continuous_attributes")
+        self._global_max_component_size = self.profile.get("global_max_component_size")
+        self._continuous_distributions = self.profile.get("continuous_distribution")
+        self._categorical_distributions = self.profile.get("categorical_distribution")
+
+    def synthesize(self):
         """ Synthesize static graph data with edge attributes. """
         probability = self._avg_node_degree/self._num_nodes
 
@@ -45,10 +66,25 @@ class GraphDataGenerator():
     
     def sample_continuous(self, attribute, num_sample=1):
         """ Sample continuous distributions. """
-        sample = self._continuous_distributions[attribute]["distribution"].rvs(size=num_sample)
+        name = self._continuous_distributions[attribute]["name"]
+        properties = self._continuous_distributions[attribute]["properties"]
+        distribution = None
+        sample = 0
 
-        if num_sample == 1:
-            return sample[0]
+        if name == "norm":
+            distribution = st.norm(loc=properties[0], scale=properties[1])
+        if name == "logistic":
+            distribution = st.logistic(loc=properties[0], scale=properties[1])
+        if name == "lognorm":
+            distribution = st.lognorm(properties[0], loc=properties[1], scale=properties[2])
+        if name == "expon":
+            distribution = st.expon(loc=properties[0], scale=properties[1])
+        if name == "uniform":
+            distribution = st.uniform(loc=properties[0], scale=properties[1])
+        if name == "gamma":
+            distribution = st.gamma(properties[0], loc=properties[1], scale=properties[2])
+            
+        sample = distribution.rvs(size=num_sample)
         return sample
 
     def sample_categorical(self, attribute, nsamples=1):

@@ -1,13 +1,14 @@
 from __future__ import print_function
 from cmath import exp
 
+import matplotlib.pyplot as plt
 import os
 import unittest
-import matplotlib.pyplot as plt
+import random
 
-import scipy.stats as st
 import networkx as nx
 import numpy as np
+import scipy.stats as st
 
 from synthetic_data.graph_synthetic_data import GraphDataGenerator
 
@@ -23,13 +24,13 @@ class TestSyntheticGraphGenerator(unittest.TestCase):
             num_edges=20,
             categorical_attributes=["pop"],
             continuous_attributes=["edge_weight"],
-            avg_node_degree=0.5,
+            avg_node_degree=0.2,
             global_max_component_size=5,
             continuous_distribution={
                 "pop": None,
                 "edge_weight": {
-                    "name": "lognorm",
-                    "distribution": st.norm()
+                    "name": "norm",
+                    "properties": [2, 0.5, 0.5, 1, 2, 2]
                     },
             },
             categorical_distribution={
@@ -44,36 +45,25 @@ class TestSyntheticGraphGenerator(unittest.TestCase):
         cls.synthetic_graph = GraphDataGenerator(cls.expected_profile)
 
     def test_synthesize(self):
-        synthetic_graph = self.synthetic_graph._synthesize()
-        graph_df = nx.to_pandas_edgelist(synthetic_graph)
-        print(graph_df)
+        np.random.seed(1)
+        random.seed(1)
 
-        #plot
-        """   
-        pos = nx.spring_layout(synthetic_graph)
-
-        nx.draw(synthetic_graph, pos)
-        
-        edge_labels = nx.get_edge_attributes(synthetic_graph,'edge_weight')
-        
-        print(edge_labels)
-        for node in edge_labels:
-            edge_labels[node] = round(edge_labels[node], 3)
-        nx.draw_networkx_edge_labels(synthetic_graph, pos, edge_labels)
-        plt.show()
-        """
+        synthetic_graph = self.synthetic_graph.synthesize()
+        self.assertEqual(synthetic_graph.number_of_nodes(), 200)
+        self.assertEqual(synthetic_graph.number_of_edges(), 23)
 
     def test_sample_continuous(self):
         np.random.seed(5)
         attribute = self.synthetic_graph._continuous_attributes[0]
-        self.assertAlmostEqual(0.441227486885, self.synthetic_graph.sample_continuous(attribute))
+        sample = self.synthetic_graph.sample_continuous(attribute)[0]
+        self.assertAlmostEqual(2.22061374344252, sample)
         
     def test_sample_categorical(self):
         np.random.seed(1)
         attribute = self.synthetic_graph._categorical_attributes[0]
         self.assertEqual(4, self.synthetic_graph.sample_categorical(attribute))
     
-    def test_sample_categorical_plot(self):
+    def test_plot_sample_categorical(self):
         np.random.seed(2)
         attribute = self.synthetic_graph._categorical_attributes[0]
         data = []
@@ -100,18 +90,20 @@ class TestSyntheticGraphGenerator(unittest.TestCase):
         ax2.set_title('amplitude-normalized computed distribution')
         plt.show()
 
-    def test_sample_continuous_plot(self):
+    def test_plot_sample_continuous(self):
         np.random.seed(5)
         attribute = self.synthetic_graph._continuous_attributes[0]
         data = self.synthetic_graph.sample_continuous(attribute, 2000)
+        properties = self.expected_profile["continuous_distribution"][attribute]["properties"]
+        distribution_continuous_test = st.norm(loc=properties[0], scale=properties[1])
 
         # plot
         fig, ax1 = plt.subplots()
         ax1.hist(list(data), bins=100)
-        pts = np.linspace(-3, 3)
+        pts = np.linspace(-3, 4)
         ax2 = ax1.twinx()
-        ax2.set_ylim(0, 0.65)
-        ax2.plot(pts, self.synthetic_graph._continuous_distributions[attribute]["distribution"].pdf(pts), color='red')
+        ax2.set_ylim(0, 1)
+        ax2.plot(pts, distribution_continuous_test.pdf(pts), color='red')
         plt.show()
         self.assertTrue(True)
 
