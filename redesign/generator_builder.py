@@ -22,15 +22,7 @@ class Generator:
                 return config(profile, options)
             except Exception as e:
                 print("Warning: profile doesn't match user setting. \
-                        Proceeding with automatic generator selection...")
-        
-        try:
-            if not cls.is_valid_data(profile):
-                raise TypeError("Only Structured and Unstructured are \
-                                acceptable profile types.")
-        except TypeError as e:
-            print(e)
-            
+                        Proceeding with automatic generator selection...")         
                         
         if cls.is_valid_data(profile):
             generator = cls.valid_data_types[profile.__class__]
