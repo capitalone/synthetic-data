@@ -70,7 +70,7 @@ def test_data_scaling():
         scaler=MinMaxScaler(feature_range=(0, 1)),
         dist=dist,
     )
-    assert (x_final.max() == 1) and (x_final.min() == 0)
+    assert (round(x_final.max()) == 1) and (x_final.min() == 0)
 
     x_final, _, _, _ = make_tabular_data(
         n_informative=4, expr=expr, col_map=col_map, scaler=None, dist=dist
