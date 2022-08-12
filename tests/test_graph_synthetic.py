@@ -15,6 +15,7 @@ from synthetic_data.graph_synthetic_data import GraphDataGenerator
 test_root_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 class TestSyntheticGraphGenerator(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         np.random.seed(1)
@@ -105,7 +106,6 @@ class TestSyntheticGraphGenerator(unittest.TestCase):
         ax2.set_ylim(0, 1)
         ax2.plot(pts, distribution_continuous_test.pdf(pts), color='red')
         plt.show()
-        self.assertTrue(True)
 
 if __name__ == "__main__":
     unittest.main()

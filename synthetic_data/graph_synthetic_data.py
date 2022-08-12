@@ -7,15 +7,14 @@ import networkx as nx
 import scipy.stats as st
 import numpy as np
 
-class GraphDataGenerator():
+class GraphDataGenerator(object):
     '''
-    Synthesize graph data from a GraphProfiler or graph profile.
-
+    Synthesize graph data from a graph profile object
     params:
     graph_profile
 
     params type:
-    graph_profile: GraphProfiler object/graph_profile
+    graph_profile: GraphProfiler object/graph profile (dict)/NetworkX Graph
 
     return:
     None
@@ -23,13 +22,15 @@ class GraphDataGenerator():
 
     def __init__(self, graph):
 
-        if not isinstance(graph, dp.GraphProfiler) or not isinstance(graph, dict):
-            raise NotImplementedError("Graph Profile must be a GraphProfiler object or a dict")
+        if not isinstance(graph, dp.GraphProfiler) and not isinstance(graph, dict) and not isinstance(graph, nx.Graph):
+            raise NotImplementedError("Graph Profile must be a GraphProfiler object, a NetworkX Graph, or a dict")
 
         if isinstance(graph, nx.Graph):
             data = dp.Data(graph)
             profiler = dp.GraphProfiler(data)
             self.profile = profiler.report()
+        elif isinstance(graph, dp.GraphProfiler):
+            self.profile = graph.report()
         else:
             self.profile = graph
 
@@ -51,15 +52,15 @@ class GraphDataGenerator():
         for u,v in graph.edges:
             edge_attributes = dict()
 
-            for continuous_attribute in self._continuous_attributes:
-                if continuous_attribute is not None:
-                    sample = self.sample_continuous(continuous_attribute)
-                    edge_attributes[continuous_attribute] = sample
-                    
-            for categorical_attribute in self._categorical_attributes:
-                if categorical_attribute is not None:
-                    sample = self.sample_categorical(categorical_attribute)
-                    edge_attributes[categorical_attribute] = sample
+
+            for iter_attribute, attribute in enumerate([self._continuous_attributes, self._categorical_attributes]):
+                for value in attribute: 
+                    if value is not None:
+                        if iter_attribute == 0:
+                            sample = self.sample_continuous(value)
+                        if iter_attribute == 1:
+                            sample = self.sample_categorical(value)
+                        edge_attributes[value] = sample
 
             graph.add_edge(u,v,**edge_attributes)
         return graph
@@ -107,11 +108,10 @@ class GraphDataGenerator():
         """ Sample random bin from a categorical distribution histogram """
         cumulative_distribution = self.cumulative_histogram_distribution(bin_counts)
         random_var = np.random.uniform(0,1)
-        bin_number = 0
-        for cumulative_percent in cumulative_distribution:
+
+        for bin_number, cumulative_percent in enumerate(cumulative_distribution):
             if random_var <= cumulative_percent:
-                return bin_number+1
-            bin_number+=1
+                return bin_number+1            
         return None
 
     def cumulative_histogram_distribution(self, bin_counts):
