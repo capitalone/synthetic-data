@@ -1,6 +1,6 @@
 A data profile is a statistical overview of a raw data file. Each profile describes a particular type of raw data (tabular, graph, or unstructured) and therefore must be treated differently in the synthetic data generation process. This API is designed to differentially synthesize data in object-oriented fashion (i.e., with classes) based on the type of data described by its input profile.
 
-The API implementation is split into three components: 1) Base class (i.e., the blueprint for each generator), three generators (tabular, graph, and unstructured), and a generator factory class (i.e., a class that picks the right generator for a given data profile).
+The API implementation is split into three components: 1) Base class (i.e., the blueprint for each generator), three generators (tabular, graph, and unstructured), and 3) a generator factory class (i.e., a class that picks the right generator for a given data profile).
 
 To test the generator, run the following script:
 
