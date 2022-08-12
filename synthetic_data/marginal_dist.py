@@ -18,20 +18,15 @@ def _detect_dist_continuous(col_stats):
 
     # Create a continuous distribution from the histogram and sample data from it
     hist_dist = stats.rv_histogram((bin_counts, bin_edges))
-    hist_mean = hist_dist.mean()
     observed_samples = hist_dist.rvs(size=1000)
-
-    # Center the distribution around 0
-    observed_samples -= hist_mean
 
     # Distributions to test against (must be a continuous distribution from scipy.stats)
     # Distribution name -> list of positional arguments for the distribution
-    # If the observed histogram is centered around 0, means of distributions set to 0
     test_dists = (
         # norm(loc, scale)
-        ("norm", (0, col_stats["stddev"])),
+        ("norm", (col_stats["mean"], col_stats["stddev"])),
         # skewnorm(a, loc, scale)
-        ("skewnorm", (col_stats["skewness"], 0, col_stats["stddev"])),
+        ("skewnorm", (col_stats["skewness"], col_stats["mean"], col_stats["stddev"])),
         # uniform(loc, scale)
         ("uniform", (col_stats["min"], col_stats["max"] - col_stats["min"])),
     )
@@ -70,13 +65,17 @@ def _detect_dist_discrete(col_stats):
     observed_freq = [categorical_count[category] for category in categories]
     sample_size = col_stats["sample_size"]
 
+    # Shift categories so they start at 0
+    categories = list(range(len(categories)))
+
     # Distributions to test against (must be a discrete distribution from scipy.stats)
     # Distribution name -> list of positional arguments for the distribution
+    # The min of the test distributions must be equal to min of categories, i.e. 0
     test_dists = (
         # binom(n, p)
         *[("binom", (categories[-1], p * 0.25)) for p in range(1, 4)],
         # randint(low, high)
-        ("randint", (categories[0], categories[-1] + 1)),
+        ("randint", (0, categories[-1] + 1)),
     )
 
     dist = {}
@@ -100,7 +99,7 @@ def _detect_dist_discrete(col_stats):
 def detect_dist(report):
     """
     Detects type of distribution modeled by each column of a DataProfiler report.
-    Type of distribution selected for each column based on goodness-of-fit test 
+    Type of distribution selected for each column based on goodness-of-fit test
     (Chi-Squared test for discrete variables, Kolmogorov-Smirnov test for continuous variables).
 
     Args:
