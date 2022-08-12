@@ -52,7 +52,6 @@ class GraphDataGenerator(object):
         for u,v in graph.edges:
             edge_attributes = dict()
 
-
             for iter_attribute, attribute in enumerate([self._continuous_attributes, self._categorical_attributes]):
                 for value in attribute: 
                     if value is not None:
