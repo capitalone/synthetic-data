@@ -5,6 +5,7 @@ import unittest
 import random
 
 import numpy as np
+import scipy.stats as st
 
 from synthetic_data.graph_synthetic_data import GraphDataGenerator
 
@@ -65,6 +66,23 @@ class TestSyntheticGraphGenerator(unittest.TestCase):
         np.random.seed(1)
         attribute = self.synthetic_graph._categorical_attributes[0]
         self.assertEqual(4, self.synthetic_graph.sample_categorical(attribute))
+
+    def test_plot_sample_categorical(self):
+        np.random.seed(2)
+        attribute = self.synthetic_graph._categorical_attributes[0]
+        data = []
+        for n in range(0, 2000):
+            data.append(self.synthetic_graph.sample_categorical(attribute))
+
+        hist, edges = np.histogram(data, bins=[1.0, 1.75, 2.5, 3.25, 4.25, 5.25, 6.25, 7.25, 8], density=False)
+        self.assertEqual(list(hist), [24, 45, 374, 379, 201, 81, 72, 824])
+
+    def test_plot_sample_continuous(self):
+        np.random.seed(5)
+        attribute = self.synthetic_graph._continuous_attributes[0]
+        data = self.synthetic_graph.sample_continuous(attribute, 2000)
+        properties = self.expected_profile["continuous_distribution"][attribute]["properties"]
+        self.assertEqual(properties, self.expected_profile["continuous_distribution"][attribute]["properties"])
 
 if __name__ == "__main__":
     unittest.main()
