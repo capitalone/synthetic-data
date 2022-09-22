@@ -9,10 +9,10 @@ from synthetic_data.marginal_dist import (
 )
 from scipy import stats
 
-np.random.seed(0)
 
 def test_marginal_dist_detection():
 
+    np.random.seed(0)
     data = datasets.load_iris(as_frame=True).frame
 
     profile_options = dp.ProfilerOptions()
@@ -51,6 +51,7 @@ def test_marginal_dist_detection():
 
 def test_discrete_dist_detection():
 
+    np.random.seed(0)
     data = {
         "randint": stats.randint.rvs(0, 5, size=1000),
         "randint_nonzero_min": stats.randint.rvs(2, 7, size=1000), 
@@ -79,6 +80,7 @@ def test_discrete_dist_detection():
 
 def test_continuous_dist_detection():
 
+    np.random.seed(0)
     data = {
         "uniform": stats.uniform.rvs(size=1000),
         "normal": stats.norm.rvs(size=1000),
