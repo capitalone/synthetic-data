@@ -47,6 +47,7 @@ $ pip install pandas pytest pytest-cov flake8
 
 To run tests:
 ```bash
+$ pip install -r requirements-test.txt
 $ make test_local
 ```
 

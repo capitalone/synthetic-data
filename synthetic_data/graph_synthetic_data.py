@@ -67,22 +67,22 @@ class GraphDataGenerator(object):
     def sample_continuous(self, attribute, num_sample=1):
         """ Sample continuous distributions. """
         name = self._continuous_distributions[attribute]["name"]
-        properties = self._continuous_distributions[attribute]["properties"]
+        best_fit_properties = self._continuous_distributions[attribute]["properties"]["best_fit_properties"]
         distribution = None
         sample = 0
 
         if name == "norm":
-            distribution = st.norm(loc=properties[0], scale=properties[1])
+            distribution = st.norm(loc=best_fit_properties[0], scale=best_fit_properties[1])
         if name == "logistic":
-            distribution = st.logistic(loc=properties[0], scale=properties[1])
+            distribution = st.logistic(loc=best_fit_properties[0], scale=best_fit_properties[1])
         if name == "lognorm":
-            distribution = st.lognorm(properties[0], loc=properties[1], scale=properties[2])
+            distribution = st.lognorm(a=best_fit_properties[0], loc=best_fit_properties[1], scale=best_fit_properties[2])
         if name == "expon":
-            distribution = st.expon(loc=properties[0], scale=properties[1])
+            distribution = st.expon(loc=best_fit_properties[0], scale=best_fit_properties[1])
         if name == "uniform":
-            distribution = st.uniform(loc=properties[0], scale=properties[1])
+            distribution = st.uniform(loc=best_fit_properties[0], scale=best_fit_properties[1])
         if name == "gamma":
-            distribution = st.gamma(properties[0], loc=properties[1], scale=properties[2])
+            distribution = st.gamma(a=best_fit_properties[0], loc=best_fit_properties[1], scale=best_fit_properties[2])
             
         sample = distribution.rvs(size=num_sample)
         return sample

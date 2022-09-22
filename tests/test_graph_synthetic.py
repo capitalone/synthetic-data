@@ -31,8 +31,14 @@ class TestSyntheticGraphGenerator(unittest.TestCase):
                 "pop": None,
                 "edge_weight": {
                     "name": "norm",
-                    "properties": [2, 0.5, 0.5, 1, 2, 2]
-                    },
+                    "properties": {
+                        "best_fit_properties": [2, 0.5, 0.5],
+                        "mean": [1., 4.2, 1],
+                        "variance": [8.5, 305.7, 0],
+                        "skew": [4.9, 82.4, 0.5],
+                        "kurtosis": [7.2, 117436.2, 0.6],
+                    }
+                },
             },
             categorical_distribution={
                 "pop": {
@@ -63,49 +69,6 @@ class TestSyntheticGraphGenerator(unittest.TestCase):
         np.random.seed(1)
         attribute = self.synthetic_graph._categorical_attributes[0]
         self.assertEqual(4, self.synthetic_graph.sample_categorical(attribute))
-    
-    def test_plot_sample_categorical(self):
-        np.random.seed(2)
-        attribute = self.synthetic_graph._categorical_attributes[0]
-        data = []
-        for n in range(0, 2000):
-            data.append(self.synthetic_graph.sample_categorical(attribute))
-        
-        hist, edges = np.histogram(data, bins=[1.0, 1.75, 2.5, 3.25, 4.25, 5.25, 6.25, 7.25, 8], density=False)
-        self.assertEqual(list(hist), [24, 45, 374, 379, 201, 81, 72, 824])
-
-        # plots
-        expected_hist = self.expected_profile["categorical_distribution"]["pop"]["bin_counts"]
-        hist = hist/np.max(hist)
-        expected_hist = expected_hist/np.max(expected_hist)
-
-        num_bin = 8
-        bin_lims = np.linspace(0,1,num_bin+1)
-        bin_centers = 0.5*(bin_lims[:-1]+bin_lims[1:])
-        bin_widths = bin_lims[1:]-bin_lims[:-1]
-
-        fig, (ax1,ax2) = plt.subplots(nrows = 1, ncols = 2)
-        ax1.bar(bin_centers, hist, width = bin_widths, align = 'center')
-        ax2.bar(bin_centers, expected_hist, width = bin_widths, align = 'center', alpha = 0.5)
-        ax1.set_title('amplitude-normalized expected distribution')
-        ax2.set_title('amplitude-normalized computed distribution')
-        plt.show()
-
-    def test_plot_sample_continuous(self):
-        np.random.seed(5)
-        attribute = self.synthetic_graph._continuous_attributes[0]
-        data = self.synthetic_graph.sample_continuous(attribute, 2000)
-        properties = self.expected_profile["continuous_distribution"][attribute]["properties"]
-        distribution_continuous_test = st.norm(loc=properties[0], scale=properties[1])
-
-        # plot
-        fig, ax1 = plt.subplots()
-        ax1.hist(list(data), bins=100)
-        pts = np.linspace(-3, 4)
-        ax2 = ax1.twinx()
-        ax2.set_ylim(0, 1)
-        ax2.plot(pts, distribution_continuous_test.pdf(pts), color='red')
-        plt.show()
 
 if __name__ == "__main__":
     unittest.main()
