@@ -1,14 +1,10 @@
 from __future__ import print_function
-from cmath import exp
 
-import matplotlib.pyplot as plt
 import os
 import unittest
 import random
 
-import networkx as nx
 import numpy as np
-import scipy.stats as st
 
 from synthetic_data.graph_synthetic_data import GraphDataGenerator
 

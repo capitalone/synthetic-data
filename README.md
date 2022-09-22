@@ -42,13 +42,12 @@ pip install -e .
 Test/Lint Dependencies
 
 ```bash
-$ pip install pandas pytest pytest-cov flake8
+pip install -r requirements-test.txt
 ```
 
 To run tests:
 ```bash
-$ pip install -r requirements-test.txt
-$ make test_local
+make test_local
 ```
 
 ### Referencing this library
