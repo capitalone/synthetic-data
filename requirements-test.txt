@@ -1,0 +1,5 @@
+pytest
+pytest-cov
+matplotlib
+flake8
+pandas
