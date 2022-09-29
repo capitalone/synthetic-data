@@ -67,7 +67,7 @@ class TestSyntheticGraphGenerator(unittest.TestCase):
         attribute = self.synthetic_graph._categorical_attributes[0]
         self.assertEqual(4, self.synthetic_graph.sample_categorical(attribute))
 
-    def test_plot_sample_categorical(self):
+    def test_categorical_histogram(self):
         np.random.seed(2)
         attribute = self.synthetic_graph._categorical_attributes[0]
         data = []
@@ -77,7 +77,7 @@ class TestSyntheticGraphGenerator(unittest.TestCase):
         hist, edges = np.histogram(data, bins=[1.0, 1.75, 2.5, 3.25, 4.25, 5.25, 6.25, 7.25, 8], density=False)
         self.assertEqual(list(hist), [24, 45, 374, 379, 201, 81, 72, 824])
 
-    def test_plot_sample_continuous(self):
+    def test_continuous_properties(self):
         np.random.seed(5)
         attribute = self.synthetic_graph._continuous_attributes[0]
         data = self.synthetic_graph.sample_continuous(attribute, 2000)
