@@ -420,7 +420,7 @@ def make_data_from_report(
     D = np.diag(stddevs)
 
     cov = D @ R @ D
-    cov = cov.round(decimals=8)  # round to avoid failing symmetry check
+    # cov = cov.round(decimals=8)  # round to avoid failing symmetry check
 
     # create col_map of appropriate length to pass pre_data_generation_checks
     col_map = {}
