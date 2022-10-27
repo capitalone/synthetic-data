@@ -21,12 +21,16 @@ def _detect_dist_continuous(col_stats):
     # Distribution name -> list of positional arguments for the distribution
     test_dists = (
         # norm(loc, scale)
-        ("norm", (col_stats["mean"], col_stats["stddev"])),
+        # ("norm", (col_stats["mean"], col_stats["stddev"])),
         # skewnorm(a, loc, scale)
+        # ("skewnorm", (col_stats["mean"], col_stats["variance"], col_stats["skewness"], 0, col_stats['min'], col_stats['max'])),
+        # ("skewnorm", (col_stats["mean"], col_stats["variance"], col_stats["skewness"], col_stats["kurtosis"], col_stats['min'], col_stats['max'])),
         ("skewnorm", (col_stats["skewness"], col_stats["mean"], col_stats["stddev"])),
         # uniform(loc, scale)
         ("uniform", (col_stats["min"], col_stats["max"] - col_stats["min"])),
     )
+    dist = {'dist': 'skewnormal', 'args': hist_dist}
+    return dist
 
     dist = {}
     dist["dist"] = "skewnorm"

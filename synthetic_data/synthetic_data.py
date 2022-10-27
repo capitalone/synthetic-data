@@ -28,6 +28,8 @@ import pandas as pd
 from scipy import stats
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import MinMaxScaler
+import scipy.interpolate as interpolate
+from statsmodels.sandbox.distributions.extras import pdf_mvsk
 
 from synthetic_data.marginal_dist import detect_dist
 from synthetic_data.null_replication import replicate_null
@@ -75,14 +77,33 @@ def transform_to_distribution(x, adict):
     if "kwargs" not in adict:
         adict["kwargs"] = {}
 
-    method_gen = getattr(stats, adict["dist"])
-    method_specific = method_gen(*adict["args"], **adict["kwargs"])
+    # if adict["dist"] == "skewnorm":
+    #     f = pdf_mvsk([*adict["args"][:-2]], **adict["kwargs"])
+    #     _x = np.linspace(adict["args"][-2], adict["args"][-1], num=500)
+    #     y = [f(i) for i in _x]
+    #     yy = np.cumsum(y) / np.sum(y)
+    #     inv_cdf = interpolate.interp1d(yy, _x, fill_value="extrapolate")
+    #     x_samples = inv_cdf(x)
+    # else:
+    #     method_gen = getattr(stats, adict["dist"])
+    #     method_specific = method_gen(*adict["args"], **adict["kwargs"])
+    #     # all DP categoricals will hit this first condition
+    #     if adict["dist"] == "multinomial":
+    #         x_samples = multinomial_ppf(x, method_specific)
+    #     else:
+    #         x_samples = method_specific.ppf(x)
 
-    # all DP categoricals will hit this first condition
+
+    # method_gen = getattr(stats, adict["dist"])
+    # method_specific = method_gen(*adict["args"], **adict["kwargs"])
+    # # all DP categoricals will hit this first condition
     if adict["dist"] == "multinomial":
-        x_samples = multinomial_ppf(x, method_specific, adict["categories"])
+        method_gen = getattr(stats, adict["dist"])
+        method_specific = method_gen(*adict["args"], **adict["kwargs"])
+        x_samples = multinomial_ppf(x, method_specific, adict['categories'])
     else:
-        x_samples = method_specific.ppf(x)
+    #     x_samples = method_specific.ppf(x)
+        x_samples = adict["args"].ppf(x)
 
     return x_samples
 
@@ -312,7 +333,6 @@ def make_tabular_data(
     mvnorm = stats.multivariate_normal(mean=means, cov=cov, allow_singular=True)
     x = mvnorm.rvs(n_samples, random_state=seed)
 
-    # now tranform marginals back to uniform distribution
     x_cont = np.zeros_like(x)
     for i in range(x.shape[1]):
         x_tmp = x[:, i]
