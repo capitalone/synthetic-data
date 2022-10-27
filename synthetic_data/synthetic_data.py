@@ -36,7 +36,7 @@ from synthetic_data.null_replication import replicate_null
 from synthetic_data.parser import MathParser
 
 
-def multinomial_ppf(x_uniform, my_dist, categories):
+def multinomial_ppf(x_uniform, my_dist, categories_info):
     """
     input:
         x_uniform - uniform distribution random variable
@@ -48,14 +48,15 @@ def multinomial_ppf(x_uniform, my_dist, categories):
     x_sampled = np.zeros_like(x_uniform)
 
     # search discrete CDF
+    mapping_order = categories_info["mapping_order"]
+    category_mapping = categories_info["category_mapping"]
     for j, x_u in enumerate(x_uniform):
         if x_u <= discrete_cdf[0]:
-            x_sampled[j] = 0
+            x_sampled[j] = category_mapping[mapping_order[0]]
         else:
             for i, _ in enumerate(discrete_cdf[:-1]):
                 if (discrete_cdf[i] < x_u) and (x_u <= discrete_cdf[i + 1]):
-                    x_sampled[j] = categories[i + 1]
-
+                    x_sampled[j] = category_mapping[mapping_order[i + 1]]
                     break
 
     return x_sampled
@@ -100,7 +101,7 @@ def transform_to_distribution(x, adict):
     if adict["dist"] == "multinomial":
         method_gen = getattr(stats, adict["dist"])
         method_specific = method_gen(*adict["args"], **adict["kwargs"])
-        x_samples = multinomial_ppf(x, method_specific, adict['categories'])
+        x_samples = multinomial_ppf(x, method_specific, adict['categories_info'])
     else:
     #     x_samples = method_specific.ppf(x)
         x_samples = adict["args"].ppf(x)

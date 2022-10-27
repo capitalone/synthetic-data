@@ -54,12 +54,16 @@ def _detect_dist_discrete(col_stats):
         for the distribution.
     """
     # Convert strings to ints, ideally DataProfiler should be handling this
-    categories = [int(category) for category in col_stats["categories"]]
+    categories = col_stats["categories"]
 
-    categories.sort()
-    categorical_count = {int(k): v for k, v in col_stats["categorical_count"].items()}
+    # can sort if all numeric here
+    try:
+        mapping_order = np.argsort(list(map(int, categories)))
+    except:
+        mapping_order = list(range(len(categories)))
 
-    observed_freq = [categorical_count[category] for category in categories]
+    category_mapping = {i: categories[i] for i in mapping_order}
+    observed_freq = [col_stats["categorical_count"][categories[i]] for i in mapping_order]
     p = np.array(observed_freq) / sum(observed_freq)
 
     assert p.sum() <= 1.00000000000005, f"ppf is too big, {p}"
@@ -70,8 +74,12 @@ def _detect_dist_discrete(col_stats):
     dist["args"] = (1, p)
 
     # categories need not be continuous
-    # think of this as labels to be applied to samples in multinomial_ppf()
-    dist["categories"] = categories
+    # think of this as labels to be applied to samples
+    dist["categories_info"] = {
+        "category_mapping": category_mapping,
+        "mapping_order": mapping_order,
+    }
+
 
     return dist
 
