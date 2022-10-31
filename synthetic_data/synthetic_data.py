@@ -458,26 +458,34 @@ def make_data_from_report(
         noise_level_x=noise_level,
         seed=seed,
         dist=dist,
+        scaler=None,
     )
 
-    # generate scalers by range of values in original data
-    scalers = {}
-    for col, stat in enumerate(report["data_stats"]):
-        _min = stat["statistics"]["min"]
-        _max = stat["statistics"]["max"]
-        scalers[col] = MinMaxScaler(feature_range=(_min, _max))
+    # # generate scalers by range of values in original data
+    # scalers = {}
+    # for col, stat in enumerate(report["data_stats"]):
+    #     _min = stat["statistics"]["min"]
+    #     _max = stat["statistics"]["max"]
+    #     scalers[col] = MinMaxScaler(feature_range=(_min, _max))
+    #
+    # # rescale to feature range
+    # for col in scalers:
+    #     x_final[:, col] = (
+    #         scalers[col].fit_transform(x_final[:, col].reshape(-1, 1)).flatten()
+    #     )
 
-    # rescale to feature range
-    for col in scalers:
-        x_final[:, col] = (
-            scalers[col].fit_transform(x_final[:, col].reshape(-1, 1)).flatten()
-        )
+    # # find number of decimals for each column and round the data to match
+    # precisions = [stat["samples"][0][::-1].find(".") for stat in report["data_stats"]]
 
-    # find number of decimals for each column and round the data to match
-    precisions = [stat["samples"][0][::-1].find(".") for stat in report["data_stats"]]
-
-    for i, precision in enumerate(precisions):
-        x_final[:, i] = np.around(x_final[:, i], precision if precision > 0 else 0)
+    for i, col_stat in enumerate(report["data_stats"]):
+        digits = 0
+        if col_stat['data_type'] not in ['int', 'float']:
+            continue
+        if col_stat['data_type'] in ['float']:
+            precision = col_stat.get('statistics', {}).get('precision', {}).get('max', 0)
+            digits = precision - np.ceil(np.log10(np.abs(x_final[:, i])))
+            digits = int((digits[np.isfinite(digits)]).max())
+        x_final[:, i] = np.around(x_final[:, i], digits)
 
     # replicate null values if null replication metrics exist in the original report
     col_to_null_metrics = {}

@@ -161,12 +161,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_
 model = clf = MLPRegressor(solver='lbfgs', alpha=1e-5,
                             hidden_layer_sizes=(15,), random_state=1)
 clf = model.fit(X_train, y_train)
-original_mse = np.average((y_test - clf.predict(X_test))) ** 2
+original_mse = np.average((y_test - clf.predict(X_test)) ** 2)
 print(f"MSE of RandomForestRegressor on predicting price in original dataset: {original_mse}")
 
 X_synthetic = synthetic_data.drop(columns="price").astype(float)
 y_synthetic = synthetic_data['price'].astype(float)
-synthetic_mse = np.average((y_synthetic - clf.predict(X_synthetic))) ** 2
+synthetic_mse = np.average((y_synthetic - clf.predict(X_synthetic)) ** 2)
 print(f"MSE of RandomForestRegressor on predicting price in synthetic dataset: {synthetic_mse}")
 
 print()
@@ -177,9 +177,9 @@ X_train, X_test, y_train, y_test = train_test_split(X_synthetic, y_synthetic, te
 model = clf = MLPRegressor(solver='lbfgs', alpha=1e-5,
                             hidden_layer_sizes=(15,), random_state=1)
 clf = model.fit(X_train, y_train)
-synthetic_mse = np.average((y_test - clf.predict(X_test))) ** 2
+synthetic_mse = np.average((y_test - clf.predict(X_test)) ** 2)
 print(f"MSE of RandomForestRegressor on predicting price in synthetic dataset: {synthetic_mse}")
 
 
-original_mse = np.average((y - clf.predict(X))) ** 2
+original_mse = np.average((y - clf.predict(X)) ** 2)
 print(f"MSE of RandomForestRegressor on predicting price in original dataset: {original_mse}")
