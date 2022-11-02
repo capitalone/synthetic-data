@@ -177,3 +177,8 @@ X_synthetic = synthetic_data.drop(columns="price").astype(float)
 y_synthetic = synthetic_data['price'].astype(float)
 synthetic_mse = np.average((y_synthetic - clf.predict(X_synthetic)) ** 2)
 print(f"MSE of RandomForestRegressor on predicting price in synthetic dataset: {synthetic_mse}")
+
+print(f"RMSE array of RandomForestRegressor on predicting price in original dataset: {np.sqrt(original_mse)}")
+print(f"RMSE of RandomForestRegressor on predicting price in original dataset: {np.average(np.sqrt(original_mse))} +- {np.std(np.sqrt(original_mse))}")
+print(f"RMSE array of RandomForestRegressor on predicting price in synthetic dataset: {np.sqrt(synthetic_mse)}")
+print(f"RMSE of RandomForestRegressor on predicting price in synthetic dataset: {np.average(np.sqrt(synthetic_mse))} +- {np.std(np.sqrt(synthetic_mse))}")
