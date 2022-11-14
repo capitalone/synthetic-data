@@ -9,9 +9,13 @@ class BaseGenerator(metaclass=abc.ABCMeta):
     def __init__(self, profile, options):
         """Initialize generator object."""
         self.profile = profile.report()
-        self.options = options
+
+        if isinstance(options, dict):
+            self.options = options
+        else:
+            self.options = {}
 
     @abc.abstractmethod
-    def synthesize(self):
+    def run(self):
         """Make synthetic data."""
         raise NotImplementedError()
