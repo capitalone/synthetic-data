@@ -15,9 +15,9 @@ class TestSubgenerators(unittest.TestCase):
         cls.unstruct_profile = dp.Profiler(unstruct_data, profiler_type='unstructured')   
 
     def test_synthesize_tab(self):
-        result = Generator(self.tab_profile).synthesize()
-        self.assertEqual(result, "Synthesized tabular data!")
+        result = Generator(self.tab_profile).synthesize(100)
+        self.assertEqual(len(result), 100)
     
     def test_synthesize_unstruct(self):
-        result = Generator(self.unstruct_profile).synthesize()
+        result = Generator(self.unstruct_profile).run()
         self.assertEqual(result, "Synthesized unstructured data!")

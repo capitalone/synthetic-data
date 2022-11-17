@@ -8,30 +8,36 @@ from .base_generator import BaseGenerator
 class TabularGenerator(BaseGenerator):
     """Class for generating synthetic tabular data."""
 
-    def __init__(self, profile, options):
+    def __init__(self, report, options):
         """Initialize tabular generator object."""
-        super().__init__(profile, options)
+        super().__init__(report, options)
 
-    def run(self):
+    def synthesize(self, num_samples, options = None):
         """
         Generate synthetic tabular data.
         """
+        if not options:
+            options = {
+                "noise_level": 0,
+                "seed": None,
+            }
+
         return make_data_from_report(
-            self.profile,
-            n_samples=self.options.get("samples"),
-            noise_level=self.options.get("noise_level", 0.0),
-            seed=self.options.get("seed"),
+            self.report,
+            n_samples=num_samples,
+            noise_level=options.get("noise_level", 0.0),
+            seed=options.get("seed"),
         )
 
 
 class GraphGenerator(BaseGenerator):
     """Class for generating synthetic graph data."""
 
-    def __init__(self, profile, options):
+    def __init__(self, report, options):
         """Initialize graph generator object."""
-        super().__init__(profile, options)
+        super().__init__(report, options)
 
-    def run(self):
+    def synthesize(self):
         """Generate synthetic graph data."""
         if not self.options:
             return "Synthesized graph data!"
@@ -40,11 +46,11 @@ class GraphGenerator(BaseGenerator):
 class UnstructuredGenerator(BaseGenerator):
     """Class for generating synthetic tabular data."""
 
-    def __init__(self, profile, options):
+    def __init__(self, report, options):
         """Initialize unstructured generator object."""
-        super().__init__(profile, options)
+        super().__init__(report, options)
 
-    def run(self):
+    def synthesize(self):
         """Generate synthetic unstructured data."""
         if not self.options:
             return "Synthesized unstructured data!"
