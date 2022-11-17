@@ -1,5 +1,9 @@
 """Contains generators for tabular, graph, and unstructured data profiles."""
 
+from typing import Optional, Union
+
+from dataprofiler import StructuredProfiler, UnstructuredProfiler
+
 from synthetic_data.synthetic_data import make_data_from_report
 
 from .base_generator import BaseGenerator
@@ -8,34 +12,28 @@ from .base_generator import BaseGenerator
 class TabularGenerator(BaseGenerator):
     """Class for generating synthetic tabular data."""
 
-    def __init__(self, report, options):
+    def __init__(self, profile: Union[StructuredProfiler, UnstructuredProfiler]):
         """Initialize tabular generator object."""
-        super().__init__(report, options)
+        super().__init__(profile)
 
-    def synthesize(self, num_samples, options = None):
+    def synthesize(self, num_samples: int, noise_level: Optional[float], seed=None):
         """
         Generate synthetic tabular data.
         """
-        if not options:
-            options = {
-                "noise_level": 0,
-                "seed": None,
-            }
-
         return make_data_from_report(
             self.report,
             n_samples=num_samples,
-            noise_level=options.get("noise_level", 0.0),
-            seed=options.get("seed"),
+            noise_level=noise_level,
+            seed=seed,
         )
 
 
 class GraphGenerator(BaseGenerator):
     """Class for generating synthetic graph data."""
 
-    def __init__(self, report, options):
+    def __init__(self, profile: Union[StructuredProfiler, UnstructuredProfiler]):
         """Initialize graph generator object."""
-        super().__init__(report, options)
+        super().__init__(profile)
 
     def synthesize(self):
         """Generate synthetic graph data."""
@@ -46,9 +44,9 @@ class GraphGenerator(BaseGenerator):
 class UnstructuredGenerator(BaseGenerator):
     """Class for generating synthetic tabular data."""
 
-    def __init__(self, report, options):
+    def __init__(self, profile: Union[StructuredProfiler, UnstructuredProfiler]):
         """Initialize unstructured generator object."""
-        super().__init__(report, options)
+        super().__init__(profile)
 
     def synthesize(self):
         """Generate synthetic unstructured data."""

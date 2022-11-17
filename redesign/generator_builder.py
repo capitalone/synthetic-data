@@ -10,7 +10,7 @@ class Generator:
 
     valid_data_types = {
         StructuredProfiler: TabularGenerator,
-        UnstructuredProfiler: UnstructuredGenerator
+        UnstructuredProfiler: UnstructuredGenerator,
     }
 
     @classmethod
@@ -23,8 +23,10 @@ class Generator:
             try:
                 return config(profile, options)
             except Exception as e:
-                print("Warning: profile doesn't match user setting. \
-                        Proceeding with automatic generator selection...")         
+                print(
+                    "Warning: profile doesn't match user setting. \
+                        Proceeding with automatic generator selection..."
+                )
 
         if cls.is_valid_data(profile):
             generator = cls.valid_data_types[profile.__class__]
