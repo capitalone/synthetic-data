@@ -19,5 +19,5 @@ class TestSubgenerators(unittest.TestCase):
         self.assertEqual(len(result), 100)
     
     def test_synthesize_unstruct(self):
-        result = Generator(self.unstruct_profile).run()
+        result = Generator(self.unstruct_profile).synthesize()
         self.assertEqual(result, "Synthesized unstructured data!")
