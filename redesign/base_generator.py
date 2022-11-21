@@ -1,24 +1,18 @@
 """Contains abstract class from which generators will inherit."""
 
 import abc
-from typing import Dict, Optional, Union
-
-from dataprofiler import StructuredProfiler, UnstructuredProfiler
+from typing import Dict
 
 
 class BaseGenerator(metaclass=abc.ABCMeta):
     """Abstract generator class."""
 
-    def __init__(self, profile: Union[StructuredProfiler, UnstructuredProfiler]):
+    def __init__(self, seed, *args, **kwargs):
         """Initialize generator object."""
-        if not isinstance(profile, (StructuredProfiler, UnstructuredProfiler)):
-            raise ValueError(
-                "Profile must be an object of class "
-                "StructuredProfiler, UnstructuredProfiler, or GraphProfiler."
-            )
-        self.report: Dict = profile.report()
+        self.seed = seed
+        self.profile: Dict = kwargs.get("profile")
 
     @abc.abstractmethod
-    def synthesize(self, num_samples: int, noise_level: Optional[float], seed=None):
+    def synthesize(self, *args, **kwargs):
         """Make synthetic data."""
         raise NotImplementedError()
