@@ -42,8 +42,8 @@ class TestSubgenerators(unittest.TestCase):
             Generator(profile=self.unstruct_profile).synthesize()
 
     def test_synthesize_graph(self):
-        with self.assertRaises(NotImplementedError):
-            Generator(profile=self.graph_profile).synthesize()
+        result = Generator(profile=self.graph_profile).synthesize()
+        self.assertEqual(result.number_of_nodes(), 278)
 
     def test_invalid_config(self):
         with self.assertRaises(

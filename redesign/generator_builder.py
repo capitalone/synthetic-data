@@ -1,7 +1,6 @@
 """Contains generator factory class that picks generator based on its profile type."""
 
 from dataprofiler import StructuredProfiler, UnstructuredProfiler
-
 from dataprofiler.profilers.graph_profiler import GraphProfiler
 
 from redesign.generators import GraphGenerator, TabularGenerator, UnstructuredGenerator
