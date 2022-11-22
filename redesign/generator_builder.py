@@ -24,7 +24,7 @@ class Generator:
         """Instantiate proper generator."""
         if config:
             try:
-                return config(seed, *args, **kwargs)
+                return config(*args, **kwargs)
             except Exception as e:
                 print(
                     "Warning: profile doesn't match user setting. \
