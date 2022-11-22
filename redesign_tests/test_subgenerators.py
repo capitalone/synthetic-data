@@ -45,10 +45,20 @@ class TestSubgenerators(unittest.TestCase):
         with self.assertRaises(NotImplementedError):
             Generator(profile=self.graph_profile).synthesize()
 
+    def test_invalid_config(self):
+        with self.assertRaises(
+            ValueError,
+            msg="Warning: profile doesn't match user setting.",
+        ):
+            Generator(config=1).synthesize()
+
     def test_no_profile(self):
         with self.assertRaises(
             ValueError,
-            msg="No profile object was passed in kwargs. If you want to generate synthetic data from a profile, pass in a profile object through kwargs.",
+            msg="No profile object was passed in kwargs. "
+            "If you want to generate synthetic data from a "
+            "profile, pass in a profile object through the "
+            'key "profile" in kwargs.',
         ):
             Generator().synthesize()
 

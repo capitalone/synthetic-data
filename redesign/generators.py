@@ -2,7 +2,7 @@
 
 from synthetic_data.synthetic_data import make_data_from_report
 
-from .base_generator import BaseGenerator
+from redesign.base_generator import BaseGenerator
 
 
 class TabularGenerator(BaseGenerator):

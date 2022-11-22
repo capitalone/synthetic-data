@@ -4,7 +4,7 @@ from dataprofiler import StructuredProfiler, UnstructuredProfiler
 
 from dataprofiler.profilers.graph_profiler import GraphProfiler
 
-from .generators import GraphGenerator, TabularGenerator, UnstructuredGenerator
+from redesign.generators import GraphGenerator, TabularGenerator, UnstructuredGenerator
 
 
 class Generator:
@@ -26,22 +26,21 @@ class Generator:
             try:
                 return config(*args, **kwargs)
             except Exception as e:
-                print(
-                    "Warning: profile doesn't match user setting. \
-                        Proceeding with automatic generator selection..."
-                )
+                raise ValueError("Warning: profile doesn't match user setting.")
 
         profile = kwargs.pop("profile", None)
         if not profile:
             raise ValueError(
                 "No profile object was passed in kwargs. "
                 "If you want to generate synthetic data from a "
-                "profile, pass in a profile object through kwargs."
+                "profile, pass in a profile object through the "
+                'key "profile" in kwargs.'
             )
 
         if not cls.is_valid_data(profile):
             raise ValueError(
-                f"Profile object is invalid. The supported profile types are: {list(cls.valid_data_types.keys())}."
+                "Profile object is invalid. The supported profile "
+                f"types are: {list(cls.valid_data_types.keys())}."
             )
 
         generator = cls.valid_data_types[profile.__class__]
