@@ -1,8 +1,8 @@
 """Contains generators for tabular, graph, and unstructured data profiles."""
 
-from synthetic_data.synthetic_data import make_data_from_report
-
 from redesign.base_generator import BaseGenerator
+from synthetic_data.graph_synthetic_data import GraphDataGenerator
+from synthetic_data.synthetic_data import make_data_from_report
 
 
 class TabularGenerator(BaseGenerator):
@@ -31,18 +31,6 @@ class TabularGenerator(BaseGenerator):
         )
 
 
-class GraphGenerator(BaseGenerator):
-    """Class for generating synthetic graph data."""
-
-    def __init__(self, profile, seed):
-        """Initialize graph generator object."""
-        super().__init__(profile, seed)
-
-    def synthesize(self):
-        """Generate synthetic graph data."""
-        raise NotImplementedError()
-
-
 class UnstructuredGenerator(BaseGenerator):
     """Class for generating synthetic tabular data."""
 
@@ -53,3 +41,17 @@ class UnstructuredGenerator(BaseGenerator):
     def synthesize(self):
         """Generate synthetic unstructured data."""
         raise NotImplementedError()
+
+
+class GraphGenerator(BaseGenerator):
+    """Class for generating synthetic graph data."""
+
+    def __init__(self, profile, seed=None):
+        """Initialize graph generator object."""
+        super().__init__(profile)
+
+        self.generator = GraphDataGenerator(profile)
+
+    def synthesize(self):
+        """Generate synthetic graph data."""
+        return self.generator.synthesize()
