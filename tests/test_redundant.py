@@ -78,7 +78,7 @@ def test_redundant():
 
     x_redundant = np.dot(x_cont, B)
 
-    scaler = MinMaxScaler(feature_range=[-1, 1])
+    scaler = MinMaxScaler(feature_range=(-1, 1))
     x_redundant_scaled = scaler.fit_transform(x_redundant)
     print(" - scaled - ")
     print(x_redundant_scaled)
