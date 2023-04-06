@@ -40,5 +40,5 @@ setup(
     url='https://github.com/capitalone/synthetic-data',
     packages=find_packages(),
     include_package_data=True,
-    python_requires=">=3.6"
+    python_requires=">=3.8"
 )
