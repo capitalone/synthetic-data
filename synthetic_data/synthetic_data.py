@@ -34,6 +34,31 @@ from synthetic_data.null_replication import replicate_null
 from synthetic_data.parser import MathParser
 
 
+def multinomial_ppf(x_uniform, my_dist, categories):
+    """
+    input:
+        x_uniform - uniform distribution random variable
+        my_dist - scipy.stats.multinomial object
+    output:
+        x_sampled - vector of samples from the multinomial
+    """
+    discrete_cdf = np.cumsum(my_dist.p)
+    x_sampled = np.zeros_like(x_uniform)
+
+    # search discrete CDF
+    for j, x_u in enumerate(x_uniform):
+        if x_u <= discrete_cdf[0]:
+            x_sampled[j] = 0
+        else:
+            for i, _ in enumerate(discrete_cdf[:-1]):
+                if (discrete_cdf[i] < x_u) and (x_u <= discrete_cdf[i + 1]):
+                    x_sampled[j] = categories[i + 1]
+
+                    break
+
+    return x_sampled
+
+
 def transform_to_distribution(x, adict):
     """
     Input:
@@ -52,7 +77,12 @@ def transform_to_distribution(x, adict):
 
     method_gen = getattr(stats, adict["dist"])
     method_specific = method_gen(*adict["args"], **adict["kwargs"])
-    x_samples = method_specific.ppf(x)
+
+    # all DP categoricals will hit this first condition
+    if adict["dist"] == "multinomial":
+        x_samples = multinomial_ppf(x, method_specific, adict["categories"])
+    else:
+        x_samples = method_specific.ppf(x)
 
     return x_samples
 
@@ -116,7 +146,8 @@ def generate_x_noise(X, noise_level_x, seed=None):
 
     # generate our gaussian white noise
     means = np.zeros(n_total)
-    mvnorm = stats.multivariate_normal(mean=means, cov=cov)
+    # mvnorm = stats.multivariate_normal(mean=means, cov=cov)
+    mvnorm = stats.multivariate_normal(mean=means, cov=cov, allow_singular=True)
     x_noise = noise_level_x * mvnorm.rvs(n_samples, random_state=seed)
     # print("in noise x_noise - ", x_noise.shape)
 
@@ -125,7 +156,8 @@ def generate_x_noise(X, noise_level_x, seed=None):
 
 def resolve_covariant(n_total, covariant=None):
     """Resolves a covariant in the following cases:
-        - If a covariant is not provided a diagonal matrix of 1s is generated, and symmetry is checked via a comparison with the datasets transpose
+        - If a covariant is not provided, a diagonal matrix of 1s is generated
+        and symmetry is checked via a comparison with the datasets transpose
         - If a covariant is provided, the symmetry is checked
 
     args:
@@ -140,9 +172,15 @@ def resolve_covariant(n_total, covariant=None):
         covariant = np.diag(np.ones(n_total))
 
     # test for symmetry on covariance matrix by comparing the matrix to its transpose
-    assert np.all(
-        covariant == covariant.T
-    ), "Assertion error - please check covariance matrix is symmetric."
+    # assert np.all(
+    #    covariant == covariant.T
+    # ), "Assertion error - please check covariance matrix is symmetric."
+    np.testing.assert_almost_equal(
+        covariant,
+        covariant.T,
+        1e-8,
+        "Assertion error - please check covariance matrix is symmetric.",
+    )
 
     return covariant
 
@@ -167,16 +205,12 @@ def pre_data_generation_checks(n_informative, col_map, n_total):
 
 def generate_redundant_features(x, n_informative, n_redundant, seed):
     generator = np.random.RandomState(seed)
-    B = 2 * generator.rand(n_informative, n_redundant) - 1
-    # B = 2 * random_state.rand(n_informative, n_redundant) - 1
-    # print("in main script - b")
-    # print(B)
-    # print("in main script - x")
-    # print(x)
-    x_redundant = np.dot(x, B)
-    # print("in synthetic_data - ")
-    # print(x_redundant)
-
+    b = 2 * generator.rand(n_informative, n_redundant) - 1
+    print("in main script - x")
+    print(x)
+    print("in main script - b")
+    print(b)
+    x_redundant = np.dot(x, b)
     return x_redundant
 
 
@@ -214,7 +248,7 @@ def make_tabular_data(
     n_classes=2,
     dist=None,
     cov=None,
-    col_map={},
+    col_map=None,
     expr=None,
     sig_k=1.0,
     sig_x0=None,
@@ -242,8 +276,9 @@ def make_tabular_data(
         p_thresh - probability threshold for assigning class labels
         noise_level_x (float) - level of white noise (jitter) added to x
         noise_level_y (float) - level of white noise added to y (think flip_y)
-        scaler (sklearn scaler) - sklearn style scaler. Defaults to MinMaxScaler(feature_range = (-1,1)).
-                              If None, no feature scaling is performed.
+        scaler (sklearn scaler) - sklearn style scaler.
+            Defaults to MinMaxScaler(feature_range = (-1,1)).
+            If None, no feature scaling is performed.
         seed - numpy random state object for repeatability
 
 
@@ -268,13 +303,25 @@ def make_tabular_data(
 
     # initialize X array
     means = np.zeros(n_informative)
-    mvnorm = stats.multivariate_normal(mean=means, cov=cov)
+    # if coming from make_data_from_report - that data won't be standardized...
+
+    for i, a_dist in enumerate(dist):
+        if a_dist.get("mean") is not None:
+            means[i] = a_dist["mean"]
+
+    mvnorm = stats.multivariate_normal(mean=means, cov=cov, allow_singular=True)
     x = mvnorm.rvs(n_samples, random_state=seed)
-    # x_cont = np.zeros_like(x)
 
     # now tranform marginals back to uniform distribution
-    norm = stats.norm()
-    x_cont = norm.cdf(x)
+    x_cont = np.zeros_like(x)
+    for i in range(x.shape[1]):
+        x_tmp = x[:, i]
+        # print(i, x_tmp.mean(), x_tmp.std())
+        tmp_norm = stats.norm(loc=x_tmp.mean(), scale=x_tmp.std())
+        x_cont[:, i] = tmp_norm.cdf(x_tmp)
+
+    # norm = stats.norm()
+    # x_cont = norm.cdf(x)
 
     # print("x_cont.shape - ", x.shape)
     # print("x_cont - ")
