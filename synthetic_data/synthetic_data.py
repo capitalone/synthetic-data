@@ -353,10 +353,7 @@ def make_tabular_data(
 
     for a_dist in dist:
         col = a_dist["column"]
-        # method = getattr(stats, a_dist["dist"])
-        # x_cont[:, col] = method.ppf(x_unif[:, col])
         x_cont[:, col] = transform_to_distribution(x_cont[:, col], a_dist)
-    # print(x_cont.max())
     x_final[:, :n_informative] = x_cont
 
     # add redundant - lines 224-228
@@ -461,22 +458,7 @@ def make_data_from_report(
         scaler=None,
     )
 
-    # # generate scalers by range of values in original data
-    # scalers = {}
-    # for col, stat in enumerate(report["data_stats"]):
-    #     _min = stat["statistics"]["min"]
-    #     _max = stat["statistics"]["max"]
-    #     scalers[col] = MinMaxScaler(feature_range=(_min, _max))
-    #
-    # # rescale to feature range
-    # for col in scalers:
-    #     x_final[:, col] = (
-    #         scalers[col].fit_transform(x_final[:, col].reshape(-1, 1)).flatten()
-    #     )
-
-    # # find number of decimals for each column and round the data to match
-    # precisions = [stat["samples"][0][::-1].find(".") for stat in report["data_stats"]]
-
+    # Approximate the original data format given its precision / # of digits
     for i, col_stat in enumerate(report["data_stats"]):
         digits = 0
         if col_stat['data_type'] not in ['int', 'float']:
