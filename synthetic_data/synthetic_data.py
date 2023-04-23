@@ -254,9 +254,7 @@ def marginal_dist_check(dist, num_cols):
     args:
         dist - list of dicts for marginal distributions to apply to columns
     """
-    if dist is None:
-        raise ValueError("Please provide a valid list of marginal distributions.")
-    if len(dist) != num_cols:
+    if len(dist) != num_cols and len(dist) > 0:
         raise ValueError(
             "Please provide a marginal distribution dictionary for each of n_informative columns."
         )
@@ -310,6 +308,8 @@ def make_tabular_data(
             y: array of shape [n_samples] with our labels
             y_reg: array of shape [n_samples] with regression values which get split for labels
     """
+    if dist is None:
+        dist = []
 
     n_total = n_informative + n_redundant + n_nuisance
     x_final = np.zeros((n_samples, n_total))
