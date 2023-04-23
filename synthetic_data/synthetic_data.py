@@ -98,10 +98,14 @@ def transform_to_distribution(x, adict):
     # method_gen = getattr(stats, adict["dist"])
     # method_specific = method_gen(*adict["args"], **adict["kwargs"])
     # # all DP categoricals will hit this first condition
-    if adict["dist"] == "multinomial":
+    
+    if adict["dist"] in ["multinomial", "norm", "skewnorm"]:
         method_gen = getattr(stats, adict["dist"])
         method_specific = method_gen(*adict["args"], **adict["kwargs"])
-        x_samples = multinomial_ppf(x, method_specific, adict['categories_info'])
+        if adict["dist"] == "mulitnormial":
+            x_samples = multinomial_ppf(x, method_specific, adict['categories_info'])
+        else:
+            x_samples = method_specific.ppf(x)
     else:
     #     x_samples = method_specific.ppf(x)
         x_samples = adict["args"].ppf(x)
@@ -256,7 +260,8 @@ def marginal_dist_check(dist, num_cols):
     """
     if len(dist) != num_cols and len(dist) > 0:
         raise ValueError(
-            "Please provide a marginal distribution dictionary for each of n_informative columns."
+            "When providing a marginal distribution list, ensure the length of "
+            "the list is equal to n_informative columns."
         )
 
 
@@ -397,6 +402,22 @@ def make_tabular_data(
         x_final[:, :n_informative] = x_final[:, :n_informative] + x_noise
 
     return x_final, y_reg, y_prob, y_labels
+
+
+def create_synthetic_generator_from_report(
+    repot: dict,
+    seed=None,
+):
+    """
+    Use a DataProfiler report to create a generator to make synthetic data from.
+    args:
+        report (dict) - DataProfiler report
+        n_samples (int) - number of samples to generate
+        noise_level (float) - level of white noise (jitter) added to x
+        seed - numpy random state object for repeatability
+
+    returns X: DataFrame of shape [n_samples, n_total]
+    """
 
 
 def make_data_from_report(
