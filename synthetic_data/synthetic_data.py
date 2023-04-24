@@ -210,7 +210,6 @@ def pre_data_generation_checks(n_informative, col_map, n_total):
 def generate_redundant_features(x, n_informative, n_redundant, seed):
     generator = np.random.RandomState(seed)
     B = 2 * generator.rand(n_informative, n_redundant) - 1
-    # B = 2 * random_state.rand(n_informative, n_redundant) - 1
     # print("in main script - b")
     # print(B)
     # print("in main script - x")
