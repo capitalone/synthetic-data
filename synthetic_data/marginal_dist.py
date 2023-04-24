@@ -5,7 +5,7 @@ DataProfiler report into scipy.stats distributions used by synthetic_data
 import numpy as np
 
 
-def _detect_dist_continuous(col_stats):
+def _gen_rv_hist_continuous(col_stats):
     """
     Detects type of continuous distribution based on Kolmogorov-Smirnov Goodness-of-fit test
     https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test.
@@ -17,6 +17,21 @@ def _detect_dist_continuous(col_stats):
         for the distribution.
     """
 
+    # Create a continuous distribution from the histogram and sample data from it
+    hist_dist = stats.rv_histogram((bin_counts, bin_edges))
+    observed_samples = hist_dist.rvs(size=1000)
+    dist = {'dist': 'rv_histogram', 'args': hist_dist}
+    dist = {'dist': 'skewnormal', 'args': hist_dist}
+    return dist
+
+def _detect_dist_continuous(col_stats):
+    """
+    Detects type of continuous distribution based on Kolmogorov-Smirnov Goodness-of-fit test, https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test.
+    Args:
+        col_stats (dict): Column data statistics. The column data must be of a continuous numerical random variable.
+    Returns:
+        dist (dict): Dictionary stating distribution type along with other parameters for the distribution.
+    """
     # Distributions to test against (must be a continuous distribution from scipy.stats)
     # Distribution name -> list of positional arguments for the distribution
     test_dists = (
@@ -29,8 +44,6 @@ def _detect_dist_continuous(col_stats):
         # uniform(loc, scale)
         ("uniform", (col_stats["min"], col_stats["max"] - col_stats["min"])),
     )
-    dist = {'dist': 'skewnormal', 'args': hist_dist}
-    return dist
 
     dist = {}
     dist["dist"] = "skewnorm"
@@ -104,7 +117,7 @@ def detect_dist(report):
 
         print(col_num, col_dict["data_type"])
         dist = (
-            _detect_dist_continuous(col_stats)
+            _gen_rv_hist_continuous(col_stats)
             if is_continuous
             else _detect_dist_discrete(col_stats)
         )
