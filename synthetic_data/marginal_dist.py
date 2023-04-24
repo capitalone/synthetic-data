@@ -3,6 +3,7 @@ Methods that support detecting and translating marginal distributions from a
 DataProfiler report into scipy.stats distributions used by synthetic_data
 """
 import numpy as np
+from scipy import stats
 
 
 def _gen_rv_hist_continuous(col_stats):
@@ -17,12 +18,17 @@ def _gen_rv_hist_continuous(col_stats):
         for the distribution.
     """
 
+    bin_counts, bin_edges = (
+        col_stats["histogram"]["bin_counts"],
+        col_stats["histogram"]["bin_edges"],
+    )
+
     # Create a continuous distribution from the histogram and sample data from it
     hist_dist = stats.rv_histogram((bin_counts, bin_edges))
     observed_samples = hist_dist.rvs(size=1000)
     dist = {'dist': 'rv_histogram', 'args': hist_dist}
-    dist = {'dist': 'skewnormal', 'args': hist_dist}
     return dist
+
 
 def _detect_dist_continuous(col_stats):
     """
@@ -34,17 +40,6 @@ def _detect_dist_continuous(col_stats):
     """
     # Distributions to test against (must be a continuous distribution from scipy.stats)
     # Distribution name -> list of positional arguments for the distribution
-    test_dists = (
-        # norm(loc, scale)
-        # ("norm", (col_stats["mean"], col_stats["stddev"])),
-        # skewnorm(a, loc, scale)
-        # ("skewnorm", (col_stats["mean"], col_stats["variance"], col_stats["skewness"], 0, col_stats['min'], col_stats['max'])),
-        # ("skewnorm", (col_stats["mean"], col_stats["variance"], col_stats["skewness"], col_stats["kurtosis"], col_stats['min'], col_stats['max'])),
-        ("skewnorm", (col_stats["skewness"], col_stats["mean"], col_stats["stddev"])),
-        # uniform(loc, scale)
-        ("uniform", (col_stats["min"], col_stats["max"] - col_stats["min"])),
-    )
-
     dist = {}
     dist["dist"] = "skewnorm"
     dist["args"] = (col_stats["skewness"], col_stats["mean"], col_stats["stddev"])

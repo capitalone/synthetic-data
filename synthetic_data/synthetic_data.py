@@ -29,7 +29,6 @@ from scipy import stats
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import MinMaxScaler
 import scipy.interpolate as interpolate
-from statsmodels.sandbox.distributions.extras import pdf_mvsk
 
 from synthetic_data.marginal_dist import detect_dist
 from synthetic_data.null_replication import replicate_null
