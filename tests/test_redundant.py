@@ -3,6 +3,10 @@
 Test the creation of redundant features (see sklearn source)
 
 The structure of X is columns of [informative, redundant, nuisance] features
+
+If the test fails, and you want to debug, two things must match between the
+    main script and this test: the matrix (B/b) and the unscaled inputs to
+    the redundant routine, here named x_cont (in main script routine it's x)
 """
 
 import numpy as np
@@ -12,10 +16,11 @@ from sklearn.preprocessing import MinMaxScaler
 from synthetic_data.synthetic_data import (
     make_tabular_data,
     transform_to_distribution,
+    generate_redundant_features,
 )
 
 np.random.seed(111)
-np.set_printoptions(precision=11)
+np.set_printoptions(precision=6)
 seed = 1234
 
 
@@ -52,41 +57,47 @@ def test_redundant():
         seed=seed,
         dist=dist,
     )
-    print("in test results for X - ")
-    print(X)
 
-    # replicate the redundant features
-    # replicate the random state - initialize, run multivariate...
-    generator = np.random.RandomState(seed)
     means = np.zeros(n_informative)
-    mvnorm = stats.multivariate_normal(mean=means, cov=cov)
+    mvnorm = stats.multivariate_normal(mean=means, cov=cov, allow_singular=True)
     x = mvnorm.rvs(n_samples, random_state=seed)
-    norm = stats.norm()
-    x_cont = norm.cdf(x)
+
+    x_cont = np.zeros_like(x)
+    for i in range(x.shape[1]):
+          x_tmp = x[:, i]
+          tmp_norm = stats.norm(loc=x_tmp.mean(), scale=x_tmp.std())
+          x_cont[:, i] = tmp_norm.cdf(x_tmp)
+
 
     for a_dist in dist:
         col = a_dist["column"]
         x_cont[:, col] = transform_to_distribution(x_cont[:, col], a_dist)
 
     # this duplicates the generate_redundant_features function
+    generator = np.random.RandomState(seed)
     B = 2 * generator.rand(n_informative, n_redundant) - 1
-    print("in test - B")
-    print(B)
+#    print("in test - B")
+#    print(B)
+
     # x_cont = X[:, :n_informative]
-    print("in test - x")
+    print("in test - x_cont")
     print(x_cont)
 
     x_redundant = np.dot(x_cont, B)
 
-    scaler = MinMaxScaler(feature_range=(-1, 1))
-    x_redundant_scaled = scaler.fit_transform(x_redundant)
-    print(" - scaled - ")
-    print(x_redundant_scaled)
+    # now loop over the redundant columns and use MinMax scaler...
+    for col in range(n_redundant):
+        scaler = MinMaxScaler(feature_range=(-1, 1))
+        x_redundant[:, col] = (
+            scaler.fit_transform(x_redundant[:, col].reshape(-1, 1)).flatten()
+        )
 
     x_slice_redundant = X[:, -n_redundant:]
+#    print("in test script - x_slice_redundant")
+#    print(x_slice_redundant)
 
-    # print("in test script - x_redundant")
-    # print(x_redundant)
+#    print("in test script - x_redundant")
+#    print(x_redundant)
 
     # check that they match
-    assert np.allclose(x_redundant_scaled, x_slice_redundant, rtol=1e-05, atol=1e-08)
+    assert np.allclose(x_redundant, x_slice_redundant, rtol=1e-05, atol=1e-08)
