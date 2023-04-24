@@ -254,7 +254,7 @@ def make_tabular_data(
     n_classes=2,
     dist=None,
     cov=None,
-    col_map={},
+    col_map=None,
     expr=None,
     sig_k=1.0,
     sig_x0=None,
