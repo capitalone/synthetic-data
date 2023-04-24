@@ -282,8 +282,9 @@ def make_tabular_data(
         p_thresh - probability threshold for assigning class labels
         noise_level_x (float) - level of white noise (jitter) added to x
         noise_level_y (float) - level of white noise added to y (think flip_y)
-        scaler (sklearn scaler) - sklearn style scaler. Defaults to MinMaxScaler(feature_range = (-1,1)).
-                              If None, no feature scaling is performed.
+        scaler (sklearn scaler) - sklearn style scaler.
+            Defaults to MinMaxScaler(feature_range = (-1,1)).
+            If None, no feature scaling is performed.
         seed - numpy random state object for repeatability
 
 
@@ -310,10 +311,16 @@ def make_tabular_data(
 
     # initialize X array
     means = np.zeros(n_informative)
+    # if coming from make_data_from_report - that data won't be standardized...
+
+    for i, a_dist in enumerate(dist):
+        if a_dist.get("mean") is not None:
+            means[i] = a_dist["mean"]
+
     mvnorm = stats.multivariate_normal(mean=means, cov=cov, allow_singular=True)
     x = mvnorm.rvs(n_samples, random_state=seed)
-    # x_cont = np.zeros_like(x)
 
+    # now tranform marginals back to uniform distribution
     x_cont = np.zeros_like(x)
     for i in range(x.shape[1]):
         x_tmp = x[:, i]
