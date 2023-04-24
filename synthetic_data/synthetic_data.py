@@ -78,27 +78,7 @@ def transform_to_distribution(x, adict):
     if "kwargs" not in adict:
         adict["kwargs"] = {}
 
-    # if adict["dist"] == "skewnorm":
-    #     f = pdf_mvsk([*adict["args"][:-2]], **adict["kwargs"])
-    #     _x = np.linspace(adict["args"][-2], adict["args"][-1], num=500)
-    #     y = [f(i) for i in _x]
-    #     yy = np.cumsum(y) / np.sum(y)
-    #     inv_cdf = interpolate.interp1d(yy, _x, fill_value="extrapolate")
-    #     x_samples = inv_cdf(x)
-    # else:
-    #     method_gen = getattr(stats, adict["dist"])
-    #     method_specific = method_gen(*adict["args"], **adict["kwargs"])
-    #     # all DP categoricals will hit this first condition
-    #     if adict["dist"] == "multinomial":
-    #         x_samples = multinomial_ppf(x, method_specific)
-    #     else:
-    #         x_samples = method_specific.ppf(x)
-
-
-    # method_gen = getattr(stats, adict["dist"])
-    # method_specific = method_gen(*adict["args"], **adict["kwargs"])
-    # # all DP categoricals will hit this first condition
-
+    # DP categoricals will be multinomial
     if adict["dist"] in ["multinomial", "norm", "skewnorm"]:
         method_gen = getattr(stats, adict["dist"])
         method_specific = method_gen(*adict["args"], **adict["kwargs"])
@@ -107,7 +87,6 @@ def transform_to_distribution(x, adict):
         else:
             x_samples = method_specific.ppf(x)
     else:
-    #     x_samples = method_specific.ppf(x)
         x_samples = adict["args"].ppf(x)
 
     return x_samples
