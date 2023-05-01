@@ -28,10 +28,45 @@ import pandas as pd
 from scipy import stats
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import MinMaxScaler
+import scipy.interpolate as interpolate
 
 from synthetic_data.marginal_dist import detect_dist
 from synthetic_data.null_replication import replicate_null
 from synthetic_data.parser import MathParser
+
+
+def multinomial_ppf(x_uniform, my_dist, categories_info):
+    """
+    input:
+        x_uniform - uniform distribution random variable
+        my_dist - scipy.stats.multinomial object
+    output:
+        x_sampled - vector of samples from the multinomial
+    """
+    discrete_cdf = np.cumsum(my_dist.p)
+    #    print("pmf - ", my_dist.p)
+    #    print("cdf - ", discrete_cdf)
+    x_sampled = np.zeros_like(x_uniform)
+    # print(
+    #    "test uniformity - ",
+    #    x_uniform.min(),
+    #    x_uniform.max(),
+    #    x_uniform.mean(),
+    #    x_uniform.std(),
+    # )
+    # search discrete CDF
+    mapping_order = categories_info["mapping_order"]
+    category_mapping = categories_info["category_mapping"]
+    for j, x_u in enumerate(x_uniform):
+        if x_u <= discrete_cdf[0]:
+            x_sampled[j] = category_mapping[mapping_order[0]]
+        else:
+            for i, _ in enumerate(discrete_cdf[:-1]):
+                if (discrete_cdf[i] < x_u) and (x_u <= discrete_cdf[i + 1]):
+                    x_sampled[j] = category_mapping[mapping_order[i + 1]]
+                    break
+
+    return x_sampled
 
 
 def transform_to_distribution(x, adict):
@@ -50,9 +85,16 @@ def transform_to_distribution(x, adict):
     if "kwargs" not in adict:
         adict["kwargs"] = {}
 
-    method_gen = getattr(stats, adict["dist"])
-    method_specific = method_gen(*adict["args"], **adict["kwargs"])
-    x_samples = method_specific.ppf(x)
+    # DP categoricals will be multinomial
+    if adict["dist"] in ["multinomial", "norm", "skewnorm"]:
+        method_gen = getattr(stats, adict["dist"])
+        method_specific = method_gen(*adict["args"], **adict["kwargs"])
+        if adict["dist"] == "multinomial":
+            x_samples = multinomial_ppf(x, method_specific, adict['categories_info'])
+        else:
+            x_samples = method_specific.ppf(x)
+    else:
+        x_samples = adict["args"].ppf(x)
 
     return x_samples
 
@@ -140,9 +182,9 @@ def resolve_covariant(n_total, covariant=None):
         covariant = np.diag(np.ones(n_total))
 
     # test for symmetry on covariance matrix by comparing the matrix to its transpose
-    assert np.all(
-        covariant == covariant.T
-    ), "Assertion error - please check covariance matrix is symmetric."
+    np.testing.assert_almost_equal(
+        covariant, covariant.T, 1e-8
+        , "Assertion error - please check covariance matrix is symmetric.")
 
     return covariant
 
@@ -168,7 +210,6 @@ def pre_data_generation_checks(n_informative, col_map, n_total):
 def generate_redundant_features(x, n_informative, n_redundant, seed):
     generator = np.random.RandomState(seed)
     B = 2 * generator.rand(n_informative, n_redundant) - 1
-    # B = 2 * random_state.rand(n_informative, n_redundant) - 1
     # print("in main script - b")
     # print(B)
     # print("in main script - x")
@@ -198,11 +239,10 @@ def marginal_dist_check(dist, num_cols):
     args:
         dist - list of dicts for marginal distributions to apply to columns
     """
-    if dist is None:
-        raise ValueError("Please provide a valid list of marginal distributions.")
-    if len(dist) != num_cols:
+    if len(dist) != num_cols and len(dist) > 0:
         raise ValueError(
-            "Please provide a marginal distribution dictionary for each of n_informative columns."
+            "When providing a marginal distribution list, ensure the length of "
+            "the list is equal to n_informative columns."
         )
 
 
@@ -214,7 +254,7 @@ def make_tabular_data(
     n_classes=2,
     dist=None,
     cov=None,
-    col_map={},
+    col_map=None,
     expr=None,
     sig_k=1.0,
     sig_x0=None,
@@ -242,8 +282,9 @@ def make_tabular_data(
         p_thresh - probability threshold for assigning class labels
         noise_level_x (float) - level of white noise (jitter) added to x
         noise_level_y (float) - level of white noise added to y (think flip_y)
-        scaler (sklearn scaler) - sklearn style scaler. Defaults to MinMaxScaler(feature_range = (-1,1)).
-                              If None, no feature scaling is performed.
+        scaler (sklearn scaler) - sklearn style scaler.
+            Defaults to MinMaxScaler(feature_range = (-1,1)).
+            If None, no feature scaling is performed.
         seed - numpy random state object for repeatability
 
 
@@ -253,6 +294,8 @@ def make_tabular_data(
             y: array of shape [n_samples] with our labels
             y_reg: array of shape [n_samples] with regression values which get split for labels
     """
+    if dist is None:
+        dist = []
 
     n_total = n_informative + n_redundant + n_nuisance
     x_final = np.zeros((n_samples, n_total))
@@ -268,13 +311,22 @@ def make_tabular_data(
 
     # initialize X array
     means = np.zeros(n_informative)
-    mvnorm = stats.multivariate_normal(mean=means, cov=cov)
+    # if coming from make_data_from_report - that data won't be standardized...
+
+    for i, a_dist in enumerate(dist):
+        if a_dist.get("mean") is not None:
+            means[i] = a_dist["mean"]
+
+    mvnorm = stats.multivariate_normal(mean=means, cov=cov, allow_singular=True)
     x = mvnorm.rvs(n_samples, random_state=seed)
-    # x_cont = np.zeros_like(x)
 
     # now tranform marginals back to uniform distribution
-    norm = stats.norm()
-    x_cont = norm.cdf(x)
+    x_cont = np.zeros_like(x)
+    for i in range(x.shape[1]):
+        x_tmp = x[:, i]
+        # print(i, x_tmp.mean(), x_tmp.std())
+        tmp_norm = stats.norm(loc=x_tmp.mean(), scale=x_tmp.std())
+        x_cont[:, i] = tmp_norm.cdf(x_tmp)
 
     # print("x_cont.shape - ", x.shape)
     # print("x_cont - ")
@@ -282,13 +334,9 @@ def make_tabular_data(
     # at this point x_cont has columns with correlation & uniform dist
 
     # apply marginal distributions
-
     for a_dist in dist:
         col = a_dist["column"]
-        # method = getattr(stats, a_dist["dist"])
-        # x_cont[:, col] = method.ppf(x_unif[:, col])
         x_cont[:, col] = transform_to_distribution(x_cont[:, col], a_dist)
-    # print(x_cont.max())
     x_final[:, :n_informative] = x_cont
 
     # add redundant - lines 224-228
@@ -373,7 +421,7 @@ def make_data_from_report(
     D = np.diag(stddevs)
 
     cov = D @ R @ D
-    cov = cov.round(decimals=8)  # round to avoid failing symmetry check
+    # cov = cov.round(decimals=8)  # round to avoid failing symmetry check
 
     # create col_map of appropriate length to pass pre_data_generation_checks
     col_map = {}
@@ -390,26 +438,19 @@ def make_data_from_report(
         noise_level_x=noise_level,
         seed=seed,
         dist=dist,
+        scaler=None,
     )
 
-    # generate scalers by range of values in original data
-    scalers = {}
-    for col, stat in enumerate(report["data_stats"]):
-        _min = stat["statistics"]["min"]
-        _max = stat["statistics"]["max"]
-        scalers[col] = MinMaxScaler(feature_range=(_min, _max))
-
-    # rescale to feature range
-    for col in scalers:
-        x_final[:, col] = (
-            scalers[col].fit_transform(x_final[:, col].reshape(-1, 1)).flatten()
-        )
-
-    # find number of decimals for each column and round the data to match
-    precisions = [stat["samples"][0][::-1].find(".") for stat in report["data_stats"]]
-
-    for i, precision in enumerate(precisions):
-        x_final[:, i] = np.around(x_final[:, i], precision if precision > 0 else 0)
+    # Approximate the original data format given its precision / # of digits
+    for i, col_stat in enumerate(report["data_stats"]):
+        digits = 0
+        if col_stat['data_type'] not in ['int', 'float']:
+            continue
+        if col_stat['data_type'] in ['float']:
+            precision = col_stat.get('statistics', {}).get('precision', {}).get('max', 0)
+            digits = precision - np.ceil(np.log10(np.abs(x_final[:, i])))
+            digits = int((digits[np.isfinite(digits)]).max())
+        x_final[:, i] = np.around(x_final[:, i], digits)
 
     # replicate null values if null replication metrics exist in the original report
     col_to_null_metrics = {}
