@@ -87,12 +87,13 @@ def test_data_scaling():
 def test_marginal_dist_check():
     col_map = {"x1": 0, "x2": 1, "x3": 2, "x4": 3}
 
-    with pytest.raises(Exception) as exec_info:
-        make_tabular_data(n_informative=4, col_map=col_map)
-    err = "Please provide a valid list of marginal distributions."
-    assert err in str(exec_info.value)
+    # should skip dist enforcement
+    data = make_tabular_data(n_informative=4, col_map=col_map)
 
     with pytest.raises(Exception) as exec_info:
-        make_tabular_data(n_informative=4, col_map=col_map, dist=[])
-    err = "Please provide a marginal distribution dictionary for each of n_informative columns."
+        make_tabular_data(n_informative=4, col_map=col_map, dist=[{}])
+    err = (
+        "When providing a marginal distribution list, ensure the length of the "
+        "list is equal to n_informative columns."
+    )
     assert err in str(exec_info.value)
