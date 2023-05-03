@@ -28,7 +28,7 @@ with open('README.md', 'r') as readme:
 
 setup(
     name='synthetic-data',
-    version='1.1.0',
+    version='1.2.0',
     maintainer='Brian Barr',
     maintainer_email='brian.barr@capitalone.com',
     license='Apache License 2.0',
