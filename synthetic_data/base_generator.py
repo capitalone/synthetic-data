@@ -11,6 +11,15 @@ class BaseGenerator(metaclass=abc.ABCMeta):
         self.seed = seed
         self.profile = profile
 
+    @classmethod
+    def post_profile_processing_w_data(cls, data, profile):
+        """
+        Any extra processing that needs to be conducted on the profile prior
+        to generation.
+        """
+        return profile
+
+
     @abc.abstractmethod
     def synthesize(self, *args, **kwargs):
         """Make synthetic data."""
