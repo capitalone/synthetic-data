@@ -460,14 +460,6 @@ def make_data_from_report(
         col_to_null_metrics[col_id] = col_data_stats["null_replication_metrics"]
     x_final = replicate_null(x_final, col_to_null_metrics, cov)
 
-    # replicate null values if null replication metrics exist in the original report
-    col_to_null_metrics = {}
-    for col_id, col_data_stats in enumerate(report["data_stats"]):
-        if "null_replication_metrics" not in col_data_stats:
-            continue
-        col_to_null_metrics[col_id] = col_data_stats["null_replication_metrics"]
-    x_final = replicate_null(x_final, col_to_null_metrics, cov)
-
     # return x_final in a DataFrame with the original column names
     return pd.DataFrame(
         x_final, columns=[stat["column_name"] for stat in report["data_stats"]]
