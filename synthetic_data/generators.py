@@ -11,10 +11,11 @@ from synthetic_data.synthetic_data import make_data_from_report
 class TabularGenerator(BaseGenerator):
     """Class for generating synthetic tabular data."""
 
-    def __init__(self, profile, seed=None, noise_level: float = 0.0):
+    def __init__(self, profile, seed=None, noise_level: float = 0.0, is_correlated: bool = True):
         """Initialize tabular generator object."""
         super().__init__(profile, seed)
         self.noise_level = noise_level
+        self.is_correlated = is_correlated
 
     @classmethod
     def post_profile_processing_w_data(cls, data, profile):
@@ -62,6 +63,7 @@ class TabularGenerator(BaseGenerator):
             report=self.profile.report(),
             n_samples=num_samples,
             noise_level=noise_level,
+            is_correlated=self.is_correlated,
             seed=seed,
         )
 
