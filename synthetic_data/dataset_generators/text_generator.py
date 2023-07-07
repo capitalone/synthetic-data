@@ -1,6 +1,7 @@
 from numpy.random import Generator
 import string
 import numpy as np
+from typing import List, Optional
 
 def random_string(
     rng: Generator,
@@ -41,3 +42,33 @@ def random_string(
         string_list.append(string_entry)
 
     return np.array(string_list)
+
+def random_text(
+    rng: Generator,
+    chars: Optional[str] = None,
+    num_rows: int = 1,
+    str_len_min: int = 256,
+    str_len_max: int = 1000,
+) -> np.array:
+    """
+    Randomly generates an array of text with length between a min and max value
+
+    :param rng: the np rng object used to generate random values
+    :type rng: numpy Generator
+    :param chars: a list of values that are allowed in a string or None
+    :type chars: List[str], None
+    :param num_rows: the number of rows in np array generated
+    :type num_rows: int, optional
+    :param str_len_min: the minimum length a string can be (must be larger than 256)
+    :type str_len_min: int, optional
+    :param str_len_max: the maximum length a string can be
+    :type str_len_max: int, optional
+
+    :return: numpy array of text
+    """
+    if str_len_min < 256:
+        raise ValueError(
+            f"str_len_min must be > 256. " f"Value provided: {str_len_min}."
+        )
+
+    return random_string(rng, chars, num_rows, str_len_min, str_len_max)
