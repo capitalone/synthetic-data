@@ -24,7 +24,6 @@ class TestRandomFloats(unittest.TestCase):
         for x in result:
             self.assertTrue(x >= min_value)
             self.assertTrue(x <= max_value)
-        #self.assertTrue((result >= min_value).all() and (result <= max_value).all())
 
     def test_sig_figs(self):
         sig_figs = 2
