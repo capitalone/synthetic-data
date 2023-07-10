@@ -26,3 +26,4 @@ class TestRandomFloats(unittest.TestCase):
         sig_figs = 2
         result = random_floats(self.rng, sig_figs=sig_figs)
         self.assertTrue(all(len(str(x).split(".")[1]) <= sig_figs for x in result))
+        
