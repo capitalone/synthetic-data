@@ -1,3 +1,4 @@
+
 import unittest
 import numpy as np 
 from numpy.random import Generator, PCG64
@@ -27,4 +28,4 @@ class TestRandomFloats(unittest.TestCase):
         result = random_floats(self.rng, sig_figs=sig_figs)
         self.assertTrue(all(len(str(x).split(".")[1]) <= sig_figs for x in result))
         
-        
+
