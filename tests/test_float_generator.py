@@ -14,7 +14,7 @@ class TestRandomFloats(unittest.TestCase):
 
     def test_size(self):
         num_rows = 5
-        result = random_floats(self.rng, num_rows = num_rows)
+        result = random_floats(self.rng, num_rows=num_rows)
         self.assertEqual(result.shape[0], num_rows)
     
     def test_values_range(self):
