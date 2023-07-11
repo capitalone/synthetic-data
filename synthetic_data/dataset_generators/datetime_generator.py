@@ -65,16 +65,16 @@ def random_datetimes(
     :return: array of generated datetimes
     :rtype: numpy array
     """
-    date_list = []
+    date_list = [""] * num_rows
     if not date_format_list:
         date_format_list = ["%B %d %Y %H:%M:%S"]
 
-    for _ in range(num_rows):
+    for i in range(num_rows):
         date_format = rng.choice(date_format_list)
         datetime = generate_datetime(
             rng, date_format=date_format, start_date=start_date, end_date=end_date
         )
-        date_list.append(datetime)
+        date_list[i] = datetime
 
     return np.array(date_list)
 
