@@ -15,7 +15,7 @@ class TestDatetimeFunctions(unittest.TestCase):
         self.end_date = pd.Timestamp(2023, 1, 1)
         self.date_format_list = ["%Y-%m-%d", "%d-%m-%Y"]
 
-    def test_generate_datetime(self):
+    def test_generate_datetime_return_type(self):
         date_str = dtg.generate_datetime(self.rng, 
                                         self.date_format_list[0],
                                         self.start_date,
