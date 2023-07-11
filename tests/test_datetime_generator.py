@@ -28,7 +28,6 @@ class TestDatetimeFunctions(unittest.TestCase):
                                         self.start_date,
                                         self.end_date)
         try:
-            date_str = "blah"
             pd.to_datetime(date_str, format=self.date_format_list[0])
         except ValueError:
             self.fail("pd.to_datetime() raised ValueError unexpectedly")
