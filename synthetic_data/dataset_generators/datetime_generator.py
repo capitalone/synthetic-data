@@ -7,8 +7,8 @@ from typing import Optional
 def generate_datetime(
     rng: Generator,
     date_format: str,
-    start_date: pd.Timestamp = None,
-    end_date: pd.Timestamp = None,
+    start_date: pd.Timestamp = pd.Timestamp(1920, 1, 1),
+    end_date: pd.Timestamp = pd.Timestamp(2049, 12, 31),
 ) -> str:
     """
     Generate datetime given the random_state, date_format, and start/end dates.
@@ -28,12 +28,6 @@ def generate_datetime(
     :return: generated datetime
     :rtype: str
     """
-    if not start_date:
-        # 100 years in past
-        start_date = pd.Timestamp(1920, 1, 1)
-    if not end_date:
-        # protection of 30 years in future
-        end_date = pd.Timestamp(2049, 12, 31)
     t = rng.random()
     ptime = start_date + t * (end_date - start_date)
 
