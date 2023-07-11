@@ -27,12 +27,11 @@ class TestDatetimeFunctions(unittest.TestCase):
                                         self.date_format_list[0],
                                         self.start_date,
                                         self.end_date)
-        format_check = True
         try:
+            date_str = "blah"
             pd.to_datetime(date_str, format=self.date_format_list[0])
         except ValueError:
-            format_check = False
-        self.assertTrue(format_check)
+            self.fail("pd.to_datetime() raised ValueError unexpectedly")
 
     def test_generate_datetime_range(self):
         date_str = dtg.generate_datetime(self.rng, 
