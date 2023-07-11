@@ -22,8 +22,8 @@ class TestRandomFloats(unittest.TestCase):
         min_value, max_value = -1, 1
         result = random_floats(self.rng, min_value, max_value)
         for x in result:
-            self.assertTrue(x >= min_value)
-            self.assertTrue(x <= max_value)
+            self.assertGreaterEqual(x, min_value)
+            self.assertGreaterEqual(max_value, x)
 
     def test_sig_figs(self):
         sig_figs = 2
