@@ -42,7 +42,6 @@ class TestDatetimeFunctions(unittest.TestCase):
         date_obj = pd.to_datetime(date_str, format = self.date_format_list[0])
         self.assertTrue(self.start_date <= date_obj <= self.end_date)
 
-    # needs mock of generate datetime maybe
     @mock.patch("synthetic_data.dataset_generators.datetime_generator.generate_datetime")
     def test_random_datetimes_return_type_and_size(self, mock_generate_datetime):
         mock_generate_datetime.return_value = "Mocked"
