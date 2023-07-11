@@ -7,8 +7,8 @@ from typing import Optional
 def generate_datetime(
     rng: Generator,
     date_format: str,
-    start_date: Optional[str] = None,
-    end_date: Optional[str] = None,
+    start_date: pd.Timestamp = None,
+    end_date: pd.Timestamp = None,
 ) -> str:
     """
     Generate datetime given the random_state, date_format, and start/end dates.
@@ -43,8 +43,8 @@ def generate_datetime(
 def random_datetimes(
     rng: Generator,
     date_format_list: Optional[str] = None,
-    start_date: Optional[str] = None,
-    end_date: Optional[str] = None,
+    start_date: pd.Timestamp = None,
+    end_date: pd.Timestamp = None,
     num_rows: int = 1,
 ) -> np.array:
     """
