@@ -19,11 +19,11 @@ def generate_datetime(
         defaults to None
     :type date_format: str, None, optional
     :param start_date: the earliest date that datetimes can be generated at,
-        defaults to None
+        defaults to pd.Timestamp(1920, 1, 1)
     :type start_date: pd.Timestamp, None, optional
-    :param start_date: the latest date that datetimes can be generated at,
-        defaults to None
-    :type start_date: pd.Timestamp, None, optional
+    :param end_date: the latest date that datetimes can be generated at,
+        defaults to pd.Timestamp(2049, 12, 31)
+    :type end_date: pd.Timestamp, None, optional
 
     :return: generated datetime
     :rtype: str
@@ -56,11 +56,11 @@ def random_datetimes(
         defaults to None
     :type date_format: str, None, optional
     :param start_date: the earliest date that datetimes can be generated at,
-        defaults to None
+        defaults to pd.Timestamp(1920, 1, 1)
     :type start_date: pd.Timestamp, None, optional
-    :param start_date: the latest date that datetimes can be generated at,
-        defaults to None
-    :type start_date: pd.Timestamp, None, optional
+    :param end_date: the latest date that datetimes can be generated at,
+        defaults to pd.Timestamp(2049, 12, 31)
+    :type end_date: pd.Timestamp, None, optional
 
     :return: array of generated datetimes
     :rtype: numpy array
