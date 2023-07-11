@@ -77,8 +77,3 @@ def random_datetimes(
         date_list[i] = datetime
 
     return np.array(date_list)
-
-
-
-
-

@@ -52,5 +52,3 @@ class TestDatetimeFunctions(unittest.TestCase):
                                       5)
         self.assertIsInstance(result, np.ndarray)
         self.assertEqual(result.shape[0], 5)
-
-
