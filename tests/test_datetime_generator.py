@@ -1,6 +1,7 @@
 
 
 import unittest
+from unittest import mock
 from numpy.random import Generator, PCG64
 import pandas as pd
 import numpy as np
@@ -42,7 +43,9 @@ class TestDatetimeFunctions(unittest.TestCase):
         self.assertTrue(self.start_date <= date_obj <= self.end_date)
 
     # needs mock of generate datetime maybe
-    def test_random_datetimes_return_type_and_size(self):
+    @mock.patch("synthetic_data.dataset_generators.datetime_generator.generate_datetime")
+    def test_random_datetimes_return_type_and_size(self, mock_generate_datetime):
+        mock_generate_datetime.return_value = "Mocked"
         result = dtg.random_datetimes(self.rng,
                                       self.date_format_list,
                                       self.start_date,
