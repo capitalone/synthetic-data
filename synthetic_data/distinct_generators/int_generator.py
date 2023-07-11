@@ -1,61 +1,32 @@
-from numpy.random import Generator
 import numpy as np
-from base_generator import BaseGenerator
-
-# this generator will create the synthetic data
-# generator = Generator(profile)
-# df = generator.synthesize()
-
-
-# >> df.head()
-# this will contain the report
-# which is then used in the primitive type generators to generate synthetic data
-
-# plan of attack -- Implement the class first. Then implement the test
-
-
-
-class Generator():
-    def __init__(self, profile) -> None:
-        self.profile = profile
-
-    def synthesize(self):
-        return self.profile.dataframe
-
-class DatasetGenerator:
-    def __init__(self) -> None:
-        pass
-
-    def synthesize(self):
-        build_dataframe = pd.DataFrame()
-        for column in profile.report()['data_stats']:
-            build_dataframe.append(column['data_type']).__init__(, column_data)
-
-        return build_dataframe
+from ..base_generator import BaseGenerator
+from numpy.random import Generator
 
 class IntGenerator(BaseGenerator):
     def __init__(
             self,
-            profile_column_dict, #DP["data_stats"][0]["statistics"] 
+            profile, #dataprofile
+            generator, #Random generator
             ) -> None:
-        self.profile_dict = profile_column_dict
-        self.min = profile_column_dict.get("min", None)
-        self.max = profile_column_dict.get("max", None)
+        self.min = int(profile.report()["data_stats"][0]["statistics"].get("min", None))
+        self.max = int(profile.report()["data_stats"][0]["statistics"].get("max", None))
+        self.num_rows = profile.report()["global_stats"].get("column_count", None)
+        self.rng = generator
 
     def synthesize(self):
         """
-        Given the min and max of the profile's statistics, 
-        uses _random_integer_generator to generate a random int np.array
-        
-        :rtype: numpy array 
+        Generates random ints within given min and max range
+        of the profile's statistics as an np.array
+
+        :rtype: numpy array
         :return: np array of integers
         """
-        return self._random_integer_generator(self.min, self.max)
+        return self._random_integer_generator(self.rng, self.min, self.max, self.num_rows)
 
-    def _random_integer_generator(self, 
-                                  rng: Generator, 
-                                  min_value: int = -1e6, 
-                                  max_value: int = 1e6, 
+    def _random_integer_generator(self,
+                                  rng: Generator,
+                                  min_value: int = -1e6,
+                                  max_value: int = 1e6,
                                   num_rows: int = 1
                                   ) -> np.array:
         """
