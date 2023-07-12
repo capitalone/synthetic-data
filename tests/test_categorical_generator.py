@@ -1,13 +1,15 @@
 import unittest
+
 import numpy as np
 from numpy.random import Generator, PCG64
+
 from synthetic_data.dataset_generators.categorical_generator import random_categorical
 
 
 class TestRandomsCategories(unittest.TestCase):
     def setUp(self):
         self.rng = Generator(PCG64(12345))
-        self.categories = ['X', 'Y', 'Z']
+        self.categories = ['People', 'Cats', 'Dogs']
 
     def test_default_return_validity(self):
         result = random_categorical(self.rng, num_rows = 5)
@@ -18,7 +20,7 @@ class TestRandomsCategories(unittest.TestCase):
     def test_custom_return_validity(self):
         result = random_categorical(self.rng, 
                                     categories=self.categories, 
-                                    num_rows = 5)
+                                    num_rows = 2)
         self.assertIsInstance(result, np.ndarray)
         self.assertTrue(set(result).issubset(self.categories))
-        self.assertEqual(result.shape[0], 5)        
+        self.assertEqual(result.shape[0], 2)       
