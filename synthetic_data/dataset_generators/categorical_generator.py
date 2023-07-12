@@ -21,5 +21,6 @@ def random_categorical(
     """
     if categories is None:
         categories = ["A", "B", "C", "D", "E"]
-
+    if num_rows > len(categories):
+        raise ValueError("num_rows exceeds number of categories")
     return rng.choice(categories, (num_rows,))
