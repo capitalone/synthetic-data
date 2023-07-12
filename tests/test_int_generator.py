@@ -31,5 +31,3 @@ class TestIntGenerator(unittest.TestCase):
             for x in result:
                 self.assertGreaterEqual(x, range[0])
                 self.assertLessEqual(x, range[1])
-
-                
