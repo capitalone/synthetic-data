@@ -16,6 +16,11 @@ class TestRandomsCategories(unittest.TestCase):
         self.assertIsInstance(result, np.ndarray)
         self.assertTrue(set(result).issubset({"A", "B", "C", "D", "E"}))
         self.assertEqual(result.shape[0], 5)
+
+        result = random_categorical(self.rng, num_rows = 4)
+        self.assertIsInstance(result, np.ndarray)
+        self.assertTrue(set(result).issubset({"A", "B", "C", "D", "E"}))
+        self.assertEqual(result.shape[0], 4)
     
     def test_custom_return_validity(self):
         result = random_categorical(self.rng, 
