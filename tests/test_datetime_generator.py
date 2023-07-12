@@ -39,9 +39,7 @@ class TestDatetimeFunctions(unittest.TestCase):
         self.assertTrue(self.start_date <= date_obj)
         self.assertTrue(date_obj <= self.end_date)
 
-    @mock.patch("synthetic_data.dataset_generators.datetime_generator.generate_datetime")
-    def test_random_datetimes_return_type_and_size(self, mock_generate_datetime):
-        mock_generate_datetime.return_value = "Mocked"
+    def test_random_datetimes_return_type_and_size(self):
         result = dtg.random_datetimes(self.rng,
                                       self.date_format_list,
                                       self.start_date,
@@ -49,3 +47,31 @@ class TestDatetimeFunctions(unittest.TestCase):
                                       5)
         self.assertIsInstance(result, np.ndarray)
         self.assertEqual(result.shape[0], 5)
+
+    def test_random_datetimes_default_format_usage(self):
+        result = dtg.random_datetimes(self.rng,
+                                      None,
+                                      self.start_date,
+                                      self.end_date,
+                                      10)     
+        for date_str in result:
+            try:
+                pd.to_datetime(date_str, format = "%B %d %Y %H:%M:%S")
+            except ValueError:
+                self.fail("pd.to_datetime() raised ValueError unexpectedly")
+
+    def test_random_datetimes_format_usage(self):
+        result = dtg.random_datetimes(self.rng,
+                                      self.date_format_list,
+                                      self.start_date,
+                                      self.end_date,
+                                      10)
+        format_success = [False] * len(self.date_format_list)
+        for date_str in result:
+            for i, date_format in enumerate(self.date_format_list):
+                try:
+                    pd.to_datetime(date_str, format = date_format)
+                    format_success[i] = True
+                except ValueError:
+                    pass
+        self.assertGreater(sum(format_success), 1)
