@@ -75,7 +75,7 @@ background = np.vstack([m_grid[0].ravel(), m_grid[1].ravel()]).T
 
 class LRPredictor(QIIPredictor):
     def __init__(self, predictor):
-        super(LRPredictor, self).__init__(predictor)
+        super().__init__(predictor)
 
     def predict(self, x):
         # predict the label for instance x

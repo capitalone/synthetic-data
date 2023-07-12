@@ -75,4 +75,3 @@ class TestDatetimeFunctions(unittest.TestCase):
                 except ValueError:
                     pass
         self.assertGreater(sum(format_success), 1)
-        

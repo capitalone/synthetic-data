@@ -1,0 +1,6 @@
+  # Pyupgrade - standardize and modernize Python syntax for newer versions of the language
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.3.0
+    hooks:
+      - id: pyupgrade
+        args: ["--py38-plus"]

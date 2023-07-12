@@ -7,7 +7,7 @@ import networkx as nx
 import scipy.stats as st
 import numpy as np
 
-class GraphDataGenerator(object):
+class GraphDataGenerator:
     '''
     Synthesize graph data from a graph profile object
     params:
