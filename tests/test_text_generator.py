@@ -44,3 +44,4 @@ class TestTextGeneratorFunctions(unittest.TestCase):
         for s in txt_arr:
             for char in s:
                 self.assertIn(char, chars_set)
+                
