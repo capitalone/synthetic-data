@@ -29,9 +29,9 @@ class TestRandomFloats(unittest.TestCase):
         sig_figs = 1
         result = random_floats(self.rng, min_value = 0.817236764, max_value = 1.92847927, sig_figs=sig_figs, num_rows = 10)
         for x in result:
-            self.assertTrue(len(str(x).split(".")[1]) <= sig_figs)
+            self.assertGreaterEqual(sig_figs, len(str(x).split(".")[1]))
 
         sig_figs = 5
         result = random_floats(self.rng, min_value = 0.817236764, max_value = 1.92847927, sig_figs=sig_figs, num_rows = 10)
         for x in result:
-            self.assertTrue(len(str(x).split(".")[1]) <= sig_figs)
+            self.assertGreaterEqual(sig_figs, len(str(x).split(".")[1]))
