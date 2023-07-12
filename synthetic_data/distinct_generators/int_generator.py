@@ -23,4 +23,3 @@ def random_integers(rng: Generator,
     :return: np array of integers
     """
     return rng.integers(min_value, max_value, (num_rows,))
-
