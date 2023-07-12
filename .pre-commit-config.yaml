@@ -1,0 +1,9 @@
+repos:
+  # Black: format Python code
+  # https://github.com/psf/black/blob/master/.pre-commit-hooks.yaml
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black
+        types: [file, python]
+        language_version: python3
