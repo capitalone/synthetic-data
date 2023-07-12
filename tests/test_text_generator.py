@@ -45,4 +45,3 @@ class TestTextGeneratorFunctions(unittest.TestCase):
             for char in s:
                 self.assertIn(char, chars_set)
                 
-                

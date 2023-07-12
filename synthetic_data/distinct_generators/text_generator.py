@@ -74,4 +74,3 @@ def random_text(
         )
 
     return random_string(rng, chars, num_rows, str_len_min, str_len_max)
-
