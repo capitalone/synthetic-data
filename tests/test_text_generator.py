@@ -1,9 +1,9 @@
 import unittest
 from unittest import mock
-from numpy.random import Generator, PCG64
 import pandas as pd
 import numpy as np
 from synthetic_data.distinct_generators.text_generator import random_string, random_text
+
 
 class TestTextGeneratorFunctions(unittest.TestCase):
     def setUp(self):
@@ -21,7 +21,7 @@ class TestTextGeneratorFunctions(unittest.TestCase):
         str_arr = random_string(self.rng, str_len_min=1, str_len_max=256)
         txt_arr = random_text(self.rng, str_len_min=256, str_len_max=1000)
         with self.assertRaises(ValueError):
-            random_text(self.rng, str_len_min=1)
+            random_text(self.rng, str_len_min=255)
         
         self.assertLessEqual(len(str_arr[0]), 256)
         self.assertGreaterEqual(len(str_arr[0]), 1)
@@ -44,4 +44,3 @@ class TestTextGeneratorFunctions(unittest.TestCase):
         for s in txt_arr:
             for char in s:
                 self.assertIn(char, chars_set)
-
