@@ -53,7 +53,7 @@ class GraphDataGenerator(object):
             edge_attributes = dict()
 
             for iter_attribute, attribute in enumerate([self._continuous_attributes, self._categorical_attributes]):
-                for value in attribute: 
+                for value in attribute:
                     if value is not None:
                         if iter_attribute == 0:
                             sample = self.sample_continuous(value)
@@ -63,7 +63,7 @@ class GraphDataGenerator(object):
 
             graph.add_edge(u,v,**edge_attributes)
         return graph
-    
+
     def sample_continuous(self, attribute, num_sample=1):
         """ Sample continuous distributions. """
         name = self._continuous_distributions[attribute]["name"]
@@ -83,7 +83,7 @@ class GraphDataGenerator(object):
             distribution = st.uniform(loc=best_fit_properties[0], scale=best_fit_properties[1])
         if name == "gamma":
             distribution = st.gamma(a=best_fit_properties[0], loc=best_fit_properties[1], scale=best_fit_properties[2])
-            
+
         sample = distribution.rvs(size=num_sample)
         return sample
 
@@ -110,7 +110,7 @@ class GraphDataGenerator(object):
 
         for bin_number, cumulative_percent in enumerate(cumulative_distribution):
             if random_var <= cumulative_percent:
-                return bin_number+1            
+                return bin_number+1
         return None
 
     def cumulative_histogram_distribution(self, bin_counts):
@@ -121,7 +121,7 @@ class GraphDataGenerator(object):
         # get percent of bin counts
         for bin in range(0,len(bin_counts)):
             total_percent.append(bin_counts[bin]/total)
-                
+
         # cumulate percent of bin counts
         for bin in range(1, len(total_percent)):
             total_percent[bin] = total_percent[bin]+total_percent[bin-1]

@@ -14,14 +14,14 @@ class TestDatetimeFunctions(unittest.TestCase):
         self.date_format_list = ["%Y-%m-%d", "%d-%m-%Y"]
 
     def test_generate_datetime_return_type(self):
-        date_str = dtg.generate_datetime(self.rng, 
+        date_str = dtg.generate_datetime(self.rng,
                                         self.date_format_list[0],
                                         self.start_date,
                                         self.end_date)
         self.assertIsInstance(date_str, str)
 
     def test_generate_datetime_format(self):
-        date_str = dtg.generate_datetime(self.rng, 
+        date_str = dtg.generate_datetime(self.rng,
                                         self.date_format_list[0],
                                         self.start_date,
                                         self.end_date)
@@ -31,7 +31,7 @@ class TestDatetimeFunctions(unittest.TestCase):
             self.fail("pd.to_datetime() raised ValueError unexpectedly")
 
     def test_generate_datetime_range(self):
-        date_str = dtg.generate_datetime(self.rng, 
+        date_str = dtg.generate_datetime(self.rng,
                                         self.date_format_list[0],
                                         self.start_date,
                                         self.end_date)
@@ -53,7 +53,7 @@ class TestDatetimeFunctions(unittest.TestCase):
                                       None,
                                       self.start_date,
                                       self.end_date,
-                                      10)     
+                                      10)
         for date_str in result:
             try:
                 pd.to_datetime(date_str, format = "%B %d %Y %H:%M:%S")
@@ -75,4 +75,3 @@ class TestDatetimeFunctions(unittest.TestCase):
                 except ValueError:
                     pass
         self.assertGreater(sum(format_success), 1)
-        

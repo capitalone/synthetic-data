@@ -22,7 +22,7 @@ class TestTextGeneratorFunctions(unittest.TestCase):
         txt_arr = random_text(self.rng, str_len_min=256, str_len_max=1000)
         with self.assertRaises(ValueError):
             random_text(self.rng, str_len_min=255)
-        
+
         self.assertLessEqual(len(str_arr[0]), 256)
         self.assertGreaterEqual(len(str_arr[0]), 1)
         self.assertLessEqual(len(txt_arr[0]), 1000)

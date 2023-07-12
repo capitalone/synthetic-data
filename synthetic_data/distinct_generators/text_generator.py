@@ -2,7 +2,7 @@ import numpy as np
 import string
 from numpy.random import Generator
 from typing import List, Optional
-    
+
 
 def random_string(
     rng: Generator,

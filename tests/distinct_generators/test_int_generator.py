@@ -8,7 +8,7 @@ from synthetic_data.distinct_generators.int_generator import random_integers
 
 class TestIntGenerator(unittest.TestCase):
     def setUp(self):
-        self.rng = np.random.default_rng(12345)     
+        self.rng = np.random.default_rng(12345)
 
     def test_return_type(self):
         result = random_integers(self.rng)

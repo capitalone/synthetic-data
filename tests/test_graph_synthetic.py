@@ -61,7 +61,7 @@ class TestSyntheticGraphGenerator(unittest.TestCase):
         attribute = self.synthetic_graph._continuous_attributes[0]
         sample = self.synthetic_graph.sample_continuous(attribute)[0]
         self.assertAlmostEqual(2.22061374344252, sample)
-        
+
     def test_sample_categorical(self):
         np.random.seed(1)
         attribute = self.synthetic_graph._categorical_attributes[0]
