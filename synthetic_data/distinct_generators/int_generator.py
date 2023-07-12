@@ -2,6 +2,7 @@ import numpy as np
 from ..base_generator import BaseGenerator
 from numpy.random import Generator
 
+
 def random_integers(rng: Generator,
                     min_value: int = -1e6,
                     max_value: int = 1e6,
