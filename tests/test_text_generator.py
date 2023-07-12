@@ -29,10 +29,12 @@ class TestTextGeneratorFunctions(unittest.TestCase):
         self.assertGreaterEqual(len(txt_arr[0]), 256)
 
     def test_num_rows(self):
-        str_arr = random_string(self.rng, num_rows=5)
-        txt_arr = random_text(self.rng, num_rows=5)
-        self.assertEqual(str_arr.size, 5)
-        self.assertEqual(txt_arr.size, 5)
+        num_rows = [1,5,10]
+        for nr in num_rows:
+            str_arr = random_string(self.rng, num_rows=nr)
+            txt_arr = random_text(self.rng, num_rows=nr)
+            self.assertEqual(str_arr.size, nr)
+            self.assertEqual(txt_arr.size, nr)
 
     def test_chars(self):
         chars_set = {"0","1"}
