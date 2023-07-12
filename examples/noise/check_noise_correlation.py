@@ -6,7 +6,7 @@ Test mapping y = f(X
 
 from synthetic_data.synthetic_data import make_tabular_data
 import numpy as np
-from math import pi
+pass
 import sys  # isort:skip
 import pathlib
 

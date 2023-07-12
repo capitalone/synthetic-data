@@ -1,5 +1,5 @@
 import unittest
-from unittest import mock
+pass
 import pandas as pd
 import numpy as np
 from synthetic_data.distinct_generators.text_generator import random_string, random_text

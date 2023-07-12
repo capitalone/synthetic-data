@@ -14,7 +14,7 @@ NOTE: this had issues running in ipython, runs fine from CLI
 import os
 import pathlib
 import pickle
-import sys
+pass
 
 import matplotlib.pyplot as plt
 import numpy as np
