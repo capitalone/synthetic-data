@@ -1,4 +1,3 @@
-
 import numpy as np
 from numpy.random import Generator
 
@@ -26,5 +25,9 @@ def random_floats(
 
     :return: np array of floats
     """
+    if sig_figs < 0:
+        raise ValueError("sig_figs should be greater than or equal to 0")
+    if not isinstance(sig_figs, int):
+        raise ValueError("sig_figs should be an int")
     return np.around(rng.uniform(min_value, max_value, num_rows), sig_figs)
 
