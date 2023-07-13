@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from numpy.random import Generator, PCG64
-from synthetic_data.distinct_generators.float_generator import random_floats
+from synthetic_data.distinct_generators.float_generator import gen_rnd_floats
 
 
 class TestRandomFloats(unittest.TestCase):
