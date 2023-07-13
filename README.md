@@ -50,6 +50,14 @@ To run tests:
 make test_local
 ```
 
+#### Pre-Commit
+To install `pre-commit` hooks, run the following commands:
+
+```cli
+pre-commit install
+pre-commit run
+```
+
 ### Referencing this library
 If you use this library in your work, please cite our paper:  
 ```

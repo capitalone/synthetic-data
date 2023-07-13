@@ -1,6 +1,5 @@
-
 import unittest
-import numpy as np 
+import numpy as np
 from numpy.random import Generator, PCG64
 from synthetic_data.dataset_generators.float_generator import random_floats
 
@@ -17,7 +16,7 @@ class TestRandomFloats(unittest.TestCase):
         num_rows = 5
         result = random_floats(self.rng, num_rows=num_rows)
         self.assertEqual(result.shape[0], num_rows)
-    
+
     def test_values_range(self):
         min_value, max_value = -1, 1
         result = random_floats(self.rng, min_value, max_value)
@@ -27,11 +26,23 @@ class TestRandomFloats(unittest.TestCase):
 
     def test_sig_figs(self):
         sig_figs = 1
-        result = random_floats(self.rng, min_value = 0.817236764, max_value = 1.92847927, sig_figs=sig_figs, num_rows = 10)
+        result = random_floats(
+            self.rng,
+            min_value=0.817236764,
+            max_value=1.92847927,
+            sig_figs=sig_figs,
+            num_rows=10,
+        )
         for x in result:
             self.assertGreaterEqual(sig_figs, len(str(x).split(".")[1]))
 
         sig_figs = 5
-        result = random_floats(self.rng, min_value = 0.817236764, max_value = 1.92847927, sig_figs=sig_figs, num_rows = 10)
+        result = random_floats(
+            self.rng,
+            min_value=0.817236764,
+            max_value=1.92847927,
+            sig_figs=sig_figs,
+            num_rows=10,
+        )
         for x in result:
             self.assertGreaterEqual(sig_figs, len(str(x).split(".")[1]))

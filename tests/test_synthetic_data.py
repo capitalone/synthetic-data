@@ -64,7 +64,7 @@ def test_data_scaling():
         col_map=col_map,
         scaler=StandardScaler(),
         dist=dist,
-        seed=42
+        seed=42,
     )
     assert np.all(np.isclose(x_final.mean(axis=0), np.zeros(4)))
 
@@ -74,17 +74,12 @@ def test_data_scaling():
         col_map=col_map,
         scaler=MinMaxScaler(feature_range=(0, 1)),
         dist=dist,
-        seed=42
+        seed=42,
     )
     assert (x_final.max() == 1) and (x_final.min() == 0)
 
     x_final, _, _, _ = make_tabular_data(
-        n_informative=4,
-        expr=expr,
-        col_map=col_map,
-        scaler=None,
-        dist=dist,
-        seed=42
+        n_informative=4, expr=expr, col_map=col_map, scaler=None, dist=dist, seed=42
     )
 
     with pytest.raises(Exception) as exec_info:
@@ -94,7 +89,7 @@ def test_data_scaling():
             col_map=col_map,
             scaler=lambda x: x,
             dist=dist,
-            seed=42
+            seed=42,
         )
     err = "Please provide a valid sklearn scaler."
     assert err in str(exec_info.value)

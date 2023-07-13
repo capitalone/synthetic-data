@@ -74,11 +74,11 @@ def test_discrete_dist_detection():
     for col in report["data_stats"]:
         col_name, col_stats = col["column_name"], col["statistics"]
         detected_dist = _detect_dist_discrete(col_stats)
-        #if col_name == "randint" or col_name == "randint_nonzero_min":
+        # if col_name == "randint" or col_name == "randint_nonzero_min":
         #    assert detected_dist["dist"] == "randint"
-        #elif col_name == "binomial":
+        # elif col_name == "binomial":
         #    assert detected_dist["dist"] == "binom"
-        assert detected_dist["dist"] == 'multinomial'
+        assert detected_dist["dist"] == "multinomial"
 
 
 def test_gen_rv_hist_continuous():
@@ -87,7 +87,7 @@ def test_gen_rv_hist_continuous():
     data = {
         "uniform": stats.uniform.rvs(size=1000),
         "normal": stats.norm.rvs(size=1000),
-        "normal_nonzero_mean": stats.norm.rvs(5, 2, size=1000)
+        "normal_nonzero_mean": stats.norm.rvs(5, 2, size=1000),
     }
     data = pd.DataFrame(data)
 
@@ -107,7 +107,7 @@ def test_gen_rv_hist_continuous():
 
         detected_dist = _gen_rv_hist_continuous(col_stats)
         assert detected_dist["dist"] == "rv_histogram"
-        assert isinstance(detected_dist["args"],  stats.rv_histogram)
+        assert isinstance(detected_dist["args"], stats.rv_histogram)
 
 
 def test_continuous_dist_detection():
@@ -116,7 +116,7 @@ def test_continuous_dist_detection():
     data = {
         "uniform": stats.uniform.rvs(size=1000),
         "normal": stats.norm.rvs(size=1000),
-        "normal_nonzero_mean": stats.norm.rvs(5, 2, size=1000)
+        "normal_nonzero_mean": stats.norm.rvs(5, 2, size=1000),
     }
     data = pd.DataFrame(data)
 
@@ -135,8 +135,8 @@ def test_continuous_dist_detection():
         col_name, col_stats = col["column_name"], col["statistics"]
 
         detected_dist = _detect_dist_continuous(col_stats)
-        #if col_name == "uniform":
+        # if col_name == "uniform":
         #    assert detected_dist["dist"] == "uniform"
-        #elif col_name == "normal" or col_name == "normal_nonzero_mean":
+        # elif col_name == "normal" or col_name == "normal_nonzero_mean":
         #    assert detected_dist["dist"] == "norm"
         assert detected_dist["dist"] == "skewnorm"

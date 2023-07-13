@@ -90,7 +90,7 @@ def transform_to_distribution(x, adict):
         method_gen = getattr(stats, adict["dist"])
         method_specific = method_gen(*adict["args"], **adict["kwargs"])
         if adict["dist"] == "multinomial":
-            x_samples = multinomial_ppf(x, method_specific, adict['categories_info'])
+            x_samples = multinomial_ppf(x, method_specific, adict["categories_info"])
         else:
             x_samples = method_specific.ppf(x)
     else:
@@ -183,8 +183,11 @@ def resolve_covariant(n_total, covariant=None):
 
     # test for symmetry on covariance matrix by comparing the matrix to its transpose
     np.testing.assert_almost_equal(
-        covariant, covariant.T, 1e-8
-        , "Assertion error - please check covariance matrix is symmetric.")
+        covariant,
+        covariant.T,
+        1e-8,
+        "Assertion error - please check covariance matrix is symmetric.",
+    )
 
     return covariant
 
@@ -444,10 +447,12 @@ def make_data_from_report(
     # Approximate the original data format given its precision / # of digits
     for i, col_stat in enumerate(report["data_stats"]):
         digits = 0
-        if col_stat['data_type'] not in ['int', 'float']:
+        if col_stat["data_type"] not in ["int", "float"]:
             continue
-        if col_stat['data_type'] in ['float']:
-            precision = col_stat.get('statistics', {}).get('precision', {}).get('max', 0)
+        if col_stat["data_type"] in ["float"]:
+            precision = (
+                col_stat.get("statistics", {}).get("precision", {}).get("max", 0)
+            )
             digits = precision - np.ceil(np.log10(np.abs(x_final[:, i])))
             digits = int((digits[np.isfinite(digits)]).max())
         x_final[:, i] = np.around(x_final[:, i], digits)
