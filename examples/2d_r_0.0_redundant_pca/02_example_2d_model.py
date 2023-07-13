@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import pathlib
 import pickle
 
 import matplotlib.pyplot as plt
@@ -8,7 +9,6 @@ from sklearn.metrics import auc, confusion_matrix, roc_curve
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.layers import Dense, Input
 from tensorflow.keras.models import Model
-import pathlib
 
 from synthetic_data.utils import resolve_output_path
 

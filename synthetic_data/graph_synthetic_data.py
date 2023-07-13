@@ -1,11 +1,11 @@
 """Generate a synthetic graph using a profile"""
-from cmath import nan
 import math
+from cmath import nan
 
 import dataprofiler as dp
 import networkx as nx
-import scipy.stats as st
 import numpy as np
+import scipy.stats as st
 
 
 class GraphDataGenerator(object):
