@@ -55,8 +55,20 @@ def no_tick_labels(ax):
     return
 
 
-def my_tricontour(ax, x1, x2, y, z, labels=None, title=None, levels=None, scatter=True, bar=True, ticks=True):
-    tri2 = ax.tricontourf(x1, x2, z, levels=levels, cmap='afmhot_r')
+def my_tricontour(
+    ax,
+    x1,
+    x2,
+    y,
+    z,
+    labels=None,
+    title=None,
+    levels=None,
+    scatter=True,
+    bar=True,
+    ticks=True,
+):
+    tri2 = ax.tricontourf(x1, x2, z, levels=levels, cmap="afmhot_r")
 
     if scatter:
         scatter = ax.scatter(x1, x2, c=y, label=y, marker=".")
@@ -70,7 +82,7 @@ def my_tricontour(ax, x1, x2, y, z, labels=None, title=None, levels=None, scatte
     ax.set_ylim([-1, 1])
 
     if bar:
-        cbar2 = fig.colorbar(tri2, ax=ax, fraction=0.046, pad=0.08, format='%.3f')
+        cbar2 = fig.colorbar(tri2, ax=ax, fraction=0.046, pad=0.08, format="%.3f")
         # cbar2.formatter.set_powerlimits((0, 0))
         cbar2.update_ticks()
 
@@ -146,10 +158,14 @@ fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
 x1 = x_train[:, 0]
 x2 = x_train[:, 1]
 z = local_attr[:, 0]
-my_tricontour(ax[0], x1, x2, y_train, z, labels=["x1", "x2"], title="x1 SHAP values", ticks=False)
+my_tricontour(
+    ax[0], x1, x2, y_train, z, labels=["x1", "x2"], title="x1 SHAP values", ticks=False
+)
 
 z = local_attr[:, 1]
-my_tricontour(ax[1], x1, x2, y_train, z, labels=["x1", ""], title="x2 SHAP values", ticks=False)
+my_tricontour(
+    ax[1], x1, x2, y_train, z, labels=["x1", ""], title="x2 SHAP values", ticks=False
+)
 
 plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
 plt.savefig(f"{output_path}/trif_round1.png", bbox_inches="tight")
@@ -159,18 +175,18 @@ plt.show()
 # check relative importance...
 #
 # not the best way to think about this...
-#clf_imp = clf.coef_ / np.linalg.norm(clf.coef_)
-#rel_imp = abs(local_attr / np.linalg.norm(local_attr[:, :2], axis=1).reshape(-1, 1))
+# clf_imp = clf.coef_ / np.linalg.norm(clf.coef_)
+# rel_imp = abs(local_attr / np.linalg.norm(local_attr[:, :2], axis=1).reshape(-1, 1))
 #
 # check contour levels for relative importance for x1 and x2
-#fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
-#x1 = x_train[:, 0]
-#x2 = x_train[:, 1]
-#z = rel_imp[:, 0]
-#my_tricontour(ax[0], x1, x2, y_train, z, labels=["x1", "x2"], title="x1 rel imp")
+# fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 5))
+# x1 = x_train[:, 0]
+# x2 = x_train[:, 1]
+# z = rel_imp[:, 0]
+# my_tricontour(ax[0], x1, x2, y_train, z, labels=["x1", "x2"], title="x1 rel imp")
 #
-#z = rel_imp[:, 1]
-#my_tricontour(ax[1], x1, x2, y_train, z, labels=["x1", "x2"], title="x2 rel imp")
+# z = rel_imp[:, 1]
+# my_tricontour(ax[1], x1, x2, y_train, z, labels=["x1", "x2"], title="x2 rel imp")
 #
-#plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
+# plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
 # plt.savefig(f"{output_path}/trif_relative.png", bbox_inches="tight")

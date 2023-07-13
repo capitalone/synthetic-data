@@ -86,7 +86,7 @@ lr_predictor = LRPredictor(model)
 quantity_of_interest = QuantityOfInterest()
 
 n_features = 2
-#qii = QII(background, n_features, quantity_of_interest)
+# qii = QII(background, n_features, quantity_of_interest)
 qii = QII(x_train, n_features, quantity_of_interest)
 
 # pick one sample

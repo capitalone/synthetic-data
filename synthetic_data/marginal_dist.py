@@ -26,7 +26,7 @@ def _gen_rv_hist_continuous(col_stats):
     # Create a continuous distribution from the histogram and sample data from it
     hist_dist = stats.rv_histogram((bin_counts, bin_edges))
     observed_samples = hist_dist.rvs(size=1000)
-    dist = {'dist': 'rv_histogram', 'args': hist_dist}
+    dist = {"dist": "rv_histogram", "args": hist_dist}
     return dist
 
 
@@ -71,7 +71,9 @@ def _detect_dist_discrete(col_stats):
         mapping_order = list(range(len(categories)))
 
     category_mapping = {i: categories[i] for i in mapping_order}
-    observed_freq = [col_stats["categorical_count"][categories[i]] for i in mapping_order]
+    observed_freq = [
+        col_stats["categorical_count"][categories[i]] for i in mapping_order
+    ]
     p = np.array(observed_freq) / sum(observed_freq)
 
     assert p.sum() <= 1.00000000000005, f"ppf is too big, {p}"
@@ -87,7 +89,6 @@ def _detect_dist_discrete(col_stats):
         "category_mapping": category_mapping,
         "mapping_order": mapping_order,
     }
-
 
     return dist
 
