@@ -4,6 +4,7 @@
 Test mapping y = f(X)s
 """
 
+import pathlib
 import pickle
 from math import pi
 
@@ -13,8 +14,6 @@ import pandas as pd
 import seaborn as sns
 
 from synthetic_data.synthetic_data import make_tabular_data
-import pathlib
-
 from synthetic_data.utils import resolve_output_path
 
 plt.close("all")

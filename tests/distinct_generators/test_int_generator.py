@@ -1,7 +1,8 @@
 import os
 import unittest
-import pandas as pd
+
 import numpy as np
+import pandas as pd
 
 from synthetic_data.distinct_generators.int_generator import random_integers
 
