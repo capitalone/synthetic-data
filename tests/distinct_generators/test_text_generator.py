@@ -4,8 +4,7 @@ from unittest import mock
 import numpy as np
 import pandas as pd
 
-from synthetic_data.distinct_generators.text_generator import (random_string,
-                                                               random_text)
+from synthetic_data.distinct_generators.text_generator import random_string, random_text
 
 
 class TestTextGeneratorFunctions(unittest.TestCase):
