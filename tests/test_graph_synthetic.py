@@ -1,8 +1,8 @@
 from __future__ import print_function
 
 import os
-import unittest
 import random
+import unittest
 
 import numpy as np
 import scipy.stats as st

@@ -1,7 +1,8 @@
-import numpy as np
 import string
-from numpy.random import Generator
 from typing import List, Optional
+
+import numpy as np
+from numpy.random import Generator
 
 
 def random_string(

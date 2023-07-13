@@ -1,6 +1,8 @@
 import unittest
+
 import numpy as np
-from numpy.random import Generator, PCG64
+from numpy.random import PCG64, Generator
+
 from synthetic_data.distinct_generators.float_generator import random_floats
 
 
