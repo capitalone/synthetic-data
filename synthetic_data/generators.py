@@ -18,23 +18,25 @@ class TabularGenerator(BaseGenerator):
 
     @classmethod
     def post_profile_processing_w_data(cls, data, profile):
-        """Creates a profile from  a dataset. """
+        """Creates a profile from  a dataset."""
 
         encoder_class = preprocessing.LabelEncoder
 
         profile_options = dp.ProfilerOptions()
-        profile_options.set({
-            "data_labeler.is_enabled": False,
-            "correlation.is_enabled": True,
-        })
+        profile_options.set(
+            {
+                "data_labeler.is_enabled": False,
+                "correlation.is_enabled": True,
+            }
+        )
 
         had_categorical_data = False
         text_cat_name_list = []
         for col_stat in profile.report()["data_stats"]:
-            if (
-                col_stat["categorical"]
-                and col_stat["data_type"] not in ["int", "float"]
-            ):
+            if col_stat["categorical"] and col_stat["data_type"] not in [
+                "int",
+                "float",
+            ]:
                 col_name = col_stat["column_name"]
                 text_cat_name_list.append(col_name)
                 encoder = encoder_class()

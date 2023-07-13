@@ -64,10 +64,9 @@ def test_redundant():
 
     x_cont = np.zeros_like(x)
     for i in range(x.shape[1]):
-          x_tmp = x[:, i]
-          tmp_norm = stats.norm(loc=x_tmp.mean(), scale=x_tmp.std())
-          x_cont[:, i] = tmp_norm.cdf(x_tmp)
-
+        x_tmp = x[:, i]
+        tmp_norm = stats.norm(loc=x_tmp.mean(), scale=x_tmp.std())
+        x_cont[:, i] = tmp_norm.cdf(x_tmp)
 
     for a_dist in dist:
         col = a_dist["column"]
@@ -76,8 +75,8 @@ def test_redundant():
     # this duplicates the generate_redundant_features function
     generator = np.random.RandomState(seed)
     B = 2 * generator.rand(n_informative, n_redundant) - 1
-#    print("in test - B")
-#    print(B)
+    #    print("in test - B")
+    #    print(B)
 
     # x_cont = X[:, :n_informative]
     print("in test - x_cont")
@@ -88,16 +87,16 @@ def test_redundant():
     # now loop over the redundant columns and use MinMax scaler...
     for col in range(n_redundant):
         scaler = MinMaxScaler(feature_range=(-1, 1))
-        x_redundant[:, col] = (
-            scaler.fit_transform(x_redundant[:, col].reshape(-1, 1)).flatten()
-        )
+        x_redundant[:, col] = scaler.fit_transform(
+            x_redundant[:, col].reshape(-1, 1)
+        ).flatten()
 
     x_slice_redundant = X[:, -n_redundant:]
-#    print("in test script - x_slice_redundant")
-#    print(x_slice_redundant)
+    #    print("in test script - x_slice_redundant")
+    #    print(x_slice_redundant)
 
-#    print("in test script - x_redundant")
-#    print(x_redundant)
+    #    print("in test script - x_redundant")
+    #    print(x_redundant)
 
     # check that they match
     assert np.allclose(x_redundant, x_slice_redundant, rtol=1e-05, atol=1e-08)
