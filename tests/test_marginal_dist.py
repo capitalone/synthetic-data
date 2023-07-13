@@ -4,9 +4,12 @@ import pandas as pd
 from scipy import stats
 from sklearn import datasets
 
-from synthetic_data.marginal_dist import (_detect_dist_continuous,
-                                          _detect_dist_discrete,
-                                          _gen_rv_hist_continuous, detect_dist)
+from synthetic_data.marginal_dist import (
+    _detect_dist_continuous,
+    _detect_dist_discrete,
+    _gen_rv_hist_continuous,
+    detect_dist,
+)
 
 
 def test_marginal_dist_detection():
