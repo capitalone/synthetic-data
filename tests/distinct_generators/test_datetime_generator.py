@@ -3,7 +3,7 @@ from unittest import mock
 from numpy.random import Generator, PCG64
 import pandas as pd
 import numpy as np
-import synthetic_data.distinct_generators.datetime_generator as dtg
+import synthetic_data.distinct_generators.datetime_generator as date_generator
 
 
 class TestDatetimeFunctions(unittest.TestCase):
@@ -14,13 +14,13 @@ class TestDatetimeFunctions(unittest.TestCase):
         self.date_format_list = ["%Y-%m-%d", "%d-%m-%Y"]
 
     def test_generate_datetime_return_type(self):
-        date_str = dtg.generate_datetime(
+        date_str = date_generator.generate_datetime(
             self.rng, self.date_format_list[0], self.start_date, self.end_date
         )
         self.assertIsInstance(date_str, str)
 
     def test_generate_datetime_format(self):
-        date_str = dtg.generate_datetime(
+        date_str = date_generator.generate_datetime(
             self.rng, self.date_format_list[0], self.start_date, self.end_date
         )
         try:
@@ -29,7 +29,7 @@ class TestDatetimeFunctions(unittest.TestCase):
             self.fail("pd.to_datetime() raised ValueError unexpectedly")
 
     def test_generate_datetime_range(self):
-        date_str = dtg.generate_datetime(
+        date_str = date_generator.generate_datetime(
             self.rng, self.date_format_list[0], self.start_date, self.end_date
         )
         date_obj = pd.to_datetime(date_str, format=self.date_format_list[0])
@@ -37,14 +37,14 @@ class TestDatetimeFunctions(unittest.TestCase):
         self.assertTrue(date_obj <= self.end_date)
 
     def test_random_datetimes_return_type_and_size(self):
-        result = dtg.random_datetimes(
+        result = date_generator.random_datetimes(
             self.rng, self.date_format_list, self.start_date, self.end_date, 5
         )
         self.assertIsInstance(result, np.ndarray)
         self.assertEqual(result.shape[0], 5)
 
     def test_random_datetimes_default_format_usage(self):
-        result = dtg.random_datetimes(
+        result = date_generator.random_datetimes(
             self.rng, None, self.start_date, self.end_date, 10
         )
         for date_str in result:
@@ -54,7 +54,7 @@ class TestDatetimeFunctions(unittest.TestCase):
                 self.fail("pd.to_datetime() raised ValueError unexpectedly")
 
     def test_random_datetimes_format_usage(self):
-        result = dtg.random_datetimes(
+        result = date_generator.random_datetimes(
             self.rng, self.date_format_list, self.start_date, self.end_date, 10
         )
         format_success = [False] * len(self.date_format_list)
