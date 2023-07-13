@@ -7,12 +7,8 @@ import numpy as np
 import pandas as pd
 
 from synthetic_data import Generator
-from synthetic_data.generators import (
-    GraphGenerator,
-    TabularGenerator,
-    UnstructuredGenerator,
-)
-
+from synthetic_data.generators import (GraphGenerator, TabularGenerator,
+                                       UnstructuredGenerator)
 
 test_dir = os.path.dirname(os.path.realpath(__file__))
 

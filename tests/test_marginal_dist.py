@@ -1,14 +1,12 @@
 import dataprofiler as dp
 import numpy as np
 import pandas as pd
-from sklearn import datasets
-from synthetic_data.marginal_dist import (
-    detect_dist,
-    _detect_dist_discrete,
-    _detect_dist_continuous,
-    _gen_rv_hist_continuous,
-)
 from scipy import stats
+from sklearn import datasets
+
+from synthetic_data.marginal_dist import (_detect_dist_continuous,
+                                          _detect_dist_discrete,
+                                          _gen_rv_hist_continuous, detect_dist)
 
 
 def test_marginal_dist_detection():

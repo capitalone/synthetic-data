@@ -1,6 +1,7 @@
 import numpy as np
-from ..base_generator import BaseGenerator
 from numpy.random import Generator
+
+from ..base_generator import BaseGenerator
 
 
 def random_integers(
