@@ -2,7 +2,7 @@ import numpy as np
 import string
 from numpy.random import Generator
 from typing import List, Optional
-    
+
 
 def random_string(
     rng: Generator,
@@ -10,7 +10,7 @@ def random_string(
     num_rows: int = 1,
     str_len_min: int = 1,
     str_len_max: int = 256,
-    ) -> np.array:
+) -> np.array:
     """
     Randomly generates an array of strings with length between a min and max value
 

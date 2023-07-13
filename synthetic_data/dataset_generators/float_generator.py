@@ -30,4 +30,3 @@ def random_floats(
     if not isinstance(sig_figs, int):
         raise ValueError("sig_figs should be an int")
     return np.around(rng.uniform(min_value, max_value, num_rows), sig_figs)
-

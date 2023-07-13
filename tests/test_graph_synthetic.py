@@ -11,8 +11,8 @@ from synthetic_data.graph_synthetic_data import GraphDataGenerator
 
 test_root_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
-class TestSyntheticGraphGenerator(unittest.TestCase):
 
+class TestSyntheticGraphGenerator(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         np.random.seed(1)
@@ -30,11 +30,11 @@ class TestSyntheticGraphGenerator(unittest.TestCase):
                     "name": "norm",
                     "properties": {
                         "best_fit_properties": [2, 0.5, 0.5],
-                        "mean": [1., 4.2, 1],
+                        "mean": [1.0, 4.2, 1],
                         "variance": [8.5, 305.7, 0],
                         "skew": [4.9, 82.4, 0.5],
                         "kurtosis": [7.2, 117436.2, 0.6],
-                    }
+                    },
                 },
             },
             categorical_distribution={
@@ -61,7 +61,7 @@ class TestSyntheticGraphGenerator(unittest.TestCase):
         attribute = self.synthetic_graph._continuous_attributes[0]
         sample = self.synthetic_graph.sample_continuous(attribute)[0]
         self.assertAlmostEqual(2.22061374344252, sample)
-        
+
     def test_sample_categorical(self):
         np.random.seed(1)
         attribute = self.synthetic_graph._categorical_attributes[0]
@@ -74,15 +74,23 @@ class TestSyntheticGraphGenerator(unittest.TestCase):
         for n in range(0, 2000):
             data.append(self.synthetic_graph.sample_categorical(attribute))
 
-        hist, edges = np.histogram(data, bins=[1.0, 1.75, 2.5, 3.25, 4.25, 5.25, 6.25, 7.25, 8], density=False)
+        hist, edges = np.histogram(
+            data, bins=[1.0, 1.75, 2.5, 3.25, 4.25, 5.25, 6.25, 7.25, 8], density=False
+        )
         self.assertEqual(list(hist), [24, 45, 374, 379, 201, 81, 72, 824])
 
     def test_continuous_properties(self):
         np.random.seed(5)
         attribute = self.synthetic_graph._continuous_attributes[0]
         data = self.synthetic_graph.sample_continuous(attribute, 2000)
-        properties = self.expected_profile["continuous_distribution"][attribute]["properties"]
-        self.assertEqual(properties, self.expected_profile["continuous_distribution"][attribute]["properties"])
+        properties = self.expected_profile["continuous_distribution"][attribute][
+            "properties"
+        ]
+        self.assertEqual(
+            properties,
+            self.expected_profile["continuous_distribution"][attribute]["properties"],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

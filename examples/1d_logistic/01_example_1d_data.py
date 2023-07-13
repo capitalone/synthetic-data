@@ -31,7 +31,7 @@ def my_tricontour(ax, x1, x2, y, z, labels=None, title=None, scatter=True, cmap=
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
     cbar2 = fig.colorbar(tri2, ax=ax, fraction=0.046, pad=0.04, format="%0.2f")
-    #cbar2.formatter.set_powerlimits((0, 0))
+    # cbar2.formatter.set_powerlimits((0, 0))
     # cbar2.update_ticks()
     ax.set_xlim([-1, 1])
     ax.set_ylim([-1, 1])
@@ -130,7 +130,9 @@ fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8, 8))
 x1 = X[:, 0]
 x2 = X[:, 1]
 z = y_reg
-my_tricontour(ax, x1, x2, y_label, z, labels=["x1", "x2"], title="", cmap='Blues', scatter=False)
+my_tricontour(
+    ax, x1, x2, y_label, z, labels=["x1", "x2"], title="", cmap="Blues", scatter=False
+)
 plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
 fig.savefig(f"{output_path}/y_reg_contours.png")
 
@@ -141,7 +143,7 @@ x1 = X[:, 0]
 x2 = X[:, 1]
 z = y_prob
 
-my_tricontour(ax, x1, x2, y_label, z, labels=["x1", "x2"], title="", cmap='Blues')
+my_tricontour(ax, x1, x2, y_label, z, labels=["x1", "x2"], title="", cmap="Blues")
 plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
 fig.savefig(f"{output_path}/y_prob_contours.png")
 plt.show()

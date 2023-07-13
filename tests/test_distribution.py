@@ -9,7 +9,7 @@ np.random.seed(seed=3)
 
 
 def test_distribution():
-    """ Test feature generation - statistics & shape"""
+    """Test feature generation - statistics & shape"""
     mu = 0.0
     sigma = 0.1
     n_samples = 1000

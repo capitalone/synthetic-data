@@ -3,3 +3,4 @@ pytest-cov
 matplotlib
 flake8
 pandas
+pre-commit
