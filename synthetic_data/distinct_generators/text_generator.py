@@ -1,3 +1,4 @@
+"""Contains a random text generator."""
 import string
 from typing import List, Optional
 

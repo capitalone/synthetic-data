@@ -1,13 +1,17 @@
+"""Contains functions for incorporating null values into synthetic data \
+    to replicate null values from the original data."""
 import numpy as np
 
 
 def replicate_null(data_array, null_metrics, cov):
     """
-    Incorporates null values into synthetic data to replicate null values from original data
+    Incorporates null values into synthetic data \
+        to replicate null values from original data.
 
     Args:
         data_array (np.ndarray): data to incorporate null values into
-        null_metrics (dict): dict mapping column id to their 'null_replication_metrics' (if exists)
+        null_metrics (dict): dict mapping column id \
+            to their 'null_replication_metrics' (if exists)
         cov (np.ndarray): covariance matrix from original data report
     Returns:
         data_array (np.ndarray): synthetic data with null values
@@ -30,20 +34,25 @@ def replicate_null(data_array, null_metrics, cov):
 
 def _lda_predict(X, priors, means, cov):
     """
-    Linear Discriminant Analysis based binary classifier to determine whether column values should be null (1) or not (0).
+    Linear Discriminant Analysis based binary classifier \
+        to determine whether column values should be null (1) or not (0).
 
-    Posterior calculation formula based on: 'https://scikit-learn.org/stable/modules/lda_qda.html'.
+    Posterior calculation formula based on: \
+        'https://scikit-learn.org/stable/modules/lda_qda.html'.
 
-    P(x) omitted from above formula as the value remains same among different classes and therefore do not need it
+    P(x) omitted from above formula as the value remains \
+        same among different classes and therefore do not need it
     for relative comparison of posterior values.
 
     Args:
         X (np.ndarray): data array
         priors (list): 'class_prior' field of a column's 'null_replication_metrics'
         means (list): 'class_mean' field of a column's 'null_replication_metrics'
-        cov (np.ndarray): covariance matrix from original data report with the values of column being processed removed
+        cov (np.ndarray): covariance matrix from original data report \
+            with the values of column being processed removed
     Returns:
-        preds (np.ndarray): Binary array indicating if a column value should be changed to null (1) or kept unchanged (0)
+        preds (np.ndarray): Binary array indicating if a column value \
+            should be changed to null (1) or kept unchanged (0)
     """
     preds = list()
     for x in X:
