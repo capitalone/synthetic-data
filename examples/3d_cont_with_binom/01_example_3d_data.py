@@ -4,16 +4,16 @@
 """
 Test mapping y = f(X)
 """
-from synthetic_data.synthetic_data import make_tabular_data
-import seaborn as sns
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from math import pi
-import pickle
-
 import pathlib
+import pickle
+from math import pi
 
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
+from synthetic_data.synthetic_data import make_tabular_data
 from synthetic_data.utils import resolve_output_path
 
 output_path = resolve_output_path(pathlib.Path(__file__).parent.absolute())

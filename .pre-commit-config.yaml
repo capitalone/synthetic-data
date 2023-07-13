@@ -7,3 +7,12 @@ repos:
       - id: black
         types: [file, python]
         language_version: python3
+  # Isort: sort import statements
+  # https://github.com/timothycrosley/isort/blob/develop/.pre-commit-hooks.yaml
+  # The setup.cfg holds the compatible config for use with black
+  # https://github.com/psf/black/blob/master/docs/compatible_configs.md#isort
+  - repo: https://github.com/timothycrosley/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        language_version: python3

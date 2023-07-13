@@ -1,8 +1,10 @@
 import unittest
 from unittest import mock
-from numpy.random import Generator, PCG64
-import pandas as pd
+
 import numpy as np
+import pandas as pd
+from numpy.random import PCG64, Generator
+
 import synthetic_data.distinct_generators.datetime_generator as date_generator
 
 
