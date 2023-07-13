@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 from numpy.random import Generator, PCG64
 
-from synthetic_data.dataset_generators.categorical_generator import random_categorical
+from synthetic_data.distinct_generators.categorical_generator import random_categorical
 
 
 class TestRandomsCategories(unittest.TestCase):
