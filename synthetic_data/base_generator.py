@@ -19,7 +19,6 @@ class BaseGenerator(metaclass=abc.ABCMeta):
         """
         return profile
 
-
     @abc.abstractmethod
     def synthesize(self, *args, **kwargs):
         """Make synthetic data."""

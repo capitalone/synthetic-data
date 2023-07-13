@@ -8,7 +8,9 @@ import pandas as pd
 
 from synthetic_data import Generator
 from synthetic_data.generators import (
-    GraphGenerator, TabularGenerator, UnstructuredGenerator
+    GraphGenerator,
+    TabularGenerator,
+    UnstructuredGenerator,
 )
 
 
@@ -95,9 +97,9 @@ class TestGeneratorBuilder(unittest.TestCase):
             r"Profile object is invalid. The supported profile types are: \[.+\].",
         ):
             Generator(profile=1)
+
     def test_invalid_data(self):
         with self.assertRaisesRegex(
-            ValueError,
-            "data is not in an acceptable format for profiling."
+            ValueError, "data is not in an acceptable format for profiling."
         ):
             Generator(data=1)

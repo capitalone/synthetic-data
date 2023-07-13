@@ -18,7 +18,7 @@ from synthetic_data.utils import resolve_output_path
 
 output_path = resolve_output_path(pathlib.Path(__file__).parent.absolute())
 
-plt.close('all')
+plt.close("all")
 
 
 def my_tricontour(ax, x1, x2, y, z, labels=None, title=None, scatter=True, cmap=None):
@@ -27,16 +27,16 @@ def my_tricontour(ax, x1, x2, y, z, labels=None, title=None, scatter=True, cmap=
     else:
         tri2 = ax.tricontourf(x1, x2, z)
 
-    ax.tricontour(x1, x2, z, colors='k')
+    ax.tricontour(x1, x2, z, colors="k")
 
     if scatter == True:
         scatter = ax.scatter(x1, x2, c=y, label=y, marker=".")
-        #leg1 = ax.legend(*scatter.legend_elements(), loc="lower right", title="class")
+        # leg1 = ax.legend(*scatter.legend_elements(), loc="lower right", title="class")
     ax.set_title(title)
     ax.set_xlabel(labels[0])
     ax.set_ylabel(labels[1])
-    #cbar2 = fig.colorbar(tri2, ax=ax, fraction=0.046, pad=0.04, format="%0.2f")
-    #cbar2.formatter.set_powerlimits((0, 0))
+    # cbar2 = fig.colorbar(tri2, ax=ax, fraction=0.046, pad=0.04, format="%0.2f")
+    # cbar2.formatter.set_powerlimits((0, 0))
     # cbar2.update_ticks()
     ax.set_xlim([-1, 1])
     ax.set_ylim([-1, 1])
@@ -98,7 +98,7 @@ h = sns.pairplot(
     diag_kws={"alpha": 0.5, "clip": (-1, 1)},
 )
 # plt.show()
-#plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
+# plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
 # h.savefig("pairplot_2D_example.png")
 
 
@@ -116,7 +116,7 @@ SMALL = 14
 MEDIUM = 30
 LARGE = 40
 
-plt.rc('text', usetex=True)
+plt.rc("text", usetex=True)
 plt.rc("font", size=MEDIUM)  # controls default text sizes
 plt.rc("axes", titlesize=MEDIUM)  # fontsize of the axes title
 plt.rc("axes", labelsize=MEDIUM)  # fontsize of the x and y labels
@@ -127,14 +127,14 @@ plt.rc("figure", titlesize=LARGE)  # fontsize of the figure title
 
 
 # check contour levels for attr for x1 and x2
-#levels = np.arange(0, 2.2, 0.2)
+# levels = np.arange(0, 2.2, 0.2)
 #
-#fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8, 8))
-#x1 = X[:, 0]
-#x2 = X[:, 1]
-#z = y_reg
-#my_tricontour(ax, x1, x2, y_label, z, labels=["x1", "x2"], title="", cmap='Blues', scatter=False)
-#plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
+# fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(8, 8))
+# x1 = X[:, 0]
+# x2 = X[:, 1]
+# z = y_reg
+# my_tricontour(ax, x1, x2, y_label, z, labels=["x1", "x2"], title="", cmap='Blues', scatter=False)
+# plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
 # fig.savefig(f"{output_path}/y_reg_contours.png")
 
 # check contour of y_prob vs (x1, x2)
@@ -143,7 +143,7 @@ fig, ax = plt.subplots(figsize=(8, 8))
 X1 = X[:, 0]
 X2 = X[:, 1]
 z = y_prob
-my_tricontour(ax, X1, X2, y_label, z, labels=["x1", "x2"], title="", cmap='Blues')
+my_tricontour(ax, X1, X2, y_label, z, labels=["x1", "x2"], title="", cmap="Blues")
 plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
 fig.savefig(f"{output_path}/rosenbrock.png")
 # plt.show()
@@ -178,7 +178,7 @@ fig, ax = plt.subplots(figsize=(8, 8))
 X1 = X[:, 0]
 X2 = X[:, 1]
 z = y_prob
-my_tricontour(ax, X1, X2, y_label, z, labels=["x1", "x2"], title="", cmap='Blues')
+my_tricontour(ax, X1, X2, y_label, z, labels=["x1", "x2"], title="", cmap="Blues")
 plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
 fig.savefig(f"{output_path}/linear.png")
 plt.show()
@@ -212,7 +212,7 @@ fig, ax = plt.subplots(figsize=(8, 8))
 X1 = X[:, 0]
 X2 = X[:, 1]
 z = y_prob
-my_tricontour(ax, X1, X2, y_label, z, labels=["x1", "x2"], title="", cmap='Blues')
+my_tricontour(ax, X1, X2, y_label, z, labels=["x1", "x2"], title="", cmap="Blues")
 plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
 fig.savefig(f"{output_path}/2d_nonlinear.png")
 plt.show()
@@ -225,7 +225,8 @@ seed = 234
 
 cov = np.array([[0.5, 0.0], [0, 0.5]])
 X, y_reg, y_prob, y_label = make_tabular_data(
-    n_samples=2000, cov=cov, col_map=col_map, expr=expr, p_thresh=0.7, seed=seed)
+    n_samples=2000, cov=cov, col_map=col_map, expr=expr, p_thresh=0.7, seed=seed
+)
 
 
 # check contour of y_prob vs (x1, x2)
@@ -234,7 +235,7 @@ fig, ax = plt.subplots(figsize=(8, 8))
 X1 = X[:, 0]
 X2 = X[:, 1]
 z = y_prob
-my_tricontour(ax, X1, X2, y_label, z, labels=["x1", "x2"], title="", cmap='Blues')
+my_tricontour(ax, X1, X2, y_label, z, labels=["x1", "x2"], title="", cmap="Blues")
 plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
 fig.savefig(f"{output_path}/rastrigin.png")
 plt.show()
