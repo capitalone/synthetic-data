@@ -3,7 +3,7 @@ from unittest import mock
 from numpy.random import Generator, PCG64
 import pandas as pd
 import numpy as np
-import synthetic_data.dataset_generators.datetime_generator as dtg
+import synthetic_data.distinct_generators.datetime_generator as dtg
 
 
 class TestDatetimeFunctions(unittest.TestCase):
