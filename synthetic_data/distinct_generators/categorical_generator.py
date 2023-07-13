@@ -13,7 +13,7 @@ def random_categorical(
 
     :param rng: the np rng object used to generate random values
     :type rng: numpy Generator
-    :param categories: a list of values that are allowed in a categorical or None
+    :param categories: a list of values that are allowed in a categorical or ["A", "B", "C", "D", "E"] 
     :type categories: string, None, optional
     :param num_rows: the number of rows in np array generated
     :type num_rows: int, optional
