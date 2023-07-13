@@ -2,9 +2,11 @@ import numpy as np
 import pytest
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
-from synthetic_data.synthetic_data import (make_tabular_data,
-                                           pre_data_generation_checks,
-                                           resolve_covariant)
+from synthetic_data.synthetic_data import (
+    make_tabular_data,
+    pre_data_generation_checks,
+    resolve_covariant,
+)
 
 
 def test_resolve_covariant_provided_no_covariant():

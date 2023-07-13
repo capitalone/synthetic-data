@@ -4,8 +4,11 @@ import dataprofiler as dp
 from dataprofiler import StructuredProfiler, UnstructuredProfiler
 from dataprofiler.profilers.graph_profiler import GraphProfiler
 
-from synthetic_data.generators import (GraphGenerator, TabularGenerator,
-                                       UnstructuredGenerator)
+from synthetic_data.generators import (
+    GraphGenerator,
+    TabularGenerator,
+    UnstructuredGenerator,
+)
 
 
 class Generator:
