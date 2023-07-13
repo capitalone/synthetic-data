@@ -1,6 +1,5 @@
-"""Generate a synthetic graph using a profile"""
+"""Generate a synthetic graph using a profile."""
 import math
-from cmath import nan
 
 import dataprofiler as dp
 import networkx as nx
@@ -10,7 +9,8 @@ import scipy.stats as st
 
 class GraphDataGenerator(object):
     """
-    Synthesize graph data from a graph profile object
+    Synthesize graph data from a graph profile object.
+
     params:
     graph_profile
 
@@ -22,14 +22,15 @@ class GraphDataGenerator(object):
     """
 
     def __init__(self, graph):
-
+        """Initiate GraphDataGenerator."""
         if (
             not isinstance(graph, dp.GraphProfiler)
             and not isinstance(graph, dict)
             and not isinstance(graph, nx.Graph)
         ):
             raise NotImplementedError(
-                "Graph Profile must be a GraphProfiler object, a NetworkX Graph, or a dict"
+                "Graph Profile must be a GraphProfiler object, \
+                    a NetworkX Graph, or a dict"
             )
 
         if isinstance(graph, nx.Graph):
@@ -133,7 +134,7 @@ class GraphDataGenerator(object):
         return sample
 
     def random_bin_sample_categorial(self, bin_counts):
-        """Sample random bin from a categorical distribution histogram"""
+        """Sample random bin from a categorical distribution histogram."""
         cumulative_distribution = self.cumulative_histogram_distribution(bin_counts)
         random_var = np.random.uniform(0, 1)
 
@@ -143,7 +144,7 @@ class GraphDataGenerator(object):
         return None
 
     def cumulative_histogram_distribution(self, bin_counts):
-        """Calculate cumulative distribution for weighted bin sizes"""
+        """Calculate cumulative distribution for weighted bin sizes."""
         total = sum(bin_counts)
         total_percent = []
 
