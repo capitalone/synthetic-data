@@ -31,14 +31,13 @@ class Generator:
 
         profile = kwargs.pop("profile", None)
         data = kwargs.pop("data", None)
-        if not profile and not data:
+        if not profile and data is None:
             raise ValueError(
                 "No profile object or dataset was passed in kwargs. "
                 "If you want to generate synthetic data from a "
                 "profile, pass in a profile object through the "
                 'key "profile" or data through the key "data" in kwargs.'
             )
-
         if data is not None:
             profile_options = dp.ProfilerOptions()
             profile_options.set({
