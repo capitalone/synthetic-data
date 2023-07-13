@@ -14,9 +14,9 @@ from scipy import stats
 from sklearn.preprocessing import MinMaxScaler
 
 from synthetic_data.synthetic_data import (
+    generate_redundant_features,
     make_tabular_data,
     transform_to_distribution,
-    generate_redundant_features,
 )
 
 np.random.seed(111)

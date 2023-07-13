@@ -13,7 +13,6 @@ from synthetic_data.generators import (
     UnstructuredGenerator,
 )
 
-
 test_dir = os.path.dirname(os.path.realpath(__file__))
 
 

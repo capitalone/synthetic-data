@@ -4,13 +4,16 @@
 Test mapping y = f(X
 """
 
-from synthetic_data.synthetic_data import make_tabular_data
-import numpy as np
-from math import pi
-import sys  # isort:skip
 import pathlib
+from math import pi
 
+import numpy as np
+
+from synthetic_data.synthetic_data import make_tabular_data
 from synthetic_data.utils import resolve_output_path
+
+import sys  # isort:skip
+
 
 output_path = resolve_output_path(pathlib.Path(__file__).parent.absolute())
 

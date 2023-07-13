@@ -1,7 +1,9 @@
 import unittest
 from unittest import mock
-import pandas as pd
+
 import numpy as np
+import pandas as pd
+
 from synthetic_data.distinct_generators.text_generator import random_string, random_text
 
 
