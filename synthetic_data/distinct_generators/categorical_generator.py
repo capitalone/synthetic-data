@@ -6,7 +6,10 @@ from numpy.random import Generator
 
 
 def random_categorical(
-    rng: Generator, categories: Optional[List[str]] = None, num_rows: int = 1
+    rng: Generator,
+    categories: Optional[List[str]] = None,
+    num_rows: int = 1,
+    probabilities: Optional[List[int]] = None,
 ) -> np.array:
     """
     Randomly generates an array of categorical chosen out of categories
@@ -24,4 +27,11 @@ def random_categorical(
         categories = ["A", "B", "C", "D", "E"]
     if num_rows > len(categories):
         raise ValueError("num_rows exceeds number of categories")
-    return rng.choice(categories, (num_rows,))
+    if probabilities is None:
+        return rng.choice(categories, size=num_rows)
+
+    if len(categories) != len(probabilities):
+        raise ValueError("categories and probabilities must be of the same length")
+    if not np.isclose(sum(probabilities), 1):
+        raise ValueError("Probabilities must sum to 1")
+    return rng.choice(categories, size=num_rows, p=probabilities)

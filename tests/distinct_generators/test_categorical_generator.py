@@ -9,7 +9,7 @@ from synthetic_data.distinct_generators.categorical_generator import random_cate
 class TestRandomsCategories(unittest.TestCase):
     def setUp(self):
         self.rng = Generator(PCG64(12345))
-        self.categories = ["People", "Cats", "Dogs"]
+        self.categories = ["People", "Cats", "Dogs", "Bees", "Spiders"]
 
     def test_default_return_validity(self):
         result = random_categorical(self.rng, num_rows=5)
@@ -27,3 +27,30 @@ class TestRandomsCategories(unittest.TestCase):
         self.assertIsInstance(result, np.ndarray)
         self.assertTrue(set(result).issubset(self.categories))
         self.assertEqual(result.shape[0], 2)
+
+    def test_weighted_return_validity(self):
+        cat_probs = [0.1, 0.5, 0.0, 0.3, 0.1]
+        for i in range(10):
+            result = random_categorical(
+                self.rng,
+                categories=self.categories,
+                num_rows=5,
+                probabilities=cat_probs,
+            )
+            print(result)
+            self.assertIsInstance(result, np.ndarray)
+            self.assertTrue(set(result).issubset(self.categories))
+            self.assertEqual(result.shape[0], 5)
+
+        cat_probs = [0.1, 0.4, 0.1, 0.3, 0.1]
+        for i in range(10):
+            result = random_categorical(
+                self.rng,
+                categories=self.categories,
+                num_rows=5,
+                probabilities=cat_probs,
+            )
+            print(result)
+            self.assertIsInstance(result, np.ndarray)
+            self.assertTrue(set(result).issubset(self.categories))
+            self.assertEqual(result.shape[0], 5)
