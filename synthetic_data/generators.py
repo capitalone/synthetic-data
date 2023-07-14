@@ -18,10 +18,8 @@ class TabularGenerator(BaseGenerator):
 
     @classmethod
     def post_profile_processing_w_data(cls, data, profile):
-        """Creates a profile from  a dataset."""
-
+        """Create a profile from a dataset."""
         encoder_class = preprocessing.LabelEncoder
-
         profile_options = dp.ProfilerOptions()
         profile_options.set(
             {
@@ -29,7 +27,6 @@ class TabularGenerator(BaseGenerator):
                 "correlation.is_enabled": True,
             }
         )
-
         had_categorical_data = False
         text_cat_name_list = []
         for col_stat in profile.report()["data_stats"]:
@@ -51,9 +48,7 @@ class TabularGenerator(BaseGenerator):
         return profile
 
     def synthesize(self, num_samples: int, seed=None, noise_level: float = None):
-        """
-        Generate synthetic tabular data.
-        """
+        """Generate synthetic tabular data."""
         if seed is None:
             seed = self.seed
 
