@@ -48,3 +48,11 @@ repos:
     hooks:
       - id: pyupgrade
         args: ["--py38-plus"]
+  # Autoflake - cleanup unused variables and imports
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.0.0
+    hooks:
+      - id: autoflake
+        args:
+          - "--in-place"
+          - "--ignore-pass-statements"
