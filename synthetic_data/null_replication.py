@@ -5,7 +5,7 @@ import numpy as np
 
 def replicate_null(data_array, null_metrics, cov):
     """
-    Incorporates null values into synthetic data \
+    Incorporate null values into synthetic data \
         to replicate null values from original data.
 
     Args:

@@ -13,7 +13,7 @@ class BaseGenerator(metaclass=abc.ABCMeta):
 
     @classmethod
     def post_profile_processing_w_data(cls, data, profile):
-        """Any extra processing needed on the profile priorto generation."""
+        """Any extra processing needed on the profile prior to generation."""
         return profile
 
     @abc.abstractmethod
