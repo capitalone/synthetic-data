@@ -1,4 +1,4 @@
-"""
+"""  # noqa D205 D400
 Methods that support detecting and translating marginal distributions from a
 DataProfiler report into scipy.stats distributions used by synthetic_data
 """
@@ -7,8 +7,8 @@ from scipy import stats
 
 
 def _gen_rv_hist_continuous(col_stats):
-    """
-    Detects type of continuous distribution based on Kolmogorov-Smirnov Goodness-of-fit test
+    """Detect type of continuous dist based on Kolmogorov-Smirnov Goodness-of-fit test.
+
     https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test.
     Args:
         col_stats (dict): Column data statistics. The column data must be
@@ -17,7 +17,6 @@ def _gen_rv_hist_continuous(col_stats):
         dist (dict): Dictionary stating distribution type along with other parameters
         for the distribution.
     """
-
     bin_counts, bin_edges = (
         col_stats["histogram"]["bin_counts"],
         col_stats["histogram"]["bin_edges"],
@@ -25,18 +24,21 @@ def _gen_rv_hist_continuous(col_stats):
 
     # Create a continuous distribution from the histogram and sample data from it
     hist_dist = stats.rv_histogram((bin_counts, bin_edges))
-    observed_samples = hist_dist.rvs(size=1000)
+    # observed_samples = hist_dist.rvs(size=1000)
     dist = {"dist": "rv_histogram", "args": hist_dist}
     return dist
 
 
 def _detect_dist_continuous(col_stats):
-    """
-    Detects type of continuous distribution based on Kolmogorov-Smirnov Goodness-of-fit test, https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test.
+    """Detect type of continuous dist based on Kolmogorov-Smirnov Goodness-of-fit test.
+
+    https://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test.
     Args:
-        col_stats (dict): Column data statistics. The column data must be of a continuous numerical random variable.
+        col_stats (dict): Column data statistics.
+        The column data must be of a continuous numerical random variable.
     Returns:
-        dist (dict): Dictionary stating distribution type along with other parameters for the distribution.
+        dist (dict): Dictionary stating distribution type
+            along with other parameters for the distribution.
     """
     # Distributions to test against (must be a continuous distribution from scipy.stats)
     # Distribution name -> list of positional arguments for the distribution
@@ -50,8 +52,9 @@ def _detect_dist_continuous(col_stats):
 
 
 def _detect_dist_discrete(col_stats):
-    """
-    Constructs a scipy.stats.multinomial distribution for a feature based on
+    """Construct a scipy.stats.multinomial distribution for a feature.
+
+    Distribution construted for a feature based on
     the columns stats provided by a DataProfiler report.
 
     Args:
@@ -67,7 +70,7 @@ def _detect_dist_discrete(col_stats):
     # can sort if all numeric here
     try:
         mapping_order = np.argsort(list(map(int, categories)))
-    except:
+    except:  # noqa E722
         mapping_order = list(range(len(categories)))
 
     category_mapping = {i: categories[i] for i in mapping_order}
@@ -94,10 +97,10 @@ def _detect_dist_discrete(col_stats):
 
 
 def detect_dist(report):
-    """
-    Detects type of distribution modeled by each column of a DataProfiler report.
+    """Detect type of distribution modeled by each column of a DataProfiler report.
+
     Type of distribution selected for each column based on goodness-of-fit test
-    (Chi-Squared test for discrete variables, Kolmogorov-Smirnov test for continuous variables).
+    (Chi-Squared test for discrete vars, Kolmogorov-Smirnov test for continuous vars).
 
     Args:
         report (dict): DataProfiler report

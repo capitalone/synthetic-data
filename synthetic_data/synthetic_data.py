@@ -5,7 +5,8 @@ Generate synthetic data for a binary classification problem.
 Inspired by sklearn.datasets.make_classification.
 https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_classification.html
 
-Generate tabular data to provide ground truth data for post-hoc explainability of black box models.
+Generate tabular data to provide ground truth data
+    for post-hoc explainability of black box models.
 With user specified control over:
     1. marginal distribution for features
     2. correlation structure
@@ -25,7 +26,6 @@ With user specified control over:
 
 import numpy as np
 import pandas as pd
-import scipy.interpolate as interpolate
 from scipy import stats
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import MinMaxScaler
@@ -36,7 +36,8 @@ from synthetic_data.parser import MathParser
 
 
 def multinomial_ppf(x_uniform, my_dist, categories_info):
-    """
+    """Generate samples from a multinomial distribution given uniform random vars.
+
     input:
         x_uniform - uniform distribution random variable
         my_dist - scipy.stats.multinomial object
@@ -70,15 +71,15 @@ def multinomial_ppf(x_uniform, my_dist, categories_info):
 
 
 def transform_to_distribution(x, adict):
-    """
+    """Transform uniform random vars to desired distribution.
+
     Input:
         x - input uniform distributed random variable
         adict - dictionary corresponding to the desired distribution (name & params)
-        e.g. {'col':[list], 'dist':'normal', 'kwargs':{'loc':0.0, 'scale':1.0, 'size'=n_samples}}
+        e.g. {'col':[list], 'dist':'normal', 'kwargs':{'loc':0.0, 'scale':1.0, 'size'=n_samples}}   # noqa E501
     Output:
         x_samples - the transformed vector with desired distribution
     """
-
     if "args" not in adict:
         adict["args"] = []
 
@@ -100,7 +101,8 @@ def transform_to_distribution(x, adict):
 
 
 def eval_expr_for_sample(x, col_map, expr):
-    """
+    """Evaluate a given expression.
+
     Inputs:
         x - 1D array with shape = number of symbols
         col_map - dictionary with keys = symbols, values = columns of X
@@ -128,8 +130,7 @@ def eval_expr_for_sample(x, col_map, expr):
 
 
 def sigmoid(x, k=1.0, x0=None):
-    """sigmoid/logistic function"""
-
+    """sigmoid/logistic function."""
     if x0 is None:
         x0 = x.mean()
     sig = 1.0 / (1.0 + np.exp(-k * (x - x0)))
@@ -143,7 +144,8 @@ def sigmoid(x, k=1.0, x0=None):
 
 
 def generate_x_noise(X, noise_level_x, seed=None):
-    """
+    """Generate gaussian white noise.
+
     inputs - X (used to determine shape of output matrix)
             noise_level_x : strength of the noise (range 0 to 1)
     outputs:
@@ -166,8 +168,9 @@ def generate_x_noise(X, noise_level_x, seed=None):
 
 
 def resolve_covariant(n_total, covariant=None):
-    """Resolves a covariant in the following cases:
-        - If a covariant is not provided a diagonal matrix of 1s is generated, and symmetry is checked via a comparison with the datasets transpose
+    """Resolve a covariant in the following cases:    # noqa: D400 D205
+        - If a covariant is not provided a diagonal matrix of 1s is generated,
+            and symmetry is checked via a comparison with the datasets transpose
         - If a covariant is provided, the symmetry is checked
 
     args:
@@ -176,7 +179,6 @@ def resolve_covariant(n_total, covariant=None):
     returns:
         covariant {np_array}
     """
-
     if covariant is None:
         print("No covariant provided, generating one.")
         covariant = np.diag(np.ones(n_total))
@@ -193,11 +195,10 @@ def resolve_covariant(n_total, covariant=None):
 
 
 def pre_data_generation_checks(n_informative, col_map, n_total):
-    """This function is used to ensure input, and input combinations are correct before
-    generating synthetic data
+    """Ensure input, and input combinations are correct before generating synthetic data.
 
     args:
-        n_informative {int} -- n_informative - number of informative features - need to appear at least once in expression
+        n_informative {int} -- n_informative - number of informative features - need to appear at least once in expression  # noqa E501
         col_map {dict} -- dictionary mapping str symbols to columns
         n_total {int} -- total number of samples in the dataset
     """
@@ -211,6 +212,7 @@ def pre_data_generation_checks(n_informative, col_map, n_total):
 
 
 def generate_redundant_features(x, n_informative, n_redundant, seed):
+    """Generate redundant features."""
     generator = np.random.RandomState(seed)
     B = 2 * generator.rand(n_informative, n_redundant) - 1
     # print("in main script - b")
@@ -225,7 +227,7 @@ def generate_redundant_features(x, n_informative, n_redundant, seed):
 
 
 def scaler_check(scaler):
-
+    """Check if scalar object is a valid sklearn scaler."""
     if (
         not (
             issubclass(scaler.__class__, BaseEstimator)
@@ -237,8 +239,8 @@ def scaler_check(scaler):
 
 
 def marginal_dist_check(dist, num_cols):
-    """
-    Checks if dist argument passed to make_tabular_data is valid.
+    """Check if dist argument passed to make_tabular_data is valid.
+
     args:
         dist - list of dicts for marginal distributions to apply to columns
     """
@@ -267,11 +269,11 @@ def make_tabular_data(
     scaler=MinMaxScaler(feature_range=(-1, 1)),
     seed=None,
 ):
-    """
-    Use copulas and marginal distributions to build the joint probability of X.
+    """Use copulas and marginal distributions to build the joint probability of X.
+
     args:
         n_samples - number of samples to generate
-        n_informative - number of informative features - need to appear at least once in expression
+        n_informative - number of informative features - need to appear at least once in expression   # noqa E501
         n_redundant - number of redundant features
         n_nuisance - number of nuiscance features with no signal (noise)
         n_classes - number of classes for labeling (default is binary classification)
@@ -293,9 +295,11 @@ def make_tabular_data(
 
 
 
-    returns X: array of shape [n_samples, n_total] where n_total = n_inform + n_nuisance, etc.
+    returns X: array of shape [n_samples, n_total]
+                where n_total = n_inform + n_nuisance, etc.
             y: array of shape [n_samples] with our labels
-            y_reg: array of shape [n_samples] with regression values which get split for labels
+            y_reg: array of shape [n_samples]
+                with regression values which get split for labels
     """
     if dist is None:
         dist = []
@@ -391,8 +395,8 @@ def make_data_from_report(
     noise_level: float = 0.0,
     seed=None,
 ) -> pd.DataFrame:
-    """
-    Use a DataProfiler report to generate a synthetic data set to mimic the report.
+    """Use a DataProfiler report to generate a synthetic data set to mimic the report.
+
     args:
         report (dict) - DataProfiler report
         n_samples (int) - number of samples to generate
@@ -401,7 +405,6 @@ def make_data_from_report(
 
     returns X: DataFrame of shape [n_samples, n_total]
     """
-
     # make sure correlation matrix was generated
     if report["global_stats"]["correlation_matrix"] is None:
         raise Exception("The report must have the correlation matrix enabled")

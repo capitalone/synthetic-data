@@ -1,10 +1,11 @@
+"""Contains utility helper functions."""
 import pathlib
 
 import numpy as np
 
 
 def resolve_output_path(file_path):
-    """Resolves and creates the output path for a given examples artifacts
+    """Resolve and create the output path for a given examples artifacts.
 
     Args:
         file_path (str): file path string
@@ -12,7 +13,6 @@ def resolve_output_path(file_path):
     Returns:
         [str]: path to the examples output
     """
-
     output_path = f"{file_path}/output"
 
     pathlib.Path(output_path).mkdir(parents=True, exist_ok=True)
@@ -21,15 +21,16 @@ def resolve_output_path(file_path):
 
 
 def tuples_to_cov(list_of_tuples, col_map):
-    """
+    """Specify correlation between features.
+
     Alternative form for specifying correlation between features, intended
-    to be an easier specification, and less error prone (using symbolic names rather than indices)
+    to be an easier specification, and less error prone
+    (using symbolic names rather than indices)
 
     Input - list of tuples where each tuple is of the form:
             (sym_i, sym_j, correlation)
     Output - symmetric (n_features x n_features) array of cov
     """
-
     n_feat = len(col_map.keys())
     cov = np.zeros((n_feat, n_feat))
 
