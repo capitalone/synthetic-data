@@ -11,7 +11,7 @@ def random_floats(
     num_rows: int = 1,
 ) -> np.array:
     """
-    Randomly generates an array of floats between a min and max value
+    Randomly generates an array of floats between a min and max value.
 
     :param rng: the np rng object used to generate random values
     :type rng: numpy Generator

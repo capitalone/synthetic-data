@@ -22,6 +22,7 @@ class Generator:
 
     @classmethod
     def is_valid_data(cls, profile):
+        """Check if profile's data is valid."""
         return profile.__class__ in cls.valid_data_types
 
     def __new__(cls, seed=None, config=None, *args, **kwargs):
@@ -29,7 +30,7 @@ class Generator:
         if config:
             try:
                 return config(*args, **kwargs)
-            except Exception as e:
+            except Exception as e:  # noqa F841
                 raise ValueError("Warning: profile doesn't match user setting.")
 
         profile = kwargs.pop("profile", None)
