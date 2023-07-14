@@ -9,7 +9,7 @@ from synthetic_data.distinct_generators.categorical_generator import random_cate
 class TestRandomsCategories(unittest.TestCase):
     def setUp(self):
         self.rng = Generator(PCG64(12345))
-        self.categories = ["Lions", "Tigers", "Bears", "Oh my"]
+        self.categories = ["Lions", "Tigers", "Bears", "Oh", "my"]
 
     def test_default_return_validity(self):
         result = random_categorical(self.rng, num_rows=5)
@@ -56,26 +56,21 @@ class TestRandomsCategories(unittest.TestCase):
     def test_len_probs_vs_categories(self):
         cat_probs = [0.1, 0.4, 0.1]
         nbr_cats = 5
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaisesRegex(ValueError, "categories and probabilities must be of the same length"):
             result = random_categorical(
                 self.rng,
                 categories=self.categories,
                 num_rows=nbr_cats,
                 probabilities=cat_probs,
-            )
-            self.assertTrue(
-                "categories and probabilities must be of the same length"
-                in str(context.exception)
             )
 
     def test_bad_probability_sum(self):
         cat_probs = [0.1, 0.7, 0.0, 0.3, 0.1]
         nbr_cats = 5
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaisesRegex(ValueError, "Probabilities must sum to 1"):
             result = random_categorical(
                 self.rng,
                 categories=self.categories,
                 num_rows=nbr_cats,
                 probabilities=cat_probs,
             )
-            self.assertTrue("Probabilities must sum to 1" in str(context.exception))
