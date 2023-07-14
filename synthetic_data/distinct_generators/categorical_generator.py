@@ -21,7 +21,8 @@ def random_categorical(
     :type categories: string, None, optional
     :param num_rows: the number of rows in np array generated
     :type num_rows: int, optional
-    :param probabilities: a list of floats that respresent the probability each category will be chosen
+    :param probabilities: a list of floats that respresent the
+        probability each category will be chosen
     :type probabilities: float, optional
 
     :return: np array of categories
