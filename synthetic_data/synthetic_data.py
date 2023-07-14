@@ -76,7 +76,11 @@ def transform_to_distribution(x, adict):
     Input:
         x - input uniform distributed random variable
         adict - dictionary corresponding to the desired distribution (name & params)
-        e.g. {'col':[list], 'dist':'normal', 'kwargs':{'loc':0.0, 'scale':1.0, 'size'=n_samples}}   # noqa E501
+        e.g. {
+              'col':[list],
+              'dist':'normal',
+              'kwargs':{'loc':0.0, 'scale':1.0, 'size'=n_samples}
+             }
     Output:
         x_samples - the transformed vector with desired distribution
     """
@@ -168,7 +172,9 @@ def generate_x_noise(X, noise_level_x, seed=None):
 
 
 def resolve_covariant(n_total, covariant=None):
-    """Resolve a covariant in the following cases:    # noqa: D400 D205
+    """Resolve a covariant.
+
+    Resolves a covariant in the following cases:
         - If a covariant is not provided a diagonal matrix of 1s is generated,
             and symmetry is checked via a comparison with the datasets transpose
         - If a covariant is provided, the symmetry is checked
@@ -198,7 +204,8 @@ def pre_data_generation_checks(n_informative, col_map, n_total):
     """Ensure input, and input combinations are correct before generating synthetic data.
 
     args:
-        n_informative {int} -- n_informative - number of informative features - need to appear at least once in expression  # noqa E501
+        n_informative {int} -- n_informative - number of informative features \
+            - need to appear at least once in expression
         col_map {dict} -- dictionary mapping str symbols to columns
         n_total {int} -- total number of samples in the dataset
     """
@@ -273,7 +280,8 @@ def make_tabular_data(
 
     args:
         n_samples - number of samples to generate
-        n_informative - number of informative features - need to appear at least once in expression   # noqa E501
+        n_informative - number of informative features \
+            - need to appear at least once in expression
         n_redundant - number of redundant features
         n_nuisance - number of nuiscance features with no signal (noise)
         n_classes - number of classes for labeling (default is binary classification)

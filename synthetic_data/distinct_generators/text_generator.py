@@ -14,7 +14,7 @@ def random_string(
     str_len_max: int = 256,
 ) -> np.array:
     """
-    Randomly generates an array of strings with length between the min and max value.
+    Randomly generates an array of strings with length between the min and max values.
 
     :param rng: the np rng object used to generate random values
     :type rng: numpy Generator
@@ -55,7 +55,7 @@ def random_text(
     str_len_max: int = 1000,
 ) -> np.array:
     """
-    Randomly generates an array of text with length between the min and max value.
+    Randomly generates an array of text with length between the min and max values.
 
     :param rng: the np rng object used to generate random values
     :type rng: numpy Generator

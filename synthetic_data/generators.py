@@ -18,7 +18,7 @@ class TabularGenerator(BaseGenerator):
 
     @classmethod
     def post_profile_processing_w_data(cls, data, profile):
-        """Create a profile from  a dataset."""
+        """Create a profile from a dataset."""
         encoder_class = preprocessing.LabelEncoder
         profile_options = dp.ProfilerOptions()
         profile_options.set(

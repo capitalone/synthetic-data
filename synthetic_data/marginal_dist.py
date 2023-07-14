@@ -25,8 +25,6 @@ def _gen_rv_hist_continuous(col_stats):
 
     # Create a continuous distribution from the histogram and sample data from it
     hist_dist = stats.rv_histogram((bin_counts, bin_edges))
-    # observed_samples = hist_dist.rvs(size=1000)
-    _ = hist_dist.rvs(size=1000)
     dist = {"dist": "rv_histogram", "args": hist_dist}
     return dist
 
@@ -72,7 +70,7 @@ def _detect_dist_discrete(col_stats):
     # can sort if all numeric here
     try:
         mapping_order = np.argsort(list(map(int, categories)))
-    except ValueError:
+    except Exception:
         mapping_order = list(range(len(categories)))
 
     category_mapping = {i: categories[i] for i in mapping_order}
@@ -102,7 +100,8 @@ def detect_dist(report):
     """Detect type of distribution modeled by each column of a DataProfiler report.
 
     Type of distribution selected for each column based on goodness-of-fit test
-    (Chi-Squared test for discrete vars, Kolmogorov-Smirnov test for continuous vars).
+    (Chi-Squared test for discrete variables, \
+    Kolmogorov-Smirnov test for continuous variables).
 
     Args:
         report (dict): DataProfiler report
