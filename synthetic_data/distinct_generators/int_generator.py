@@ -7,7 +7,7 @@ def random_integers(
     rng: Generator, min_value: int = -1e6, max_value: int = 1e6, num_rows: int = 1
 ) -> np.array:
     """
-    Randomly generates an array of integers between a min and max value.
+    Randomly generates an array of integers between the given min and max values.
 
     :param rng: the np rng object used to generate random values
     :type rng: numpy Generator
