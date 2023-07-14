@@ -32,13 +32,3 @@ repos:
     hooks:
       - id: check-manifest
         additional_dependencies: ['scikit-learn', 'dataprofiler', 'numpy','scipy']
-  # General fixers: format files for white spaces and trailing new lines, warn on debug statements
-  # https://github.com/pre-commit/pre-commit-hooks#hooks-available
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
-    hooks:
-      - id: trailing-whitespace
-        exclude: (^tests/data/)
-      - id: debug-statements
-      - id: end-of-file-fixer
-        exclude: (^tests/data/)
