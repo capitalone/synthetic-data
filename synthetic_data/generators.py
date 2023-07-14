@@ -21,7 +21,6 @@ class TabularGenerator(BaseGenerator):
     def post_profile_processing_w_data(cls, data, profile):
         """Create a profile from  a dataset."""
         encoder_class = preprocessing.LabelEncoder
-
         profile_options = dp.ProfilerOptions()
         profile_options.set(
             {
@@ -29,7 +28,6 @@ class TabularGenerator(BaseGenerator):
                 "correlation.is_enabled": True,
             }
         )
-
         had_categorical_data = False
         text_cat_name_list = []
         for col_stat in profile.report()["data_stats"]:
