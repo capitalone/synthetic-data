@@ -22,7 +22,7 @@ class GraphDataGenerator(object):
     """
 
     def __init__(self, graph):
-        """Initiate GraphDataGenerator."""
+        """Initialize GraphDataGenerator."""
         if (
             not isinstance(graph, dp.GraphProfiler)
             and not isinstance(graph, dict)
