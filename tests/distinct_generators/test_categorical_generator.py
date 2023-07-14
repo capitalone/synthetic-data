@@ -9,7 +9,7 @@ from synthetic_data.distinct_generators.categorical_generator import random_cate
 class TestRandomsCategories(unittest.TestCase):
     def setUp(self):
         self.rng = Generator(PCG64(12345))
-        self.categories = ["People", "Cats", "Dogs", "Bees", "Spiders"]
+        self.categories = ["Lions", "Tigers", "Bears", "Oh my"]
 
     def test_default_return_validity(self):
         result = random_categorical(self.rng, num_rows=5)
