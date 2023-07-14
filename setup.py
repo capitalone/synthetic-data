@@ -25,7 +25,7 @@ def parse_requirements(filename):
     return [line for line in lineiter if line and not line.startswith("#")]
 
 
-with open("README.md", "r") as readme:
+with open("README.md") as readme:
     long_description = readme.read()
 
 setup(
