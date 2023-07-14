@@ -56,7 +56,9 @@ class TestRandomsCategories(unittest.TestCase):
     def test_len_probs_vs_categories(self):
         cat_probs = [0.1, 0.4, 0.1]
         nbr_cats = 5
-        with self.assertRaisesRegex(ValueError, "categories and probabilities must be of the same length"):
+        with self.assertRaisesRegex(
+            ValueError, "categories and probabilities must be of the same length"
+        ):
             result = random_categorical(
                 self.rng,
                 categories=self.categories,
