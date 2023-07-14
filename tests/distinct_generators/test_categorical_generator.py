@@ -37,7 +37,6 @@ class TestRandomsCategories(unittest.TestCase):
                 num_rows=5,
                 probabilities=cat_probs,
             )
-            print(result)
             self.assertIsInstance(result, np.ndarray)
             self.assertTrue(set(result).issubset(self.categories))
             self.assertEqual(result.shape[0], 5)
@@ -50,7 +49,33 @@ class TestRandomsCategories(unittest.TestCase):
                 num_rows=5,
                 probabilities=cat_probs,
             )
-            print(result)
             self.assertIsInstance(result, np.ndarray)
             self.assertTrue(set(result).issubset(self.categories))
             self.assertEqual(result.shape[0], 5)
+
+    def test_len_probs_vs_categories(self):
+        cat_probs = [0.1, 0.4, 0.1]
+        nbr_cats = 5
+        with self.assertRaises(ValueError) as context:
+            result = random_categorical(
+                self.rng,
+                categories=self.categories,
+                num_rows=nbr_cats,
+                probabilities=cat_probs,
+            )
+            self.assertTrue(
+                "categories and probabilities must be of the same length"
+                in str(context.exception)
+            )
+
+    def test_bad_probability_sum(self):
+        cat_probs = [0.1, 0.7, 0.0, 0.3, 0.1]
+        nbr_cats = 5
+        with self.assertRaises(ValueError) as context:
+            result = random_categorical(
+                self.rng,
+                categories=self.categories,
+                num_rows=nbr_cats,
+                probabilities=cat_probs,
+            )
+            self.assertTrue("Probabilities must sum to 1" in str(context.exception))
