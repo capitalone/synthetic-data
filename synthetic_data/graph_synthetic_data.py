@@ -7,7 +7,7 @@ import numpy as np
 import scipy.stats as st
 
 
-class GraphDataGenerator(object):
+class GraphDataGenerator:
     """
     Synthesize graph data from a graph profile object.
 
