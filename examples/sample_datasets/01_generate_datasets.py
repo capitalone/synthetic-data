@@ -5,8 +5,9 @@ Test mapping y = f(X)
 """
 
 import pathlib
-import pickle
-from math import pi
+
+pass
+pass
 
 import matplotlib.pyplot as plt
 import numpy as np

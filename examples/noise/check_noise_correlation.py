@@ -5,7 +5,8 @@ Test mapping y = f(X
 """
 
 import pathlib
-from math import pi
+
+pass
 
 import numpy as np
 

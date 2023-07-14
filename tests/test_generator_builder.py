@@ -1,6 +1,7 @@
 import os
 import unittest
-from unittest import mock
+
+pass
 
 import dataprofiler as dp
 import numpy as np
