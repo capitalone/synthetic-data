@@ -1,7 +1,7 @@
+"""Contains a categorical generator."""
 from typing import List, Optional
 
 import numpy as np
-import pandas as pd
 from numpy.random import Generator
 
 
@@ -12,11 +12,12 @@ def random_categorical(
     probabilities: Optional[List[float]] = None,
 ) -> np.array:
     """
-    Randomly generates an array of categorical chosen out of categories
+    Randomly generates an array of categorical values chosen out of categories.
 
     :param rng: the np rng object used to generate random values
     :type rng: numpy Generator
-    :param categories: a list of values that are allowed in a categorical or defaults to ["A", "B", "C", "D", "E"] if None
+    :param categories: a list of values that are allowed in categorical values \
+        or defaults to ["A", "B", "C", "D", "E"] if None
     :type categories: string, None, optional
     :param num_rows: the number of rows in np array generated
     :type num_rows: int, optional
