@@ -1,14 +1,16 @@
+"""Contains a basic parser with local variable and math functions."""
 import ast
 import math
 import operator as op
 
 
 class MathParser:
-    """Basic parser with local variable and math functions
+    """Basic parser with local variable and math functions.
 
     Args:
        vars (mapping): mapping object where obj[name] -> numerical value
-       math (bool, optional): if True (default) all math function are added in the same name space
+       math (bool, optional): if True (default) all math function
+          are added in the same name space
 
     Example:
        data = {'r': 3.4, 'theta': 3.141592653589793}
@@ -34,6 +36,7 @@ class MathParser:
     }
 
     def __init__(self, vars, math=True):
+        """Initialize MathParser class."""
         self._vars = vars
         if not math:
             self._alt_name = self._no_alt_name
@@ -52,6 +55,7 @@ class MathParser:
         raise NameError(f"{name!r}")
 
     def eval_(self, node):
+        """Evaluate given abstract syntax tree (AST) node."""
         if isinstance(node, ast.Expression):
             return self.eval_(node.body)
         if isinstance(node, ast.Num):
@@ -82,4 +86,5 @@ class MathParser:
         raise TypeError(node)
 
     def parse(self, expr):
+        """Parse given math expression and evaluate."""
         return self.eval_(ast.parse(expr, mode="eval"))
