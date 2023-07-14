@@ -25,4 +25,10 @@ repos:
         additional_dependencies: [flake8-docstrings]
         exclude: (^examples/|^tests/|^.*/__init__.py)
         language_version: python3
-
+  # Check-manifest: ensures required non-Python files are included in MANIFEST.in
+  # https://github.com/mgedmin/check-manifest/blob/master/.pre-commit-hooks.yaml
+  - repo: https://github.com/mgedmin/check-manifest
+    rev: "0.48"
+    hooks:
+      - id: check-manifest
+        additional_dependencies: ['scikit-learn', 'dataprofiler', 'numpy','scipy']
