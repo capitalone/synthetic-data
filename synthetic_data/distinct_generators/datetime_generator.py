@@ -1,3 +1,4 @@
+"""Contains a datetime generator."""
 from typing import Optional
 
 import numpy as np

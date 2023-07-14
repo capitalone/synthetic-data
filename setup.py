@@ -1,3 +1,5 @@
+"""Setup.py File."""
+
 # SPDX-Copyright: Copyright (c) Capital One Services, LLC
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2018 Capital One Services, LLC
@@ -18,7 +20,7 @@ from setuptools import find_packages, setup
 
 
 def parse_requirements(filename):
-    """Loads requirements file and outputs an array of dependencies"""
+    """Load requirements file and outputs an array of dependencies."""
     lineiter = (line.strip() for line in open(filename))
     return [line for line in lineiter if line and not line.startswith("#")]
 
