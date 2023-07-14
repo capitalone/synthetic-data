@@ -9,7 +9,7 @@ def random_categorical(
     rng: Generator,
     categories: Optional[List[str]] = None,
     num_rows: int = 1,
-    probabilities: Optional[List[int]] = None,
+    probabilities: Optional[List[float]] = None,
 ) -> np.array:
     """
     Randomly generates an array of categorical chosen out of categories
@@ -20,6 +20,8 @@ def random_categorical(
     :type categories: string, None, optional
     :param num_rows: the number of rows in np array generated
     :type num_rows: int, optional
+    :param p: a list of floats that respresent the probability each category will be chosen
+    :type p: float, optional
 
     :return: np array of categories
     """
