@@ -1,0 +1,47 @@
+include *.md
+include *.pdf
+include *.txt
+include CODEOWNERS
+recursive-include examples *.csv
+recursive-include examples *.ipynb
+recursive-include examples *.py
+CODEOWNERS
+Roadmap.md
+Synthetic_Data_Generators.md
+examples/1d_logistic/01_example_1d_data.py
+examples/1d_logistic/02_example_2d_model.py
+examples/1d_logistic/03_shap_explanations.py
+examples/1d_logistic_rotation/01_example_1d_data.py
+examples/1d_logistic_rotation/02_example_2d_model.py
+examples/1d_logistic_rotation/03_shap_explanations.py
+examples/2d_data_generation_with_correlation.ipynb
+examples/2d_r_0.0/01_example_2d_data.py
+examples/2d_r_0.0/02_example_2d_model.py
+examples/2d_r_0.0/03_shap_explanations.py
+examples/2d_r_0.0/04_qii_explanattions.py
+examples/2d_r_0.0_redundant/01_example_2d_data.py
+examples/2d_r_0.0_redundant/02_example_2d_model.py
+examples/2d_r_0.0_redundant/03_shap_explanations.py
+examples/2d_r_0.0_redundant_pca/01_example_2d_data.py
+examples/2d_r_0.0_redundant_pca/02_example_2d_model.py
+examples/2d_r_0.0_redundant_pca/03_shap_explanations.py
+examples/2d_r_0.5/01_example_2d_data.py
+examples/2d_r_0.5/02_example_2d_model.py
+examples/2d_r_0.5/03_shap_explanations.py
+examples/3d_cont_with_binom/01_example_3d_data.py
+examples/3d_cont_with_binom/aa_fit_copula_to_data.py
+examples/accuracy_test.ipynb
+examples/baseline_vs_correlation.ipynb
+examples/baseline_vs_redundant.ipynb
+examples/copula_dev.py
+examples/generate_from_report.ipynb
+examples/marginal_dist_detection.ipynb
+examples/noise/check_noise_correlation.py
+examples/replicate_null_demo.ipynb
+examples/sample_datasets/01_generate_datasets.py
+examples/sample_datasets/diamonds.csv
+examples/synth_graph_data/demo_graph.csv
+examples/synth_graph_data/graph_data_demo.ipynb
+generators_UML_diagram.pdf
+requirements-test.txt
+requirements.txt
