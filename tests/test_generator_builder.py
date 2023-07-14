@@ -1,8 +1,6 @@
 import os
 import unittest
 
-pass
-
 import dataprofiler as dp
 import numpy as np
 import pandas as pd

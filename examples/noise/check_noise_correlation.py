@@ -6,8 +6,6 @@ Test mapping y = f(X
 
 import pathlib
 
-pass
-
 import numpy as np
 
 from synthetic_data.synthetic_data import make_tabular_data

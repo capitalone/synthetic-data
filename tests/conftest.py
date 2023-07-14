@@ -1,5 +1,4 @@
 """Sets root directory for repo."""
-pass
 import sys
 from os.path import abspath, dirname
 
