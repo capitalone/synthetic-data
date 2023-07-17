@@ -1,12 +1,11 @@
+"""Contains a dataset generator."""
 import copy
 import json
-
 from typing import List, Optional
 
 import numpy as np
 import pandas as pd
 from numpy.random import Generator
-import dataprofiler as dp
 
 from synthetic_data.distinct_generators.categorical_generator import random_categorical
 from synthetic_data.distinct_generators.datetime_generator import random_datetimes
@@ -16,7 +15,10 @@ from synthetic_data.distinct_generators.text_generator import random_string, ran
 
 
 class NumpyEncoder(json.JSONEncoder):
+    """Numpy Encoder."""
+
     def default(self, obj):
+        """Encode numpy array."""
         if isinstance(obj, np.integer):
             return int(obj)
         if isinstance(obj, np.floating):
@@ -25,14 +27,14 @@ class NumpyEncoder(json.JSONEncoder):
             return obj.tolist()
         return super().default(obj)
 
+
 def convert_data_to_df(
     np_data: np.array,
     path: Optional[str] = None,
     index: bool = False,
     column_names: Optional[List[str]] = None,
 ) -> pd.DataFrame:
-    """
-    Converts np array to a pandas dataframe
+    """Convert np array to a pandas dataframe.
 
     :param np_data: np array to be converted
     :type np_data: numpy array
@@ -56,8 +58,7 @@ def convert_data_to_df(
 
 
 def get_ordered_column(data: np.array, type: str) -> np.array:
-    """
-    Sorts a numpy array based on data type
+    """Sort a numpy array based on data type.
 
     :param data: numpy array to be sorted
     :type data: np.array
@@ -74,6 +75,7 @@ def get_ordered_column(data: np.array, type: str) -> np.array:
     else:
         return np.sort(data)
 
+
 def generate_dataset_by_class(
     report,
     rng: Generator,
@@ -82,8 +84,7 @@ def generate_dataset_by_class(
     path: Optional[str] = None,
     ordered: bool = False,
 ) -> pd.DataFrame:
-    """
-    Randomly generate a dataset with a mixture of different data classes
+    """Randomly generate a dataset with a mixture of different data classes.
 
     :param rng: the np rng object used to generate random values
     :type rng: numpy Generator
@@ -128,7 +129,14 @@ def generate_dataset_by_class(
         col_generator_function = gen_funcs.get(col_generator)
         if ordered:
             data_type = report["data_stats"][col].get("data_type", None)
-            dataset.append(get_ordered_column(col_generator_function(**col_, num_rows=dataset_length, rng=rng), data_type))
+            dataset.append(
+                get_ordered_column(
+                    col_generator_function(**col_, num_rows=dataset_length, rng=rng),
+                    data_type,
+                )
+            )
         else:
-            dataset.append(col_generator_function(**col_, num_rows=dataset_length, rng=rng))
+            dataset.append(
+                col_generator_function(**col_, num_rows=dataset_length, rng=rng)
+            )
     return convert_data_to_df(dataset, path)
