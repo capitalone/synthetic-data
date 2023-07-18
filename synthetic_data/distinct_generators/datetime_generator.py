@@ -9,8 +9,8 @@ from numpy.random import Generator
 def generate_datetime(
     rng: Generator,
     date_format: str,
-    start_date: pd.Timestamp = pd.Timestamp(1920, 1, 1),
-    end_date: pd.Timestamp = pd.Timestamp(2049, 12, 31),
+    start_date: pd.Timestamp,
+    end_date: pd.Timestamp,
 ) -> str:
     """
     Generate datetime given the random_state, date_format, and start/end dates.
@@ -30,6 +30,10 @@ def generate_datetime(
     :return: generated datetime
     :rtype: str
     """
+    if start_date is None:
+        start_date: pd.Timestamp = pd.Timestamp(1920, 1, 1)
+    if end_date is None:
+        end_date: pd.Timestamp = pd.Timestamp(2049, 12, 31)
     t = rng.random()
     ptime = start_date + t * (end_date - start_date)
 
