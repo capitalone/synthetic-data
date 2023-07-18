@@ -13,17 +13,15 @@ class TestDatasetGenerator(unittest.TestCase):
 
     def test_generate_dataset_with_invalid_generator(self):
         columns_to_gen = [{"generator": "non existent generator"}]
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaisesRegex(
+            ValueError, "generator: non existent generator is not a valid generator."
+        ):
             generate_dataset_by_class(
                 self.rng,
                 columns_to_generate=columns_to_gen,
                 dataset_length=self.dataset_length,
                 path=None,
             )
-        self.assertEqual(
-            str(context.exception),
-            "generator: non existent generator is not a valid generator.",
-        )
 
     def test_generate_dataset_with_none_columns(self):
         df = generate_dataset_by_class(self.rng, None, self.dataset_length, None)
