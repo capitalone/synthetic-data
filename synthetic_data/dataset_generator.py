@@ -40,13 +40,12 @@ def convert_data_to_df(
     # save the dataframe as a csv file
     if path:
         dataframe.to_csv(path, index=index, encoding="utf-8")
-        print(f"Created {path}!")
     return dataframe
 
 
 def generate_dataset_by_class(
     rng: Generator,
-    columns_to_generate: Optional[List[dict]] = None,
+    columns_to_generate: List[dict] = None,
     dataset_length: int = 100000,
     path: Optional[str] = None,
 ) -> pd.DataFrame:
@@ -74,14 +73,7 @@ def generate_dataset_by_class(
     }
 
     if columns_to_generate is None:
-        columns_to_generate = [
-            dict(generator="datetime"),
-            dict(generator="integer"),
-            dict(generator="float"),
-            dict(generator="categorical"),
-            dict(generator="text"),
-            dict(generator="string"),
-        ]
+        raise ValueError("columns_to_generate is a required parameter")
 
     dataset = []
     column_names = []
