@@ -1,6 +1,6 @@
 import unittest
+from unittest import mock
 
-import pandas as pd
 from numpy.random import PCG64, Generator
 
 from synthetic_data.dataset_generator import generate_dataset_by_class
@@ -59,3 +59,20 @@ class TestDatasetGenerator(unittest.TestCase):
         )
         self.assertEqual(4, len(df))
         self.assertListEqual(list(df.columns), expected_columns)
+
+    @mock.patch("synthetic_data.dataset_generator.pd.DataFrame.to_csv")
+    def test_path_to_csv(self, to_csv):
+        columns_to_gen = [
+            {"generator": "integer"},
+            {"generator": "datetime"},
+            {"generator": "text"},
+        ]
+        to_csv.return_value = "does_not_matter"
+        to_csv.side_effect = ValueError("Test successful")
+        with self.assertRaisesRegex(ValueError, "Test successful"):
+            generate_dataset_by_class(
+                self.rng,
+                columns_to_generate=columns_to_gen,
+                dataset_length=4,
+                path="testing_path",
+            )
