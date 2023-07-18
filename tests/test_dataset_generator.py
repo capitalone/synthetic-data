@@ -33,7 +33,6 @@ class TestDatasetGenerator(unittest.TestCase):
             "integer",
             "float",
             "categorical",
-            "ordered",
             "text",
             "string",
         ]

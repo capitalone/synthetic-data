@@ -44,20 +44,6 @@ def convert_data_to_df(
     return dataframe
 
 
-def get_ordered_column(start: int = 0, num_rows: int = 1, **kwarg) -> np.array:
-    """
-    Generate an array of ordered integers.
-
-    :param start: integer that the ordered list should start at
-    :type str_len_min: int, optional
-    :param num_rows: the number of rows in np array generated
-    :type num_rows: int, optional
-
-    :return: np array of ordered integers
-    """
-    return np.arange(start, start + num_rows)
-
-
 def generate_dataset_by_class(
     rng: Generator,
     columns_to_generate: Optional[List[dict]] = None,
@@ -82,7 +68,6 @@ def generate_dataset_by_class(
         "integer": random_integers,
         "float": random_floats,
         "categorical": random_categorical,
-        "ordered": get_ordered_column,
         "text": random_text,
         "datetime": random_datetimes,
         "string": random_string,
@@ -94,7 +79,6 @@ def generate_dataset_by_class(
             dict(generator="integer"),
             dict(generator="float"),
             dict(generator="categorical"),
-            dict(generator="ordered"),
             dict(generator="text"),
             dict(generator="string"),
         ]
