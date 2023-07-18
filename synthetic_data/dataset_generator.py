@@ -57,7 +57,7 @@ def generate_dataset_by_class(
     :type rng: numpy Generator
     :param columns_to_generate: Classes of data to be included in the dataset
     :type columns_to_generate: List[dict], None, optional
-    :param dataset_length: length of the dataset generated
+    :param dataset_length: length of the dataset generated, default 100,000
     :type dataset_length: int, optional
     :param path: path to output a csv of the dataframe generated
     :type path: str, None, optional
