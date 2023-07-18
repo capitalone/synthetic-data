@@ -24,17 +24,10 @@ class TestDatasetGenerator(unittest.TestCase):
             )
 
     def test_generate_dataset_with_none_columns(self):
-        df = generate_dataset_by_class(self.rng, None, self.dataset_length, None)
-        self.assertIsInstance(df, pd.DataFrame)
-        expected_columns = [
-            "datetime",
-            "integer",
-            "float",
-            "categorical",
-            "text",
-            "string",
-        ]
-        self.assertListEqual(list(df.columns), expected_columns)
+        with self.assertRaisesRegex(
+            ValueError, "columns_to_generate is a required parameter"
+        ):
+            generate_dataset_by_class(self.rng, None, self.dataset_length, None)
 
     def test_generate_custom_datasets(self):
         columns_to_gen = [
@@ -43,6 +36,20 @@ class TestDatasetGenerator(unittest.TestCase):
             {"generator": "text"},
         ]
         expected_columns = ["integer", "datetime", "text"]
+        df = generate_dataset_by_class(
+            self.rng,
+            columns_to_generate=columns_to_gen,
+            dataset_length=self.dataset_length,
+            path=None,
+        )
+        self.assertListEqual(list(df.columns), expected_columns)
+
+        columns_to_gen = [
+            {"generator": "string"},
+            {"generator": "categorical"},
+            {"generator": "float"},
+        ]
+        expected_columns = ["string", "categorical", "float"]
         df = generate_dataset_by_class(
             self.rng,
             columns_to_generate=columns_to_gen,
