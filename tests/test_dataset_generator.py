@@ -42,6 +42,7 @@ class TestDatasetGenerator(unittest.TestCase):
             dataset_length=self.dataset_length,
             path=None,
         )
+        self.assertEqual(self.dataset_length, len(df))
         self.assertListEqual(list(df.columns), expected_columns)
 
         columns_to_gen = [
@@ -53,7 +54,8 @@ class TestDatasetGenerator(unittest.TestCase):
         df = generate_dataset_by_class(
             self.rng,
             columns_to_generate=columns_to_gen,
-            dataset_length=self.dataset_length,
+            dataset_length=4,
             path=None,
         )
+        self.assertEqual(4, len(df))
         self.assertListEqual(list(df.columns), expected_columns)
