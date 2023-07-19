@@ -10,9 +10,6 @@ from synthetic_data import dataset_generator as dg
 
 
 class TestDatasetGenerator(unittest.TestCase):
-    def test_setup(self):
-        pass
-
     def test_get_ordered_column_datetime(self):
         date_format = "%m/%d/%Y, %H:%M:%S"
         data = [
