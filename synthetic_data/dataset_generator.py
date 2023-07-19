@@ -32,7 +32,6 @@ def convert_data_to_df(
     :type path: List, None, optional
     :return: a pandas dataframe
     """
-    
     # convert array into dataframe
     if not column_names:
         column_names = [x for x in range(len(np_data))]
