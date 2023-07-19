@@ -33,6 +33,7 @@ def convert_data_to_df(
     :return: a pandas dataframe
     """
     # convert array into dataframe
+
     if not column_names:
         column_names = [x for x in range(len(np_data))]
     dataframe = pd.DataFrame.from_dict(dict(zip(column_names, np_data)))
