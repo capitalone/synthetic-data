@@ -13,6 +13,15 @@ class TestDatetimeFunctions(unittest.TestCase):
         self.start_date = pd.Timestamp(2001, 12, 22)
         self.end_date = pd.Timestamp(2023, 1, 1)
         self.date_format_list = ["%Y-%m-%d", "%d-%m-%Y"]
+    
+    def test_start_end_date_when_none(self):
+        date_str = date_generator.generate_datetime(
+            self.rng, self.date_format_list[0], start_date=None, end_date=None
+        )
+        try:
+            pd.to_datetime(date_str, format=self.date_format_list[0])
+        except:
+            self.fail("pd.to_datetime() raised ValueError unexpectedly")
 
     def test_generate_datetime_return_type(self):
         date_str = date_generator.generate_datetime(
