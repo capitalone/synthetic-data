@@ -112,10 +112,6 @@ def generate_dataset_by_class(
         if col["ordered"] in ["ascending", "descending"]:
             data_type = col["data_type"]
 
-            # check if date_format_list is not None
-            # so that we insert that custom format.
-            # Need to check if its a datetime generator
-            # and if theres a date_format_list in the dict
             if col["data_type"] == "datetime" and "date_format_list" in col:
                 dataset.append(
                     get_ordered_column(
