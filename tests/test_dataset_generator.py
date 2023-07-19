@@ -35,7 +35,8 @@ class TestDatasetGenerator(unittest.TestCase):
                 ]
             ),
         ]
-        ordered_data = [np.array(
+        ordered_data = [
+            np.array(
                 [
                     "February 20 2019 13:00:00",
                     "February 21 2019 12:00:00",
@@ -50,21 +51,22 @@ class TestDatasetGenerator(unittest.TestCase):
                     "11/26/2018, 04:34:52",
                     "12/26/2018, 04:34:52",
                     "12/26/2018, 04:34:56",
-                    "12/27/2018, 04:34:52",                  
+                    "12/27/2018, 04:34:52",
                 ]
-            )
-            ]
-        
+            ),
+        ]
+
         output_data = []
         output_data.append(dg.get_ordered_column(data[0], "datetime"))
         output_data.append(dg.get_ordered_column(data[1], "datetime", date_format))
 
         for i in range(len(output_data)):
             self.assertTrue(np.array_equal(output_data[i], ordered_data[i]))
-        
+
     def test_get_ordered_column_datetime_descending(self):
         date_format = "%m/%d/%Y, %H:%M:%S"
-        data = [np.array(
+        data = [
+            np.array(
                 [
                     "February 20 2019 13:00:00",
                     "February 21 2019 12:00:00",
@@ -79,10 +81,10 @@ class TestDatasetGenerator(unittest.TestCase):
                     "11/26/2018, 04:34:52",
                     "12/26/2018, 04:34:52",
                     "12/26/2018, 04:34:56",
-                    "12/27/2018, 04:34:52",                  
+                    "12/27/2018, 04:34:52",
                 ]
-            )
-            ]
+            ),
+        ]
         ordered_data = [
             np.array(
                 [
@@ -104,8 +106,12 @@ class TestDatasetGenerator(unittest.TestCase):
             ),
         ]
         output_data = []
-        output_data.append(dg.get_ordered_column(data[0], "datetime", order="descending"))
-        output_data.append(dg.get_ordered_column(data[1], "datetime", date_format, order="descending"))
+        output_data.append(
+            dg.get_ordered_column(data[0], "datetime", order="descending")
+        )
+        output_data.append(
+            dg.get_ordered_column(data[1], "datetime", date_format, order="descending")
+        )
 
         for i in range(len(output_data)):
             print(output_data[i], "GG", ordered_data[i])
@@ -150,7 +156,9 @@ class TestDatasetGenerator(unittest.TestCase):
         ]
         output_data = []
         for data_type in data.keys():
-            output_data.append(dg.get_ordered_column(data[data_type], data_type, order="descending"))
+            output_data.append(
+                dg.get_ordered_column(data[data_type], data_type, order="descending")
+            )
 
         for i in range(len(output_data)):
             self.assertTrue(np.array_equal(output_data[i], ordered_data[i]))
