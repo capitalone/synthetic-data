@@ -3,8 +3,10 @@
 import unittest
 from collections import OrderedDict
 
+import dataprofiler as dp
 import numpy as np
 import pandas as pd
+
 
 from synthetic_data import dataset_generator as dg
 
@@ -57,8 +59,7 @@ class TestDatasetGenerator(unittest.TestCase):
         output_data.append(dg.get_ordered_column(data[0], "datetime"))
         output_data.append(dg.get_ordered_column(data[1], "datetime", date_format))
 
-        for i in range(len(output_data)):
-            self.assertTrue(np.array_equal(output_data[i], ordered_data[i]))
+        self.assertTrue(np.array_equal(output_data, ordered_data))
 
     def test_get_ordered_column_datetime_descending(self):
         date_format = "%m/%d/%Y, %H:%M:%S"
@@ -110,9 +111,7 @@ class TestDatasetGenerator(unittest.TestCase):
             dg.get_ordered_column(data[1], "datetime", date_format, order="descending")
         )
 
-        for i in range(len(output_data)):
-            print(output_data[i], "GG", ordered_data[i])
-            self.assertTrue(np.array_equal(output_data[i], ordered_data[i]))
+        self.assertTrue(np.array_equal(output_data, ordered_data))
 
     def test_get_ordered_column(self):
         data = OrderedDict(
@@ -132,30 +131,7 @@ class TestDatasetGenerator(unittest.TestCase):
         output_data = []
         for data_type in data.keys():
             output_data.append(dg.get_ordered_column(data[data_type], data_type))
-
+        
         for i in range(len(output_data)):
             self.assertTrue(np.array_equal(output_data[i], ordered_data[i]))
-
-    def test_get_ordered_column_descending(self):
-        data = OrderedDict(
-            {
-                "int": np.array([1, 2, 3, 4, 5]),
-                "float": np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
-                "string": np.array(["abc", "bca", "cab"]),
-                "categorical": np.array(["A", "B", "C", "D", "E"]),
-            }
-        )
-        ordered_data = [
-            np.array([5, 4, 3, 2, 1]),
-            np.array([5.0, 4.0, 3.0, 2.0, 1.0]),
-            np.array(["cab", "bca", "abc"]),
-            np.array(["E", "D", "C", "B", "A"]),
-        ]
-        output_data = []
-        for data_type in data.keys():
-            output_data.append(
-                dg.get_ordered_column(data[data_type], data_type, order="descending")
-            )
-
-        for i in range(len(output_data)):
-            self.assertTrue(np.array_equal(output_data[i], ordered_data[i]))
+            
