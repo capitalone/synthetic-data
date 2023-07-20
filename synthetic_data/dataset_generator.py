@@ -139,23 +139,25 @@ def generate_dataset_by_class(
 
 
 
+
 def generate_dataset_by_class(
     rng: Generator,
-    columns_to_generate: List[dict] = None,
+    columns_to_generate: Optional[List[dict]] = None,
     dataset_length: int = 100000,
     path: Optional[str] = None,
 ) -> pd.DataFrame:
-    """
-    Randomizes a dataset with a mixture of different data classes.
+    """Randomly generate a dataset with a mixture of different data classes.
 
     :param rng: the np rng object used to generate random values
     :type rng: numpy Generator
     :param columns_to_generate: Classes of data to be included in the dataset
     :type columns_to_generate: List[dict], None, optional
-    :param dataset_length: length of the dataset generated, default 100,000
+    :param dataset_length: length of the dataset generated
     :type dataset_length: int, optional
     :param path: path to output a csv of the dataframe generated
     :type path: str, None, optional
+    :param ordered: whether to generate ordered data
+    :type ordered: bool, optional
 
     :return: pandas DataFrame
     """
@@ -168,18 +170,39 @@ def generate_dataset_by_class(
         "string": random_string,
     }
 
-    if columns_to_generate is None:
-        raise ValueError("columns_to_generate is a required parameter")
-
     dataset = []
-    column_names = []
     for col in columns_to_generate:
         col_ = copy.deepcopy(col)
-        col_generator = col_.pop("generator")
+        col_generator = col_.pop("data_type")
         if col_generator not in gen_funcs:
             raise ValueError(f"generator: {col_generator} is not a valid generator.")
-
         col_generator_function = gen_funcs.get(col_generator)
-        dataset.append(col_generator_function(**col_, num_rows=dataset_length, rng=rng))
-        column_names.append(col_generator)
-    return convert_data_to_df(dataset, path, column_names=column_names)
+
+        # if that column is ordered, get data_type
+        if col["ordered"] in ["ascending", "descending"]:
+            data_type = col["data_type"]
+            if col["data_type"] == "datetime" and "date_format_list" in col:
+                dataset.append(
+                    get_ordered_column(
+                        col_generator_function(
+                            **col_, num_rows=dataset_length, rng=rng
+                        ),
+                        data_type,
+                        col["date_format_list"][0],
+                    )
+                )
+            else:
+                dataset.append(
+                    get_ordered_column(
+                        col_generator_function(
+                            **col_, num_rows=dataset_length, rng=rng
+                        ),
+                        data_type,
+                    )
+                )
+        else:
+            dataset.append(
+                col_generator_function(**col_, num_rows=dataset_length, rng=rng)
+            )
+    return convert_data_to_df(dataset, path)
+

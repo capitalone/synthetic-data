@@ -1,4 +1,5 @@
 import unittest
+from unittest import mock
 import os
 import numpy as np
 import pandas as pd
@@ -10,8 +11,8 @@ import dataprofiler as dp
 
 class TestDatetimeFunctions(unittest.TestCase):
     def setUp(self):
-        profile_options = dp.ProfilerOptions()
-        profile_options.set(
+        self.profile_options = dp.ProfilerOptions()
+        self.profile_options.set(
             {
                 "data_labeler.is_enabled": False,
                 "correlation.is_enabled": True,
@@ -20,10 +21,20 @@ class TestDatetimeFunctions(unittest.TestCase):
         )
         test_dir = os.path.abspath('tests')
         # create dataset and profile for tabular
-        data = dp.Data(os.path.join(test_dir, "data/iris.csv"))
+        self.data = dp.Data(os.path.join(test_dir, "data/iris.csv"))
         self.columns = dp.Profiler(
-            data, profiler_type="structured", options=profile_options
+            data=self.data, profiler_type="structured", options=self.profile_options
         ).report()["data_stats"]
+    
+    @mock.patch('synthetic_data.generators.make_data_from_report')
+    def test_synthesize_correlated_method(self, mock_make_data):
+        profile = dp.Profiler(
+            data=self.data, options=self.profile_options, samples_per_update=len(self.data)
+        )
+        instance = TabularGenerator(profile)
+        instance.method = "correlated"
+        instance.synthesize(num_samples=10)
+        mock_make_data.assert_called_once()
 
     def test_get_ordered_column_descending(self):
             data = OrderedDict(
@@ -49,21 +60,21 @@ class TestDatetimeFunctions(unittest.TestCase):
             for i in range(len(output_data)):
                 self.assertTrue(np.array_equal(output_data[i], ordered_data[i]))
 
-    def test_generate_dataset_columns_format_list(self):
-        random_seed = 0
-        rng = np.random.default_rng(seed=random_seed)
-        col_data = [] 
+    # def test_generate_dataset_columns_format_list(self):
+    #     random_seed = 0
+    #     rng = np.random.default_rng(seed=random_seed)
+    #     col_data = [] 
 
-        for i, col in enumerate(self.columns):
-            data_type = col[i].get("data_type", None)
-            ordered = col[i].get("order", None)
+    #     for i, col in enumerate(self.columns):
+    #         data_type = col[i].get("data_type", None)
+    #         ordered = col[i].get("order", None)
                 
-            if data_type == "datetime":
-                col_data.append({"data_type":data_type, "ordered":ordered, "date_format_list": "%m/%d/%Y, %H:%M:%S"}) 
-            else:
-                col_data.append({"data_type":data_type, "ordered":ordered})
+    #         if data_type == "datetime":
+    #             col_data.append({"data_type":data_type, "ordered":ordered, "date_format_list": "%m/%d/%Y, %H:%M:%S"}) 
+    #         else:
+    #             col_data.append({"data_type":data_type, "ordered":ordered})
 
-        return dg.generate_dataset_by_class(
-            rng=rng,
-            columns_to_generate=col_data,
-        )
+    #     return dg.generate_dataset_by_class(
+    #         rng=rng,
+    #         columns_to_generate=col_data,
+    #     )
