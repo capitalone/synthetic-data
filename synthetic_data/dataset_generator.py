@@ -57,7 +57,6 @@ def get_ordered_column(
 
     :return: sorted numpy array
     """
-    sorted_data = []
     if type == "datetime":
         date_object = np.array([datetime.strptime(dt, original_format) for dt in data])
         sorted_datetime = np.sort(date_object)
