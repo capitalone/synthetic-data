@@ -47,9 +47,6 @@ class TabularGenerator(BaseGenerator):
             )
         return profile
 
-    def col_to_generate(self, profile):
-        print(profile)
-
     def synthesize(self, num_samples: int, seed=None, noise_level: float = None):
         """Generate synthetic tabular data."""
         if seed is None:
