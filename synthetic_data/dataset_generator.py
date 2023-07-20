@@ -1,6 +1,7 @@
 """Contains generator that returns collective df of requested distinct generators."""
 
 import copy
+from datetime import datetime
 from typing import List, Optional
 
 import numpy as np
@@ -43,7 +44,6 @@ def convert_data_to_df(
     return dataframe
 
 
-
 def get_ordered_column(
     data: np.array,
     type: str,
@@ -67,7 +67,6 @@ def get_ordered_column(
     if order == "descending":
         return sorted_data[::-1]
     return sorted_data
-
 
 
 def generate_dataset_by_class(
@@ -109,7 +108,7 @@ def generate_dataset_by_class(
         col_generator_function = gen_funcs.get(col_generator)
 
         # if that column is ordered, get data_type
-        if col["ordered"] in ["ascending", "descending"]:
+        if col.get("ordered", None) in ["ascending", "descending"]:
             data_type = col["data_type"]
 
             if col["data_type"] == "datetime" and "date_format_list" in col:
@@ -136,50 +135,3 @@ def generate_dataset_by_class(
                 col_generator_function(**col_, num_rows=dataset_length, rng=rng)
             )
     return convert_data_to_df(dataset, path)
-
-
-
-def generate_dataset_by_class(
-    rng: Generator,
-    columns_to_generate: List[dict] = None,
-    dataset_length: int = 100000,
-    path: Optional[str] = None,
-) -> pd.DataFrame:
-    """
-    Randomizes a dataset with a mixture of different data classes.
-
-    :param rng: the np rng object used to generate random values
-    :type rng: numpy Generator
-    :param columns_to_generate: Classes of data to be included in the dataset
-    :type columns_to_generate: List[dict], None, optional
-    :param dataset_length: length of the dataset generated, default 100,000
-    :type dataset_length: int, optional
-    :param path: path to output a csv of the dataframe generated
-    :type path: str, None, optional
-
-    :return: pandas DataFrame
-    """
-    gen_funcs = {
-        "integer": random_integers,
-        "float": random_floats,
-        "categorical": random_categorical,
-        "text": random_text,
-        "datetime": random_datetimes,
-        "string": random_string,
-    }
-
-    if columns_to_generate is None:
-        raise ValueError("columns_to_generate is a required parameter")
-
-    dataset = []
-    column_names = []
-    for col in columns_to_generate:
-        col_ = copy.deepcopy(col)
-        col_generator = col_.pop("generator")
-        if col_generator not in gen_funcs:
-            raise ValueError(f"generator: {col_generator} is not a valid generator.")
-
-        col_generator_function = gen_funcs.get(col_generator)
-        dataset.append(col_generator_function(**col_, num_rows=dataset_length, rng=rng))
-        column_names.append(col_generator)
-    return convert_data_to_df(dataset, path, column_names=column_names)
