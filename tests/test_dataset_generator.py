@@ -117,19 +117,20 @@ class TestDatasetGenerator(unittest.TestCase):
             {
                 "int": np.array([5, 4, 3, 2, 1]),
                 "float": np.array([5.0, 4.0, 3.0, 2.0, 1.0]),
-                "string": np.array(["cab", "bca", "abc"]),
+                "string": np.array(["abcde", "bcdea", "cdeab", "deabc", "eabcd"]),
                 "categorical": np.array(["E", "D", "C", "B", "A"]),
             }
         )
         ordered_data = [
             np.array([1, 2, 3, 4, 5]),
             np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
-            np.array(["abc", "bca", "cab"]),
+            np.array(["abcde", "bcdea", "cdeab", "deabc", "eabcd"]),
             np.array(["A", "B", "C", "D", "E"]),
         ]
+        ordered_data = np.asarray(ordered_data)
         output_data = []
         for data_type in data.keys():
             output_data.append(dg.get_ordered_column(data[data_type], data_type))
+        ordered_data = np.asarray(ordered_data)
 
-        for i in range(len(output_data)):
-            self.assertTrue(np.array_equal(output_data[i], ordered_data[i]))
+        self.assertTrue(np.array_equal(output_data, ordered_data))
