@@ -7,7 +7,6 @@ import dataprofiler as dp
 import numpy as np
 import pandas as pd
 
-
 from synthetic_data import dataset_generator as dg
 
 
@@ -131,7 +130,6 @@ class TestDatasetGenerator(unittest.TestCase):
         output_data = []
         for data_type in data.keys():
             output_data.append(dg.get_ordered_column(data[data_type], data_type))
-        
+
         for i in range(len(output_data)):
             self.assertTrue(np.array_equal(output_data[i], ordered_data[i]))
-            
