@@ -1,5 +1,5 @@
-"""Contains a dataset generator."""
-import copy
+"""Contains generator that returns collective df of requested distinct generators."""
+
 from datetime import datetime
 from typing import List, Optional
 
@@ -20,7 +20,8 @@ def convert_data_to_df(
     index: bool = False,
     column_names: Optional[List[str]] = None,
 ) -> pd.DataFrame:
-    """Convert np array to a pandas dataframe.
+    """
+    Convert np array to a pandas dataframe.
 
     :param np_data: np array to be converted
     :type np_data: numpy array
@@ -40,7 +41,6 @@ def convert_data_to_df(
     # save the dataframe as a csv file
     if path:
         dataframe.to_csv(path, index=index, encoding="utf-8")
-        print(f"Created {path}!")
     return dataframe
 
 
@@ -101,37 +101,30 @@ def generate_dataset_by_class(
 
     dataset = []
     for col in columns_to_generate:
-        col_ = copy.deepcopy(col)
-        col_generator = col_.pop("data_type")
-        if col_generator not in gen_funcs:
-            raise ValueError(f"generator: {col_generator} is not a valid generator.")
-        col_generator_function = gen_funcs.get(col_generator)
+        data_type_var = col.get("data_type", None)
+        if data_type_var not in gen_funcs:
+            raise ValueError(f"generator: {data_type_var} is not a valid generator.")
+        col_generator_function = gen_funcs.get(data_type_var)
 
-        # if that column is ordered, get data_type
-        if col["ordered"] in ["ascending", "descending"]:
-            data_type = col["data_type"]
-
-            if col["data_type"] == "datetime" and "date_format_list" in col:
+        sort = col.get("ordered", None)
+        if sort in ["ascending", "descending"]:
+            if data_type_var == "datetime" and "date_format_list" in col:
                 dataset.append(
                     get_ordered_column(
-                        col_generator_function(
-                            **col_, num_rows=dataset_length, rng=rng
-                        ),
-                        data_type,
+                        col_generator_function(**col, num_rows=dataset_length, rng=rng),
+                        data_type_var,
                         col["date_format_list"][0],
                     )
                 )
             else:
                 dataset.append(
                     get_ordered_column(
-                        col_generator_function(
-                            **col_, num_rows=dataset_length, rng=rng
-                        ),
-                        data_type,
+                        col_generator_function(**col, num_rows=dataset_length, rng=rng),
+                        data_type_var,
                     )
                 )
         else:
             dataset.append(
-                col_generator_function(**col_, num_rows=dataset_length, rng=rng)
+                col_generator_function(**col, num_rows=dataset_length, rng=rng)
             )
     return convert_data_to_df(dataset, path)
