@@ -81,4 +81,4 @@ class TestDatasetGenerator(unittest.TestCase):
             dataset_length=4,
             path=path,
         )
-        to_csv.assert_called_with(path, index=False, encoding="utf-8")
+        to_csv.assert_called_once_with(path, index=False, encoding="utf-8")
