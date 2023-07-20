@@ -36,7 +36,7 @@ def convert_data_to_df(
     if not column_names:
         column_names = [x for x in range(len(np_data))]
     dataframe = pd.DataFrame.from_dict(dict(zip(column_names, np_data)))
-    
+
     # save the dataframe as a csv file
     if path:
         dataframe.to_csv(path, index=index, encoding="utf-8")
@@ -102,9 +102,7 @@ def generate_dataset_by_class(
     dataset = []
     for col in columns_to_generate:
         col_ = copy.deepcopy(col)
-        col_generator = col_.pop(
-            "data_type"
-        )
+        col_generator = col_.pop("data_type")
         if col_generator not in gen_funcs:
             raise ValueError(f"generator: {col_generator} is not a valid generator.")
         col_generator_function = gen_funcs.get(col_generator)
