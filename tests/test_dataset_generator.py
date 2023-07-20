@@ -62,6 +62,12 @@ class TestDatasetGenerator(unittest.TestCase):
 
     @mock.patch("synthetic_data.dataset_generator.pd.DataFrame.to_csv")
     def test_path_to_csv(self, to_csv):
+        """
+        Ensure csv creation is triggered at the appropiate time.
+
+        :param to_csv: mock of Pandas to_csv()
+        :type to_csv: func
+        """
         columns_to_gen = [
             {"generator": "integer"},
             {"generator": "datetime"},
