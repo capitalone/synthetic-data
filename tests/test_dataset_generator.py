@@ -67,9 +67,13 @@ class TestDatasetGenerator(unittest.TestCase):
             {"generator": "datetime"},
             {"generator": "text"},
         ]
-        to_csv.return_value = "does_not_matter"
-        to_csv.side_effect = ValueError("Test successful")
-        with self.assertRaisesRegex(ValueError, "Test successful"):
+        to_csv.return_value = "assume Pandas to_csv for a dataframe runs correctly"
+        to_csv.side_effect = ValueError(
+            "csv creation rightfully triggered, test successful"
+        )
+        with self.assertRaisesRegex(
+            ValueError, "csv creation rightfully triggered, test successful"
+        ):
             generate_dataset_by_class(
                 self.rng,
                 columns_to_generate=columns_to_gen,
