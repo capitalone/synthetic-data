@@ -131,6 +131,5 @@ class TestDatasetGenerator(unittest.TestCase):
         output_data = []
         for data_type in data.keys():
             output_data.append(dg.get_ordered_column(data[data_type], data_type))
-        ordered_data = np.asarray(ordered_data)
 
         self.assertTrue(np.array_equal(output_data, ordered_data))
