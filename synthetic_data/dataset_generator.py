@@ -46,8 +46,7 @@ def convert_data_to_df(
 
 def get_ordered_column(
     data: np.array,
-    type: str,
-    original_format: str = "%B %d %Y %H:%M:%S",
+    original_format: str = "%B %d %Y %H:%M:%S", # tab gen will take 
     order: str = "ascending",
 ) -> np.array:
     """Sort a numpy array based on data type.
@@ -103,28 +102,23 @@ def generate_dataset_by_class(
         data_type_var = col.get("data_type", None)
         if data_type_var not in gen_funcs:
             raise ValueError(f"generator: {data_type_var} is not a valid generator.")
+        
         col_generator_function = gen_funcs.get(data_type_var)
         generated_data = col_generator_function(**col, num_rows=dataset_length, rng=rng)
         sort = col.get("ordered", None)
-        if (
-            data_type_var == "datetime"
-            and sort in ["ascending", "descending"]
-            and "date_format_list" in col
-        ):
+
+        if sort in ["ascending", "descending"]:
             dataset.append(
                 get_ordered_column(
                     generated_data,
                     data_type_var,
-                    col["date_format_list"],
-                )
-            )
-        elif sort in ["ascending", "descending"]:
-            dataset.append(
-                get_ordered_column(
-                    generated_data,
-                    data_type_var,
+                    sort,
+                    col["date_format_list"], # can be empty
                 )
             )
         else:
             dataset.append(generated_data)
     return convert_data_to_df(dataset, path)
+    # synthesize(list) --> datasetgen(col_data[date_format_list]) --> get_ordered([date_format_list]) or get_ordered()
+    # if given [date_format_list], then get first format in list? 
+    #   or iterate through that list, sort, and append each different datetime format into the returned numpy array
