@@ -104,26 +104,27 @@ def generate_dataset_by_class(
         if data_type_var not in gen_funcs:
             raise ValueError(f"generator: {data_type_var} is not a valid generator.")
         col_generator_function = gen_funcs.get(data_type_var)
-
+        generated_data = col_generator_function(**col, num_rows=dataset_length, rng=rng)
         sort = col.get("ordered", None)
-        if sort in ["ascending", "descending"]:
-            if data_type_var == "datetime" and "date_format_list" in col:
-                dataset.append(
-                    get_ordered_column(
-                        col_generator_function(**col, num_rows=dataset_length, rng=rng),
-                        data_type_var,
-                        col["date_format_list"][0],
-                    )
-                )
-            else:
-                dataset.append(
-                    get_ordered_column(
-                        col_generator_function(**col, num_rows=dataset_length, rng=rng),
-                        data_type_var,
-                    )
-                )
-        else:
+        if (
+            data_type_var == "datetime"
+            and sort in ["ascending", "descending"]
+            and "date_format_list" in col
+        ):
             dataset.append(
-                col_generator_function(**col, num_rows=dataset_length, rng=rng)
+                get_ordered_column(
+                    generated_data,
+                    data_type_var,
+                    col["date_format_list"],
+                )
             )
+        elif sort in ["ascending", "descending"]:
+            dataset.append(
+                get_ordered_column(
+                    generated_data,
+                    data_type_var,
+                )
+            )
+        else:
+            dataset.append(generated_data)
     return convert_data_to_df(dataset, path)
