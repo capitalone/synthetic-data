@@ -1,6 +1,5 @@
 """Contains generator that returns collective df of requested distinct generators."""
 
-from datetime import datetime
 from typing import List, Optional
 
 import numpy as np
@@ -46,7 +45,8 @@ def convert_data_to_df(
 
 def get_ordered_column(
     data: np.array,
-    original_format: str = "%B %d %Y %H:%M:%S", # tab gen will take 
+    # data_type: str,
+    # original_format: str = "%B %d %Y %H:%M:%S", # tab gen will take
     order: str = "ascending",
 ) -> np.array:
     """Sort a numpy array based on data type.
@@ -56,12 +56,12 @@ def get_ordered_column(
 
     :return: sorted numpy array
     """
-    if type == "datetime":
-        date_object = np.array([datetime.strptime(dt, original_format) for dt in data])
-        sorted_datetime = np.sort(date_object)
-        sorted_data = np.array([dt.strftime(original_format) for dt in sorted_datetime])
-    else:
-        sorted_data = np.sort(data)
+    # if data_type == "datetime":
+    #  date_object = np.array([datetime.strptime(dt, original_format) for dt in data])
+    #  sorted_datetime = np.sort(date_object)
+    #  sorted_data = np.array([dt.strftime(original_format) for dt in sorted_datetime])
+    # else:
+    sorted_data = np.sort(data)
     if order == "descending":
         return sorted_data[::-1]
     return sorted_data
@@ -102,7 +102,7 @@ def generate_dataset_by_class(
         data_type_var = col.get("data_type", None)
         if data_type_var not in gen_funcs:
             raise ValueError(f"generator: {data_type_var} is not a valid generator.")
-        
+
         col_generator_function = gen_funcs.get(data_type_var)
         generated_data = col_generator_function(**col, num_rows=dataset_length, rng=rng)
         sort = col.get("ordered", None)
@@ -111,14 +111,9 @@ def generate_dataset_by_class(
             dataset.append(
                 get_ordered_column(
                     generated_data,
-                    data_type_var,
                     sort,
-                    col["date_format_list"], # can be empty
                 )
             )
         else:
             dataset.append(generated_data)
     return convert_data_to_df(dataset, path)
-    # synthesize(list) --> datasetgen(col_data[date_format_list]) --> get_ordered([date_format_list]) or get_ordered()
-    # if given [date_format_list], then get first format in list? 
-    #   or iterate through that list, sort, and append each different datetime format into the returned numpy array
