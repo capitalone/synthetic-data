@@ -2,7 +2,8 @@
 
 import unittest
 from collections import OrderedDict
-from datetime import datetime
+
+pass
 
 import dataprofiler as dp
 import numpy as np
