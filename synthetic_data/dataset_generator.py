@@ -47,7 +47,7 @@ def generate_dataset_by_class(
     rng: Generator,
     columns_to_generate: List[dict] = None,
     dataset_length: int = 100000,
-    path: Optional[str] = None,
+    path: str = None,
 ) -> pd.DataFrame:
     """
     Randomizes a dataset with a mixture of different data classes.
@@ -84,6 +84,6 @@ def generate_dataset_by_class(
             raise ValueError(f"generator: {col_generator} is not a valid generator.")
 
         col_generator_function = gen_funcs.get(col_generator)
-        dataset.append(col_generator_function(**col_, num_rows=dataset_length, rng=rng))
+        dataset.append(col_generator_function(rng=rng, num_rows=dataset_length))
         column_names.append(col_generator)
     return convert_data_to_df(dataset, path, column_names=column_names)

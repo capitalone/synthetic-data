@@ -8,8 +8,8 @@ from numpy.random import Generator
 def random_categorical(
     rng: Generator,
     categories: Optional[List[str]] = None,
-    num_rows: int = 1,
     probabilities: Optional[List[float]] = None,
+    num_rows: int = 1,
 ) -> np.array:
     """
     Randomly generates an array of categorical values chosen out of categories.
