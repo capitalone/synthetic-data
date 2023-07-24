@@ -45,8 +45,7 @@ def convert_data_to_df(
 
 def get_ordered_column(
     data: np.array,
-    # data_type: str,
-    # original_format: str = "%B %d %Y %H:%M:%S", # tab gen will take
+    data_type: str,
     order: str = "ascending",
 ) -> np.array:
     """Sort a numpy array based on data type.
@@ -56,12 +55,12 @@ def get_ordered_column(
 
     :return: sorted numpy array
     """
-    # if data_type == "datetime":
-    #  date_object = np.array([datetime.strptime(dt, original_format) for dt in data])
-    #  sorted_datetime = np.sort(date_object)
-    #  sorted_data = np.array([dt.strftime(original_format) for dt in sorted_datetime])
-    # else:
-    sorted_data = np.sort(data)
+    if data_type == "datetime":
+        sorted_data = sorted(data, key=lambda x: x[1])
+        sorted_data = np.array([dt[1].strftime(dt[0]) for dt in sorted_data])
+    else:
+        sorted_data = np.sort(data)
+
     if order == "descending":
         return sorted_data[::-1]
     return sorted_data
@@ -111,6 +110,7 @@ def generate_dataset_by_class(
             dataset.append(
                 get_ordered_column(
                     generated_data,
+                    data_type_var,
                     sort,
                 )
             )
