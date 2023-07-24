@@ -45,9 +45,9 @@ def convert_data_to_df(
 
 def generate_dataset_by_class(
     rng: Generator,
-    columns_to_generate: List[dict] = None,
+    columns_to_generate: List[dict],
     dataset_length: int = 100000,
-    path: str = None,
+    path: Optional[str] = None,
 ) -> pd.DataFrame:
     """
     Randomizes a dataset with a mixture of different data classes.
