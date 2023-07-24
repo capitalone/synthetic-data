@@ -4,6 +4,7 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
+import random
 from numpy.random import Generator
 
 
@@ -12,7 +13,7 @@ def generate_datetime(
     date_format: str,
     start_date: pd.Timestamp = pd.Timestamp(1920, 1, 1),
     end_date: pd.Timestamp = pd.Timestamp(2049, 12, 31),
-) -> str:
+) -> list:
     """
     Generate datetime given the random_state, date_format, and start/end dates.
 
@@ -33,23 +34,19 @@ def generate_datetime(
     """
     t = rng.random()
     ptime = start_date + t * (end_date - start_date)
+    ptime = ptime.strftime(date_format) 
 
-    # this will return the datetime object instead of a string for sorting
-    return datetime.strptime(ptime, date_format)
+    return [date_format, datetime.strptime(ptime, date_format)]
 
 
 def random_datetimes(
     rng: Generator,
-    date_format: Optional[list[str]] = None,
+    date_format_list: Optional[list[str]] = None,
     start_date: pd.Timestamp = None,
     end_date: pd.Timestamp = None,
     num_rows: int = 1,
 ) -> np.array:
     """
-    Datetime needs to sort the order already. A column has multiple formats.
-    Dataset_generator will call this to generate datetimes and then will see if
-    sorts, but this will always already be sorted.
-
     Generate datetime given the random_state, date_format, and start/end dates.
 
     :param rng: the np rng object used to generate random values
@@ -68,17 +65,14 @@ def random_datetimes(
     :rtype: numpy array
     """
     date_list = [""] * num_rows
-    if not date_format:
-        date_format = ["%B %d %Y %H:%M:%S"]
+    if not date_format_list:
+        date_format_list = ["%B %d %Y %H:%M:%S"]
 
     for i in range(num_rows):
+        date_format = random.choice(date_format_list)
         datetime = generate_datetime(
             rng, date_format=date_format, start_date=start_date, end_date=end_date
         )
         date_list[i] = datetime
 
-    # sort and then convert into string format
-    sorted_data = sorted(date_list)
-    sorted_data_strings = np.array([dt.strftime(date_format) for dt in sorted_data])
-
-    return sorted_data_strings
+    return np.array(date_list)
