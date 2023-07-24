@@ -35,7 +35,10 @@ class TestDatetimeFunctions(unittest.TestCase):
         date_str = date_generator.generate_datetime(
             self.rng, self.date_format_list[0], self.start_date, self.end_date
         )
-        pd.to_datetime(date_str, format=self.date_format_list[0])
+        try:
+            pd.to_datetime(date_str, format=self.date_format_list[0])
+        except ValueError:
+            self.fail("pd.to_datetime() raised ValueError for custom formatting")
 
     def test_generate_datetime_range(self):
         date_str = date_generator.generate_datetime(
