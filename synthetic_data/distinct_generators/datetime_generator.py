@@ -1,4 +1,5 @@
 """Contains a datetime generator."""
+from datetime import datetime
 from typing import Optional
 
 import numpy as np
@@ -33,12 +34,13 @@ def generate_datetime(
     t = rng.random()
     ptime = start_date + t * (end_date - start_date)
 
-    return ptime.strftime(date_format)
+    ptime = ptime.strftime(date_format)
+    return datetime.strptime(ptime, date_format)
 
 
 def random_datetimes(
     rng: Generator,
-    date_format_list: Optional[str] = None,
+    date_format: Optional[str] = None,
     start_date: pd.Timestamp = None,
     end_date: pd.Timestamp = None,
     num_rows: int = 1,
@@ -62,11 +64,10 @@ def random_datetimes(
     :rtype: numpy array
     """
     date_list = [""] * num_rows
-    if not date_format_list:
-        date_format_list = ["%B %d %Y %H:%M:%S"]
+    if not date_format:
+        date_format = "%B %d %Y %H:%M:%S"
 
     for i in range(num_rows):
-        date_format = rng.choice(date_format_list)
         datetime = generate_datetime(
             rng, date_format=date_format, start_date=start_date, end_date=end_date
         )
