@@ -1,10 +1,10 @@
 """Contains a datetime generator."""
+import random
 from datetime import datetime
 from typing import Optional
 
 import numpy as np
 import pandas as pd
-import random
 from numpy.random import Generator
 
 
@@ -34,7 +34,7 @@ def generate_datetime(
     """
     t = rng.random()
     ptime = start_date + t * (end_date - start_date)
-    ptime = ptime.strftime(date_format) 
+    ptime = ptime.strftime(date_format)
 
     return [date_format, datetime.strptime(ptime, date_format)]
 
