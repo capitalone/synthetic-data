@@ -72,8 +72,10 @@ def generate_dataset_by_class(
         "string": random_string,
     }
 
-    if columns_to_generate is None:
-        raise ValueError("columns_to_generate is a required parameter")
+    if not columns_to_generate:
+        raise ValueError(
+            "columns_to_generate is empty and would result in an empty dataframe."
+        )
 
     dataset = []
     column_names = []

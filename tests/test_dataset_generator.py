@@ -25,7 +25,8 @@ class TestDatasetGenerator(unittest.TestCase):
 
     def test_generate_dataset_with_none_columns(self):
         with self.assertRaisesRegex(
-            ValueError, "columns_to_generate is a required parameter"
+            ValueError,
+            "columns_to_generate is empty and would result in an empty dataframe.",
         ):
             generate_dataset_by_class(self.rng, None, self.dataset_length, None)
 
