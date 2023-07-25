@@ -2,6 +2,7 @@
 
 from typing import List, Optional
 
+import copy
 import numpy as np
 import pandas as pd
 from numpy.random import Generator
@@ -99,13 +100,14 @@ def generate_dataset_by_class(
 
     dataset = []
     for col in columns_to_generate:
-        data_type_var = col.get("data_type", None)
+        col_ = copy.deepcopy(col)
+        data_type_var = col_.get("data_type", None)
         if data_type_var not in gen_funcs:
             raise ValueError(f"generator: {data_type_var} is not a valid generator.")
 
         col_generator_function = gen_funcs.get(data_type_var)
-        generated_data = col_generator_function(**col, num_rows=dataset_length, rng=rng)
-        sort = col.get("ordered", None)
+        generated_data = col_generator_function(**col_, num_rows=dataset_length, rng=rng)
+        sort = col_.get("ordered", None)
 
         if sort in ["ascending", "descending"]:
             dataset.append(
