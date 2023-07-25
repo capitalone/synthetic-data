@@ -86,8 +86,11 @@ def generate_dataset_by_class(
         col_generator = col_.pop("generator")
         if col_generator not in gen_funcs:
             raise ValueError(f"generator: {col_generator} is not a valid generator.")
-
+        if "name" in col_:
+            name = col_.pop("name")
+        else:
+            name = col_generator
         col_generator_function = gen_funcs.get(col_generator)
         dataset.append(col_generator_function(**col_, rng=rng, num_rows=dataset_length))
-        column_names.append(col_generator)
+        column_names.append(name)
     return convert_data_to_df(dataset, path, column_names=column_names)
