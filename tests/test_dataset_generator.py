@@ -1,6 +1,7 @@
 import unittest
 from unittest import mock
 
+import pandas as pd
 from numpy.random import PCG64, Generator
 
 from synthetic_data.dataset_generator import generate_dataset_by_class
@@ -23,18 +24,25 @@ class TestDatasetGenerator(unittest.TestCase):
                 path=None,
             )
 
-    def test_generate_dataset_with_none_columns(self):
-        with self.assertRaisesRegex(
-            ValueError,
-            "columns_to_generate is empty and would result in an empty dataframe.",
-        ):
-            generate_dataset_by_class(self.rng, None, self.dataset_length, None)
+    @mock.patch("synthetic_data.dataset_generator.logging.warning")
+    def test_generate_dataset_with_none_columns(self, mock_warning):
+        empty_dataframe = pd.DataFrame
+        df = generate_dataset_by_class(self.rng, None, self.dataset_length, None)
+        mock_warning.assert_called_once_with(
+            "columns_to_generate is empty, empty dataframe will be returned."
+        )
+        self.assertEqual(empty_dataframe, df)
 
-    def test_generate_custom_datasets(self):
+    def test_generate_custom_datasets(self):  # extend dictionaries here
         columns_to_gen = [
-            {"generator": "integer"},
-            {"generator": "datetime"},
-            {"generator": "text"},
+            {"generator": "integer", "min_value": 0, "max_value": 1},
+            {"generator": "datetime", "start_date": pd.Timestamp(2049, 12, 31)},
+            {
+                "generator": "text",
+                "chars": ["a", "b", "c"],
+                "str_len_min": 300,
+                "str_len_max": 301,
+            },
         ]
         expected_columns = ["integer", "datetime", "text"]
         df = generate_dataset_by_class(
@@ -47,9 +55,18 @@ class TestDatasetGenerator(unittest.TestCase):
         self.assertListEqual(list(df.columns), expected_columns)
 
         columns_to_gen = [
-            {"generator": "string"},
-            {"generator": "categorical"},
-            {"generator": "float"},
+            {
+                "generator": "string",
+                "chars": ["a", "b", "c"],
+                "str_len_min": 2,
+                "str_len_max": 5,
+            },
+            {
+                "generator": "categorical",
+                "categories": ["X", "Y", "Z"],
+                "probabilities": [0.1, 0.5, 0.4],
+            },
+            {"generator": "float", "min_value": 3, "max_value": 10, "sig_figs": 3},
         ]
         expected_columns = ["string", "categorical", "float"]
         df = generate_dataset_by_class(
