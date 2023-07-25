@@ -77,7 +77,7 @@ def generate_dataset_by_class(
         logging.warning(
             "columns_to_generate is empty, empty dataframe will be returned."
         )
-        return pd.DataFrame
+        return pd.DataFrame()
 
     dataset = []
     column_names = []
