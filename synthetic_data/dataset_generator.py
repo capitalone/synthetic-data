@@ -1,8 +1,8 @@
 """Contains generator that returns collective df of requested distinct generators."""
 
+import copy
 from typing import List, Optional
 
-import copy
 import numpy as np
 import pandas as pd
 from numpy.random import Generator
@@ -106,7 +106,9 @@ def generate_dataset_by_class(
             raise ValueError(f"generator: {data_type_var} is not a valid generator.")
 
         col_generator_function = gen_funcs.get(data_type_var)
-        generated_data = col_generator_function(**col_, num_rows=dataset_length, rng=rng)
+        generated_data = col_generator_function(
+            **col_, num_rows=dataset_length, rng=rng
+        )
         sort = col_.get("ordered", None)
 
         if sort in ["ascending", "descending"]:
