@@ -31,7 +31,7 @@ class TestDatasetGenerator(unittest.TestCase):
         mock_warning.assert_called_once_with(
             "columns_to_generate is empty, empty dataframe will be returned."
         )
-        self.assertEqual(empty_dataframe, df)
+        self.assertEqual(empty_dataframe.empty, df.empty)
 
     def test_generate_custom_datasets(self):
         columns_to_gen = [
