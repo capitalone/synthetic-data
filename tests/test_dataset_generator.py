@@ -26,7 +26,7 @@ class TestDatasetGenerator(unittest.TestCase):
 
     @mock.patch("synthetic_data.dataset_generator.logging.warning")
     def test_generate_dataset_with_none_columns(self, mock_warning):
-        empty_dataframe = pd.DataFrame
+        empty_dataframe = pd.DataFrame()
         df = generate_dataset_by_class(self.rng, None, self.dataset_length, None)
         mock_warning.assert_called_once_with(
             "columns_to_generate is empty, empty dataframe will be returned."
