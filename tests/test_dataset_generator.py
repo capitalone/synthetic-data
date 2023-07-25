@@ -33,7 +33,7 @@ class TestDatasetGenerator(unittest.TestCase):
         )
         self.assertEqual(empty_dataframe, df)
 
-    def test_generate_custom_datasets(self):  # extend dictionaries here
+    def test_generate_custom_datasets(self):
         columns_to_gen = [
             {"generator": "integer", "min_value": 0, "max_value": 1},
             {"generator": "datetime", "start_date": pd.Timestamp(2049, 12, 31)},
