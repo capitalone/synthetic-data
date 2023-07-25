@@ -3,8 +3,6 @@
 import unittest
 from collections import OrderedDict
 
-pass
-
 import dataprofiler as dp
 import numpy as np
 import pandas as pd

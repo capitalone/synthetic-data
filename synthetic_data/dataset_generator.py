@@ -57,7 +57,8 @@ def get_ordered_column(
     """
     if data_type == "datetime":
         sorted_data = sorted(data, key=lambda x: x[1])
-        sorted_data = np.array([dt[1].strftime(dt[0]) for dt in sorted_data])
+        sorted_data = sorted_data[:, 0]
+
     else:
         sorted_data = np.sort(data)
 
