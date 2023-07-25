@@ -1,6 +1,7 @@
 """Contains generator that returns collective df of requested distinct generators."""
 
 import copy
+import logging
 from typing import List, Optional
 
 import numpy as np
@@ -73,9 +74,10 @@ def generate_dataset_by_class(
     }
 
     if not columns_to_generate:
-        raise ValueError(
-            "columns_to_generate is empty and would result in an empty dataframe."
+        logging.warning(
+            "columns_to_generate is empty, empty dataframe will be returned."
         )
+        return pd.DataFrame
 
     dataset = []
     column_names = []
@@ -86,6 +88,6 @@ def generate_dataset_by_class(
             raise ValueError(f"generator: {col_generator} is not a valid generator.")
 
         col_generator_function = gen_funcs.get(col_generator)
-        dataset.append(col_generator_function(rng=rng, num_rows=dataset_length))
+        dataset.append(col_generator_function(**col_, rng=rng, num_rows=dataset_length))
         column_names.append(col_generator)
     return convert_data_to_df(dataset, path, column_names=column_names)
