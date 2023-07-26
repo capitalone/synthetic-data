@@ -17,6 +17,7 @@ class TestDatasetGenerator(unittest.TestCase):
             {
                 "generator": "datetime",
                 "name": "dat",
+                "date_format_list": ["%Y-%m-%d"],
                 "start_date": pd.Timestamp(2001, 12, 22),
                 "end_date": pd.Timestamp(2022, 12, 22),
             },
@@ -75,16 +76,16 @@ class TestDatasetGenerator(unittest.TestCase):
             np.array([62, 23, 70, 30, 21, 70, 57, 60, 87, 36]),
             np.array(
                 [
-                    "December 17 2008 16:23:16",
-                    "July 16 2014 00:40:31",
-                    "November 23 2005 06:01:43",
-                    "February 07 2016 00:55:57",
-                    "October 01 2021 15:04:17",
-                    "March 10 2007 01:04:16",
-                    "November 24 2021 22:02:32",
-                    "December 26 2015 17:04:13",
-                    "December 27 2003 12:53:31",
-                    "April 02 2011 21:50:44",
+                    "2008-12-17",
+                    "2014-07-16",
+                    "2005-11-23",
+                    "2016-02-07",
+                    "2021-10-01",
+                    "2007-03-10",
+                    "2021-11-24",
+                    "2015-12-26",
+                    "2003-12-27",
+                    "2011-04-02",
                 ]
             ),
             np.array(
