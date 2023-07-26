@@ -33,7 +33,7 @@ class TestDatasetGenerator(unittest.TestCase):
         )
         self.assertEqual(empty_dataframe.empty, df.empty)
 
-    def test_generate_custom_datasets(self):
+    def test_generate_custom_dataset(self):
         columns_to_gen = [
             {"generator": "integer", "name": "int", "min_value": 4, "max_value": 88},
             {
@@ -45,14 +45,14 @@ class TestDatasetGenerator(unittest.TestCase):
             {
                 "generator": "text",
                 "name": "txt",
-                "chars": ["a", "b", "c"],
+                "chars": ["0", "1"],
                 "str_len_min": 300,
                 "str_len_max": 301,
             },
             {
                 "generator": "string",
                 "name": "str",
-                "chars": ["a", "b", "c"],
+                "chars": ["0", "1"],
                 "str_len_min": 2,
                 "str_len_max": 5,
             },
@@ -84,7 +84,6 @@ class TestDatasetGenerator(unittest.TestCase):
             df["int"].between(4, 88).all()
         ), "Some integers are not within the specified range."
         # test floats
-        print(df["flo"])
         assert (
             df["flo"].between(3, 10).all()
         ), "Some floats are not within the specified range."
@@ -96,10 +95,15 @@ class TestDatasetGenerator(unittest.TestCase):
             self.assertTrue(start_date <= date_obj)
             self.assertTrue(date_obj <= end_date)
         # test categorical
-
-        # assert df["txt"].apply(pd.Timestamp(2001, 12, 22), pd.Timestamp(2022, 12, 22)).all(), "Some dates in 'dat' are not in the specified range."
-        # string
-        # categorical
+        self.assertTrue(set(df["cat"]).issubset(["X", "Y", "Z"]))
+        # test string and text
+        chars_set = {"0", "1"}
+        for s in df["str"]:
+            for char in s:
+                self.assertIn(char, chars_set)
+        for s in df["txt"]:
+            for char in s:
+                self.assertIn(char, chars_set)
 
     @mock.patch("synthetic_data.dataset_generator.pd.DataFrame.to_csv")
     def test_path_to_csv(self, to_csv):
