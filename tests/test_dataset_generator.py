@@ -59,13 +59,12 @@ class TestDatasetGenerator(unittest.TestCase):
                 self.rng,
                 columns_to_generate=columns_to_gen,
                 dataset_length=self.dataset_length,
-                path=None,
             )
 
     @mock.patch("synthetic_data.dataset_generator.logging.warning")
     def test_generate_dataset_with_none_columns(self, mock_warning):
         empty_dataframe = pd.DataFrame()
-        df = generate_dataset(self.rng, None, self.dataset_length, None)
+        df = generate_dataset(self.rng, None, self.dataset_length)
         mock_warning.assert_called_once_with(
             "columns_to_generate is empty, empty dataframe will be returned."
         )
@@ -117,24 +116,5 @@ class TestDatasetGenerator(unittest.TestCase):
             self.rng,
             columns_to_generate=self.columns_to_gen,
             dataset_length=self.dataset_length,
-            path=None,
         )
         self.assertTrue(df.equals(expected_df))
-
-    @mock.patch("synthetic_data.dataset_generator.pd.DataFrame.to_csv")
-    def test_path_to_csv(self, to_csv):
-        """
-        Ensure csv creation is triggered at the appropiate time.
-
-        :param to_csv: mock of Pandas to_csv()
-        :type to_csv: func
-        """
-        to_csv.return_value = "assume Pandas to_csv for a dataframe runs correctly"
-        path = "testing_path"
-        generate_dataset(
-            self.rng,
-            columns_to_generate=self.columns_to_gen,
-            dataset_length=4,
-            path=path,
-        )
-        to_csv.assert_called_once_with(path, index=False, encoding="utf-8")
