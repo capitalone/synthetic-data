@@ -34,9 +34,9 @@ def generate_datetime(
     """
     t = rng.random()
     ptime = start_date + t * (end_date - start_date)
-    ptime = ptime.strftime(date_format)
+    date_string = ptime.strftime(date_format)
 
-    return [ptime, datetime.strptime(ptime, date_format)]
+    return [date_string, datetime.strptime(date_string, date_format)]
 
 
 def random_datetimes(

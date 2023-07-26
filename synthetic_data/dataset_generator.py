@@ -120,5 +120,9 @@ def generate_dataset_by_class(
                 )
             )
         else:
-            dataset.append(generated_data)
+            if data_type_var == "datetime":
+                date = generated_data[:, 0]
+                dataset.append(date)
+            else:
+                dataset.append(generated_data)
     return convert_data_to_df(dataset, path)
