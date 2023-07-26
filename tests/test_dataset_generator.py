@@ -80,17 +80,21 @@ class TestDatasetGenerator(unittest.TestCase):
         # test column names
         self.assertListEqual(list(df.columns), expected_names)
         # test ints
-        for nbr in df["int"]:
-            self.assertTrue(4 <= nbr <= 88)
+        min_val = df["int"].min()
+        max_val = df["int"].max()
+        self.assertGreaterEqual(min_val, 4)
+        self.assertLessEqual(max_val, 88)
         # test floats
-        for nbr in df["flo"]:
-            self.assertTrue(3 <= nbr <= 10)
+        min_val = df["flo"].min()
+        max_val = df["flo"].max()
+        self.assertGreaterEqual(min_val, 3)
+        self.assertLessEqual(max_val, 10)
         # test dates
-        start_date = pd.Timestamp(2001, 12, 22)
-        end_date = pd.Timestamp(2022, 12, 22)
         for date_str in df["dat"]:
             date_obj = pd.to_datetime(date_str, format="%B %d %Y %H:%M:%S")
-            self.assertTrue(start_date <= date_obj <= end_date)
+            self.assertTrue(
+                pd.Timestamp(2001, 12, 22) <= date_obj <= pd.Timestamp(2022, 12, 22)
+            )
         # test categorical
         self.assertTrue(set(df["cat"]).issubset(["X", "Y", "Z"]))
         # test string and text
