@@ -44,7 +44,7 @@ def convert_data_to_df(
     return dataframe
 
 
-def generate_dataset_by_class(
+def generate_dataset(
     rng: Generator,
     columns_to_generate: List[dict],
     dataset_length: int = 100000,
