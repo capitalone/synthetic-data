@@ -79,21 +79,18 @@ class TestDatasetGenerator(unittest.TestCase):
         )
         # test column names
         self.assertListEqual(list(df.columns), expected_names)
-        # test integers
-        assert (
-            df["int"].between(4, 88).all()
-        ), "Some integers are not within the specified range."
+        # test ints
+        for nbr in df["int"]:
+            self.assertTrue(4 <= nbr <= 88)
         # test floats
-        assert (
-            df["flo"].between(3, 10).all()
-        ), "Some floats are not within the specified range."
+        for nbr in df["flo"]:
+            self.assertTrue(3 <= nbr <= 10)
         # test dates
         start_date = pd.Timestamp(2001, 12, 22)
         end_date = pd.Timestamp(2022, 12, 22)
         for date_str in df["dat"]:
             date_obj = pd.to_datetime(date_str, format="%B %d %Y %H:%M:%S")
-            self.assertTrue(start_date <= date_obj)
-            self.assertTrue(date_obj <= end_date)
+            self.assertTrue(start_date <= date_obj <= end_date)
         # test categorical
         self.assertTrue(set(df["cat"]).issubset(["X", "Y", "Z"]))
         # test string and text
