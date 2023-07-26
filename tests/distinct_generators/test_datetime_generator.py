@@ -14,6 +14,17 @@ class TestDatetimeFunctions(unittest.TestCase):
         self.end_date = pd.Timestamp(2023, 1, 1)
         self.date_format_list = ["%Y-%m-%d", "%d-%m-%Y"]
 
+    def test_start_end_date_when_none(self):
+        date_str = date_generator.generate_datetime(
+            self.rng, self.date_format_list[0], start_date=None, end_date=None
+        )
+        try:
+            pd.to_datetime(date_str, format=self.date_format_list[0])
+        except:
+            self.fail(
+                "pd.to_datetime() raised ValueError for start_date, end_date = None"
+            )
+
     def test_generate_datetime_return_type(self):
         date_str = date_generator.generate_datetime(
             self.rng, self.date_format_list[0], self.start_date, self.end_date
@@ -27,7 +38,7 @@ class TestDatetimeFunctions(unittest.TestCase):
         try:
             pd.to_datetime(date_str, format=self.date_format_list[0])
         except ValueError:
-            self.fail("pd.to_datetime() raised ValueError unexpectedly")
+            self.fail("pd.to_datetime() raised ValueError for custom formatting")
 
     def test_generate_datetime_range(self):
         date_str = date_generator.generate_datetime(
@@ -52,7 +63,7 @@ class TestDatetimeFunctions(unittest.TestCase):
             try:
                 pd.to_datetime(date_str, format="%B %d %Y %H:%M:%S")
             except ValueError:
-                self.fail("pd.to_datetime() raised ValueError unexpectedly")
+                self.fail("pd.to_datetime() raised ValueError for default formatting")
 
     def test_random_datetimes_format_usage(self):
         result = date_generator.random_datetimes(

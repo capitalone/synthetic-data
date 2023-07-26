@@ -9,9 +9,9 @@ from numpy.random import Generator
 def random_string(
     rng: Generator,
     chars: Optional[List[str]] = None,
-    num_rows: int = 1,
     str_len_min: int = 1,
     str_len_max: int = 256,
+    num_rows: int = 1,
 ) -> np.array:
     """
     Randomly generates an array of strings with length between the min and max values.
@@ -50,9 +50,9 @@ def random_string(
 def random_text(
     rng: Generator,
     chars: Optional[str] = None,
-    num_rows: int = 1,
     str_len_min: int = 256,
     str_len_max: int = 1000,
+    num_rows: int = 1,
 ) -> np.array:
     """
     Randomly generates an array of text with length between the min and max values.
@@ -75,4 +75,4 @@ def random_text(
             f"str_len_min must be > 255. " f"Value provided: {str_len_min}."
         )
 
-    return random_string(rng, chars, num_rows, str_len_min, str_len_max)
+    return random_string(rng, chars, str_len_min, str_len_max, num_rows)
