@@ -80,15 +80,11 @@ class TestDatasetGenerator(unittest.TestCase):
         # test column names
         self.assertListEqual(list(df.columns), expected_names)
         # test ints
-        min_val = df["int"].min()
-        max_val = df["int"].max()
-        self.assertGreaterEqual(min_val, 4)
-        self.assertLessEqual(max_val, 88)
+        self.assertGreaterEqual(df["int"].min(), 4)
+        self.assertLessEqual(df["int"].max(), 88)
         # test floats
-        min_val = df["flo"].min()
-        max_val = df["flo"].max()
-        self.assertGreaterEqual(min_val, 3)
-        self.assertLessEqual(max_val, 10)
+        self.assertGreaterEqual(df["flo"].min(), 3)
+        self.assertLessEqual(df["flo"].max(), 10)
         # test dates
         for date_str in df["dat"]:
             date_obj = pd.to_datetime(date_str, format="%B %d %Y %H:%M:%S")
