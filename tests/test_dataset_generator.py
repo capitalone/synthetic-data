@@ -77,21 +77,29 @@ class TestDatasetGenerator(unittest.TestCase):
             dataset_length=self.dataset_length,
             path=None,
         )
+        # test column names
         self.assertListEqual(list(df.columns), expected_names)
+        # test integers
         assert (
             df["int"].between(4, 88).all()
-        ), "Some integer values in 'int' are not in the specified range."
+        ), "Some integers are not within the specified range."
+        # test floats
+        print(df["flo"])
         assert (
-            df["dat"]
-            .between(pd.Timestamp(2001, 12, 22), pd.Timestamp(2022, 12, 22))
-            .all()
-        ), "Some dates in 'dat' are not in the specified range."
+            df["flo"].between(3, 10).all()
+        ), "Some floats are not within the specified range."
+        # test dates
+        start_date = pd.Timestamp(2001, 12, 22)
+        end_date = pd.Timestamp(2022, 12, 22)
+        for date_str in df["dat"]:
+            date_obj = pd.to_datetime(date_str, format="%B %d %Y %H:%M:%S")
+            self.assertTrue(start_date <= date_obj)
+            self.assertTrue(date_obj <= end_date)
+        # test categorical
+
         # assert df["txt"].apply(pd.Timestamp(2001, 12, 22), pd.Timestamp(2022, 12, 22)).all(), "Some dates in 'dat' are not in the specified range."
         # string
         # categorical
-        assert (
-            df["flo"].between(4, 88).all()
-        ), "Some floats in 'flo' are not in the specified range."
 
     @mock.patch("synthetic_data.dataset_generator.pd.DataFrame.to_csv")
     def test_path_to_csv(self, to_csv):
