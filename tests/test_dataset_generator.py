@@ -1,10 +1,11 @@
 import unittest
 from unittest import mock
 
+import numpy as np
 import pandas as pd
 from numpy.random import PCG64, Generator
 
-from synthetic_data.dataset_generator import generate_dataset_by_class
+from synthetic_data.dataset_generator import generate_dataset
 
 
 class TestDatasetGenerator(unittest.TestCase):
@@ -53,7 +54,7 @@ class TestDatasetGenerator(unittest.TestCase):
         with self.assertRaisesRegex(
             ValueError, "generator: non existent generator is not a valid generator."
         ):
-            generate_dataset_by_class(
+            generate_dataset(
                 self.rng,
                 columns_to_generate=columns_to_gen,
                 dataset_length=self.dataset_length,
@@ -63,44 +64,61 @@ class TestDatasetGenerator(unittest.TestCase):
     @mock.patch("synthetic_data.dataset_generator.logging.warning")
     def test_generate_dataset_with_none_columns(self, mock_warning):
         empty_dataframe = pd.DataFrame()
-        df = generate_dataset_by_class(self.rng, None, self.dataset_length, None)
+        df = generate_dataset(self.rng, None, self.dataset_length, None)
         mock_warning.assert_called_once_with(
             "columns_to_generate is empty, empty dataframe will be returned."
         )
         self.assertEqual(empty_dataframe.empty, df.empty)
 
     def test_generate_custom_dataset(self):
-        expected_names = ["int", "dat", "txt", "str", "cat", "flo"]
-        df = generate_dataset_by_class(
+        expected_data = [
+            np.array([62, 23, 70, 30, 21, 70, 57, 60, 87, 36]),
+            np.array(
+                [
+                    "December 17 2008 16:23:16",
+                    "July 16 2014 00:40:31",
+                    "November 23 2005 06:01:43",
+                    "February 07 2016 00:55:57",
+                    "October 01 2021 15:04:17",
+                    "March 10 2007 01:04:16",
+                    "November 24 2021 22:02:32",
+                    "December 26 2015 17:04:13",
+                    "December 27 2003 12:53:31",
+                    "April 02 2011 21:50:44",
+                ]
+            ),
+            np.array(
+                [
+                    "010100011010001000001100000001111101111111110110001011101100001010000100101100001010101000100010101010101011000110010110110000011101001011101110011010000011111010001100000000110001100100000000000111001110110110101010110010010000101101110001000101010110101101001011101011110110100110100000111101010101",
+                    "000111111101111101100010110011100000110010011100001110011100001010011001100010111000101101001010101010101111000010110111110111001000110100010100001111011111011110000100111000000100100011010110111001010011001011100110110010100000000001011111110110001001100001010100100011001110011000100101000011011111",
+                    "111100000010101010101001100110110011000010100100101110111110001001010001000010000100110011000101000000010011011001101011011100101000100001001011011110111010010100001110001101101110110011010110111010000110000000011000100011111101001110010011110000001011100100100111010001011000101110011100110111001001",
+                    "101010000111110001001111100000101111000100000111001100001001001110101111111010111011011100010101100001001010111010010110110100101010010101000100001001110000001010111100010100101110011100011100111000110110011110111110001000111011110010000111100000110010001110101100101110111111000011001100111111000011",
+                    "011110101101010111010100100001101000000101000001000100110011100011000100011111101100100101111000111000101111101101000010100011110010010111110011011010000000001111111101101111110001110110110100010111111001000000101101101101000000001000001001101000010001011111011001111011101011011000100010001001010111",
+                    "111100110001011101000101011000110001001100101100101100000110010011001011010110001010111010010111111111100011101110010011001101101000000011000100101001110010110101010001011111001110110111001111111110001000110110101000010001111001100111100110110101101100110100010011011011100110010110100001010100001000",
+                    "111000010000010000001100001101000011001001010110100100111000101100101110110111000010011101010110101011111101011011110110111100111011100110011011111011111001110001101000101001100000101010000010111100101110100001000011011011000001101010000010000001110111010010001101011100100101101110001111101001000111",
+                    "010001100011001001101011000010000111011010011000110000111110000000000000101101111011101000011001010111110100000010100000000100110001001000110010010011110001111011101111101001011111000000000011000110100000011010111001000001000110111011111000011111010011011000111100000001111100011000011111000000001000",
+                    "000011011010101010010011011001001111001000000001111110111101010000011101101000000110111001000101110001011100101110001000100001110101001011110110101000110101000100100010011011000010000111101001111000000011011000100011010100001111111111110010011101110010101010010010110011110011001010100000111111110001",
+                    "101111001110001101001010001110100100010010001011110100110000100001000100010100110001110010000111100100010010011010011111000101001110111001111000011011011011111100101010110111100110000111010000100001100111111111010001011100010010100111101010010100011011110110101110111111111000000100110001110011010000",
+                ]
+            ),
+            np.array(
+                ["01", "010", "110", "0111", "1001", "001", "0100", "0111", "11", "101"]
+            ),
+            np.array(["Z", "Y", "Z", "Y", "Y", "Z", "Y", "Y", "Y", "X"]),
+            np.array(
+                [7.919, 4.878, 9.382, 4.071, 6.537, 8.611, 7.977, 3.159, 8.304, 9.674]
+            ),
+        ]
+        expected_df = pd.DataFrame.from_dict(
+            dict(zip(["int", "dat", "txt", "str", "cat", "flo"], expected_data))
+        )
+        df = generate_dataset(
             self.rng,
             columns_to_generate=self.columns_to_gen,
             dataset_length=self.dataset_length,
             path=None,
         )
-        # test column names
-        self.assertListEqual(list(df.columns), expected_names)
-        # test ints
-        self.assertGreaterEqual(df["int"].min(), 4)
-        self.assertLessEqual(df["int"].max(), 88)
-        # test floats
-        self.assertGreaterEqual(df["flo"].min(), 3)
-        self.assertLessEqual(df["flo"].max(), 10)
-        # test dates
-        for date_str in df["dat"]:
-            date_obj = pd.to_datetime(date_str, format="%B %d %Y %H:%M:%S")
-            self.assertTrue(
-                pd.Timestamp(2001, 12, 22) <= date_obj <= pd.Timestamp(2022, 12, 22)
-            )
-        # test categorical
-        self.assertTrue(set(df["cat"]).issubset(["X", "Y", "Z"]))
-        # test string and text
-        chars_set = {"0", "1"}
-        for s in df["str"]:
-            for char in s:
-                self.assertIn(char, chars_set)
-        for s in df["txt"]:
-            for char in s:
-                self.assertIn(char, chars_set)
+        self.assertTrue(df.equals(expected_df))
 
     @mock.patch("synthetic_data.dataset_generator.pd.DataFrame.to_csv")
     def test_path_to_csv(self, to_csv):
@@ -112,7 +130,7 @@ class TestDatasetGenerator(unittest.TestCase):
         """
         to_csv.return_value = "assume Pandas to_csv for a dataframe runs correctly"
         path = "testing_path"
-        generate_dataset_by_class(
+        generate_dataset(
             self.rng,
             columns_to_generate=self.columns_to_gen,
             dataset_length=4,
