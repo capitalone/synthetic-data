@@ -3,6 +3,8 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
+import random
+from datetime import datetime
 from numpy.random import Generator
 
 
@@ -36,8 +38,8 @@ def generate_datetime(
         end_date: pd.Timestamp = pd.Timestamp(2049, 12, 31)
     t = rng.random()
     ptime = start_date + t * (end_date - start_date)
-
-    return ptime.strftime(date_format)
+    date_string = ptime.strftime(date_format)
+    return [date_string, datetime.strptime(date_string, date_format)]
 
 
 def random_datetimes(
@@ -70,7 +72,7 @@ def random_datetimes(
         date_format_list = ["%B %d %Y %H:%M:%S"]
 
     for i in range(num_rows):
-        date_format = rng.choice(date_format_list)
+        date_format = random.choice(date_format_list)
         datetime = generate_datetime(
             rng, date_format=date_format, start_date=start_date, end_date=end_date
         )
