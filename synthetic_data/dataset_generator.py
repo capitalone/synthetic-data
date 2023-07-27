@@ -12,7 +12,7 @@ from synthetic_data.distinct_generators.categorical_generator import random_cate
 from synthetic_data.distinct_generators.datetime_generator import random_datetimes
 from synthetic_data.distinct_generators.float_generator import random_floats
 from synthetic_data.distinct_generators.int_generator import random_integers
-from synthetic_data.distinct_generators.text_generator import random_string, random_text
+from synthetic_data.distinct_generators.text_generator import random_string
 
 
 def convert_data_to_df(
@@ -59,7 +59,6 @@ def generate_dataset(
         "integer": random_integers,
         "float": random_floats,
         "categorical": random_categorical,
-        "text": random_text,
         "datetime": random_datetimes,
         "string": random_string,
     }
