@@ -1,7 +1,7 @@
 import unittest
-from unittest import mock
 from collections import OrderedDict
 from datetime import datetime
+from unittest import mock
 
 import dataprofiler as dp
 import numpy as np
@@ -142,8 +142,6 @@ class TestDatasetGenerator(unittest.TestCase):
             path=path,
         )
         to_csv.assert_called_once_with(path, index=False, encoding="utf-8")
-
-
 
 
 class TestGetOrderedColumn(unittest.TestCase):

@@ -1,10 +1,10 @@
 """Contains a datetime generator."""
+import random
+from datetime import datetime
 from typing import Optional
 
 import numpy as np
 import pandas as pd
-import random
-from datetime import datetime
 from numpy.random import Generator
 
 

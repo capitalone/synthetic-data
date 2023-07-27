@@ -43,6 +43,7 @@ def convert_data_to_df(
         dataframe.to_csv(path, index=index, encoding="utf-8")
     return dataframe
 
+
 def get_ordered_column(
     data: np.array,
     data_type: str,
@@ -65,6 +66,7 @@ def get_ordered_column(
     if order == "descending":
         return sorted_data[::-1]
     return sorted_data
+
 
 def generate_dataset(
     rng: Generator,
