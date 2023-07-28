@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from synthetic_data.distinct_generators.text_generator import random_string
+from synthetic_data.distinct_generators.str_generator import random_string
 
 
 class TestTextGeneratorFunctions(unittest.TestCase):
