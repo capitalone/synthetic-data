@@ -6,7 +6,7 @@ import numpy as np
 from numpy.random import Generator
 
 
-def random_string(
+def random_text(
     rng: Generator,
     chars: Optional[List[str]] = None,
     str_len_min: int = 1,
@@ -14,7 +14,7 @@ def random_string(
     num_rows: int = 1,
 ) -> np.array:
     """
-    Randomly generates an array of strings with length between the min and max values.
+    Randomly generates an array of text with lengths between the min and max values.
 
     :param rng: the np rng object used to generate random values
     :type rng: numpy Generator
@@ -37,11 +37,11 @@ def random_string(
             + " "
             + string.punctuation
         )
-    string_list = []
+    text_list = []
 
     for _ in range(num_rows):
         length = rng.integers(str_len_min, str_len_max)
         string_entry = "".join(rng.choice(chars, (length,)))
-        string_list.append(string_entry)
+        text_list.append(string_entry)
 
-    return np.array(string_list)
+    return np.array(text_list)
