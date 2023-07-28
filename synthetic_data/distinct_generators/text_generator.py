@@ -25,7 +25,7 @@ def random_string(
     :param str_len_min: the minimum length a string can be
     :type str_len_min: int, optional
     :param str_len_max: the maximum length a string can be
-    :type str_len_max: int, optional
+    :type str_len_max: int (one above the max), optional
 
     :return: numpy array of strings
     """

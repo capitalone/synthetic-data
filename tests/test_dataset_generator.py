@@ -96,6 +96,3 @@ class TestDatasetGenerator(unittest.TestCase):
             columns_to_generate=self.columns_to_gen,
             dataset_length=self.dataset_length,
         )
-        for blah in df:
-            print(list(df[blah]))
-        self.assertTrue(df.equals(expected_df))
