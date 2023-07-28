@@ -29,6 +29,6 @@ class TestTextGeneratorFunctions(unittest.TestCase):
     def test_chars(self):
         chars_set = {"0", "1"}
         text_arr = random_text(self.rng, chars=["0", "1"])
-        for s in text_arr:
-            for char in s:
+        for t in text_arr:
+            for char in t:
                 self.assertIn(char, chars_set)
