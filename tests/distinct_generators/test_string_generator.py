@@ -3,10 +3,10 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from synthetic_data.distinct_generators.str_generator import random_string
+from synthetic_data.distinct_generators.string_generator import random_string
 
 
-class TestStrGeneratorFunctions(unittest.TestCase):
+class TestStringGeneratorFunctions(unittest.TestCase):
     def setUp(self):
         self.rng = np.random.default_rng(12345)
 
