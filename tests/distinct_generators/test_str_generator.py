@@ -6,7 +6,7 @@ import pandas as pd
 from synthetic_data.distinct_generators.str_generator import random_string
 
 
-class TestTextGeneratorFunctions(unittest.TestCase):
+class TestStrGeneratorFunctions(unittest.TestCase):
     def setUp(self):
         self.rng = np.random.default_rng(12345)
 
