@@ -22,8 +22,8 @@ class TestDatasetGenerator(unittest.TestCase):
                 "end_date": pd.Timestamp(2022, 12, 22),
             },
             {
-                "generator": "string",
-                "name": "str",
+                "generator": "text",
+                "name": "txt",
                 "chars": ["0", "1"],
                 "str_len_min": 2,
                 "str_len_max": 5,
@@ -89,7 +89,7 @@ class TestDatasetGenerator(unittest.TestCase):
             ),
         ]
         expected_df = pd.DataFrame.from_dict(
-            dict(zip(["int", "dat", "str", "cat", "flo"], expected_data))
+            dict(zip(["int", "dat", "txt", "cat", "flo"], expected_data))
         )
         df = generate_dataset(
             self.rng,
