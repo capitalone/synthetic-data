@@ -1,7 +1,7 @@
 """Contains a datetime generator."""
 import random
 from datetime import datetime
-from typing import List, Optional
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -11,9 +11,9 @@ from numpy.random import Generator
 def generate_datetime(
     rng: Generator,
     date_format: str,
-    start_date: pd.Timestamp = pd.Timestamp(1920, 1, 1),
-    end_date: pd.Timestamp = pd.Timestamp(2049, 12, 31),
-) -> list:
+    start_date: pd.Timestamp,
+    end_date: pd.Timestamp,
+) -> str:
     """
     Generate datetime given the random_state, date_format, and start/end dates.
 
@@ -44,7 +44,7 @@ def generate_datetime(
 
 def random_datetimes(
     rng: Generator,
-    date_format_list: Optional[List[str]] = None,
+    date_format_list: Optional[str] = None,
     start_date: pd.Timestamp = None,
     end_date: pd.Timestamp = None,
     num_rows: int = 1,
@@ -54,9 +54,9 @@ def random_datetimes(
 
     :param rng: the np rng object used to generate random values
     :type rng: numpy Generator
-    :param date_format_list: the format that the generated datatime will follow,
+    :param date_format: the format that the generated datatime will follow,
         defaults to None
-    :type date_format: List, None, optional
+    :type date_format: str, None, optional
     :param start_date: the earliest date that datetimes can be generated at,
         defaults to pd.Timestamp(1920, 1, 1)
     :type start_date: pd.Timestamp, None, optional
