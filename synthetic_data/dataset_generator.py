@@ -12,12 +12,11 @@ from synthetic_data.distinct_generators.categorical_generator import random_cate
 from synthetic_data.distinct_generators.datetime_generator import random_datetimes
 from synthetic_data.distinct_generators.float_generator import random_floats
 from synthetic_data.distinct_generators.int_generator import random_integers
-from synthetic_data.distinct_generators.text_generator import random_string, random_text
+from synthetic_data.distinct_generators.text_generator import random_text
 
 
 def convert_data_to_df(
     np_data: np.array,
-    path: Optional[str] = None,
     index: bool = False,
     column_names: Optional[List[str]] = None,
 ) -> pd.DataFrame:
@@ -26,21 +25,16 @@ def convert_data_to_df(
 
     :param np_data: np array to be converted
     :type np_data: numpy array
-    :param path: path to output a csv of the dataframe generated
-    :type path: str, None, optional
     :param index: whether to include index in output to csv
-    :type path: bool, optional
+    :type index: bool, optional
     :param column_names: The names of the columns of a dataset
-    :type path: List, None, optional
+    :type column_names: List, None, optional
     :return: a pandas dataframe
     """
     # convert array into dataframe
     if not column_names:
         column_names = [x for x in range(len(np_data))]
     dataframe = pd.DataFrame.from_dict(dict(zip(column_names, np_data)))
-    # save the dataframe as a csv file
-    if path:
-        dataframe.to_csv(path, index=index, encoding="utf-8")
     return dataframe
 
 
@@ -72,7 +66,6 @@ def generate_dataset(
     rng: Generator,
     columns_to_generate: List[dict],
     dataset_length: int = 100000,
-    path: Optional[str] = None,
 ) -> pd.DataFrame:
     """
     Randomizes a dataset with a mixture of different data classes.
@@ -83,8 +76,6 @@ def generate_dataset(
     :type columns_to_generate: List[dict], None, optional
     :param dataset_length: length of the dataset generated, default 100,000
     :type dataset_length: int, optional
-    :param path: path to output a csv of the dataframe generated
-    :type path: str, None, optional
 
     :return: pandas DataFrame
     """
@@ -92,9 +83,8 @@ def generate_dataset(
         "integer": random_integers,
         "float": random_floats,
         "categorical": random_categorical,
-        "text": random_text,
         "datetime": random_datetimes,
-        "string": random_string,
+        "text": random_text,
     }
 
     if not columns_to_generate:
@@ -135,4 +125,4 @@ def generate_dataset(
             else:
                 dataset.append(generated_data)
         column_names.append(name)
-    return convert_data_to_df(dataset, path, column_names=column_names)
+    return convert_data_to_df(dataset, column_names=column_names)
