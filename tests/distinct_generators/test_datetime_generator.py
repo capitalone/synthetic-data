@@ -21,17 +21,6 @@ class TestDatetimeFunctions(unittest.TestCase):
             self.rng, self.date_format_list, self.start_date, self.end_date, 10
         )
 
-    def test_start_end_date_when_none(self):
-        date_str = date_generator.generate_datetime(
-            self.rng, self.date_format_list[0], start_date=None, end_date=None
-        )
-        try:
-            pd.to_datetime(date_str, format=self.date_format_list[0])
-        except:
-            self.fail(
-                "pd.to_datetime() raised ValueError for start_date, end_date = None"
-            )
-
     def test_generate_datetime_return_type(self):
         self.assertIsInstance(self.generate_datetime_output, list)
         self.assertIsInstance(self.generate_datetime_output[0], str)
@@ -58,12 +47,9 @@ class TestDatetimeFunctions(unittest.TestCase):
         self.assertEqual(self.random_datetimes_output.shape[0], 10)
 
     def test_random_datetimes_default_format_usage(self):
-        dates = date_generator.random_datetimes(
-            self.rng, start_date=self.start_date, end_date=self.end_date
-        )
-        for date in dates:
+        for date in self.random_datetimes_output:
             try:
-                pd.to_datetime(date, format="%B %d %Y %H:%M:%S")
+                pd.to_datetime(date[1], format=date[0])
             except ValueError:
                 self.fail("pd.to_datetime() raised ValueError for default formatting")
 

@@ -1,7 +1,10 @@
 """Contains generator that returns collective df of requested distinct generators."""
 
 import copy
+<<<<<<< HEAD
 import logging
+=======
+>>>>>>> origin/feature/simple-tabular-generator
 from typing import List, Optional
 
 import numpy as np
@@ -38,6 +41,10 @@ def convert_data_to_df(
     if not column_names:
         column_names = [x for x in range(len(np_data))]
     dataframe = pd.DataFrame.from_dict(dict(zip(column_names, np_data)))
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/feature/simple-tabular-generator
     # save the dataframe as a csv file
     if path:
         dataframe.to_csv(path, index=index, encoding="utf-8")
@@ -68,6 +75,7 @@ def get_ordered_column(
     return sorted_data
 
 
+<<<<<<< HEAD
 def generate_dataset(
     rng: Generator,
     columns_to_generate: List[dict],
@@ -76,15 +84,33 @@ def generate_dataset(
 ) -> pd.DataFrame:
     """
     Randomizes a dataset with a mixture of different data classes.
+=======
+def generate_dataset_by_class(
+    rng: Generator,
+    columns_to_generate: Optional[List[dict]] = None,
+    dataset_length: int = 100000,
+    path: Optional[str] = None,
+) -> pd.DataFrame:
+    """Randomly generate a dataset with a mixture of different data classes.
+>>>>>>> origin/feature/simple-tabular-generator
 
     :param rng: the np rng object used to generate random values
     :type rng: numpy Generator
     :param columns_to_generate: Classes of data to be included in the dataset
     :type columns_to_generate: List[dict], None, optional
+<<<<<<< HEAD
     :param dataset_length: length of the dataset generated, default 100,000
     :type dataset_length: int, optional
     :param path: path to output a csv of the dataframe generated
     :type path: str, None, optional
+=======
+    :param dataset_length: length of the dataset generated
+    :type dataset_length: int, optional
+    :param path: path to output a csv of the dataframe generated
+    :type path: str, None, optional
+    :param ordered: whether to generate ordered data
+    :type ordered: bool, optional
+>>>>>>> origin/feature/simple-tabular-generator
 
     :return: pandas DataFrame
     """
@@ -97,6 +123,7 @@ def generate_dataset(
         "string": random_string,
     }
 
+<<<<<<< HEAD
     if not columns_to_generate:
         logging.warning(
             "columns_to_generate is empty, empty dataframe will be returned."
@@ -115,6 +142,16 @@ def generate_dataset(
         else:
             name = col_generator
         col_generator_function = gen_funcs.get(col_generator)
+=======
+    dataset = []
+    for col in columns_to_generate:
+        col_ = copy.deepcopy(col)
+        data_type_var = col_.get("data_type", None)
+        if data_type_var not in gen_funcs:
+            raise ValueError(f"generator: {data_type_var} is not a valid generator.")
+
+        col_generator_function = gen_funcs.get(data_type_var)
+>>>>>>> origin/feature/simple-tabular-generator
         generated_data = col_generator_function(
             **col_, num_rows=dataset_length, rng=rng
         )
@@ -124,15 +161,27 @@ def generate_dataset(
             dataset.append(
                 get_ordered_column(
                     generated_data,
+<<<<<<< HEAD
                     col_generator,
+=======
+                    data_type_var,
+>>>>>>> origin/feature/simple-tabular-generator
                     sort,
                 )
             )
         else:
+<<<<<<< HEAD
             if col_generator == "datetime":
+=======
+            if data_type_var == "datetime":
+>>>>>>> origin/feature/simple-tabular-generator
                 date = generated_data[:, 0]
                 dataset.append(date)
             else:
                 dataset.append(generated_data)
+<<<<<<< HEAD
         column_names.append(name)
     return convert_data_to_df(dataset, path, column_names=column_names)
+=======
+    return convert_data_to_df(dataset, path)
+>>>>>>> origin/feature/simple-tabular-generator
