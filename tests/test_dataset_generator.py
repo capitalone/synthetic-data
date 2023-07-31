@@ -1,5 +1,5 @@
 import unittest
-from collections import OrderedDict
+pass
 from datetime import datetime
 from unittest import mock
 
@@ -186,12 +186,12 @@ class TestDatasetGenerator(unittest.TestCase):
 
     @mock.patch("synthetic_data.dataset_generator.logging.warning")
     def test_generate_dataset_with_none_columns(self, mock_warning):
-        empty_dataframe = pd.DataFrame()
-        df = dataset_generator.generate_dataset(self.rng, None, self.dataset_length)
+        expected_dataframe = pd.DataFrame()
+        actual_df = dataset_generator.generate_dataset(self.rng, None, self.dataset_length)
         mock_warning.assert_called_once_with(
             "columns_to_generate is empty, empty dataframe will be returned."
         )
-        self.assertEqual(empty_dataframe.empty, df.empty)
+        self.assertEqual(expected_dataframe.empty, actual_df.empty)
 
     def test_generate_custom_dataset(self):
         expected_data = [
