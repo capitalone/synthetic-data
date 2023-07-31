@@ -125,11 +125,12 @@ def generate_dataset(
                 )
             )
         else:
-            logging.warning(
-                f"""{name} is passed with sorting type of {sort}.
-            Ascending and descending are the only supported options.
-            No sorting action will be taken."""
-            )
+            if sort is not None:
+                logging.warning(
+                    f"""{name} is passed with sorting type of {sort}.
+                Ascending and descending are the only supported options.
+                No sorting action will be taken."""
+                )
             if col_generator == "datetime":
                 date = generated_data[:, 0]
                 dataset.append(date)
