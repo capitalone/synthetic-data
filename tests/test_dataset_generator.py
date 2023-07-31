@@ -3,8 +3,6 @@ from collections import OrderedDict
 from datetime import datetime
 from unittest import mock
 
-pass
-
 import dataprofiler as dp
 import numpy as np
 import pandas as pd
