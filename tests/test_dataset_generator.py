@@ -56,7 +56,7 @@ class TestDatasetGenerator(unittest.TestCase):
                 "name": "int",
                 "min_value": 4,
                 "max_value": 88,
-                "ordered": "ascending",
+                "order": "ascending",
             },
             {
                 "generator": "datetime",
@@ -64,7 +64,7 @@ class TestDatasetGenerator(unittest.TestCase):
                 "date_format_list": ["%Y-%m-%d"],
                 "start_date": pd.Timestamp(2001, 12, 22),
                 "end_date": pd.Timestamp(2022, 12, 22),
-                "ordered": "ascending",
+                "order": "ascending",
             },
             {
                 "generator": "text",
@@ -72,14 +72,14 @@ class TestDatasetGenerator(unittest.TestCase):
                 "chars": ["0", "1"],
                 "str_len_min": 2,
                 "str_len_max": 5,
-                "ordered": "ascending",
+                "order": "ascending",
             },
             {
                 "generator": "categorical",
                 "name": "cat",
                 "categories": ["X", "Y", "Z"],
                 "probabilities": [0.1, 0.5, 0.4],
-                "ordered": "ascending",
+                "order": "ascending",
             },
             {
                 "generator": "float",
@@ -87,7 +87,7 @@ class TestDatasetGenerator(unittest.TestCase):
                 "min_value": 3,
                 "max_value": 10,
                 "sig_figs": 3,
-                "ordered": "ascending",
+                "order": "ascending",
             },
         ]
         expected_data = [
