@@ -116,7 +116,14 @@ def generate_dataset(
             **col_, num_rows=dataset_length, rng=rng
         )
 
-        if sort in ["ascending", "descending"]:
+        if sort not in sorting_types:
+            logging.warning(
+                f"""{name} is passed with sorting type of {sort}.
+            Ascending and descending are the only supported options.
+            No sorting action will be taken."""
+            )
+
+        if sort in sorting_types:
             dataset.append(
                 get_ordered_column(
                     generated_data,
