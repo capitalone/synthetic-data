@@ -56,7 +56,7 @@ class TestDatasetGenerator(unittest.TestCase):
                 "name": "int",
                 "min_value": 4,
                 "max_value": 88,
-                "ordered": "ascending",
+                "order": "ascending",
             },
             {
                 "generator": "datetime",
@@ -64,7 +64,7 @@ class TestDatasetGenerator(unittest.TestCase):
                 "date_format_list": ["%Y-%m-%d"],
                 "start_date": pd.Timestamp(2001, 12, 22),
                 "end_date": pd.Timestamp(2022, 12, 22),
-                "ordered": "ascending",
+                "order": "ascending",
             },
             {
                 "generator": "text",
@@ -72,14 +72,14 @@ class TestDatasetGenerator(unittest.TestCase):
                 "chars": ["0", "1"],
                 "str_len_min": 2,
                 "str_len_max": 5,
-                "ordered": "ascending",
+                "order": "ascending",
             },
             {
                 "generator": "categorical",
                 "name": "cat",
                 "categories": ["X", "Y", "Z"],
                 "probabilities": [0.1, 0.5, 0.4],
-                "ordered": "ascending",
+                "order": "ascending",
             },
             {
                 "generator": "float",
@@ -87,7 +87,7 @@ class TestDatasetGenerator(unittest.TestCase):
                 "min_value": 3,
                 "max_value": 10,
                 "sig_figs": 3,
-                "ordered": "ascending",
+                "order": "ascending",
             },
         ]
         expected_data = [
@@ -135,6 +135,56 @@ class TestDatasetGenerator(unittest.TestCase):
                 columns_to_generate=columns_to_gen,
                 dataset_length=self.dataset_length,
             )
+
+    @mock.patch("synthetic_data.dataset_generator.logging.warning")
+    def test_generate_dataset_with_invalid_sorting_type(self, mock_warning):
+        columns_to_gen = [
+            {
+                "generator": "integer",
+                "name": "int",
+                "min_value": 4,
+                "max_value": 88,
+                "order": "random",
+            }
+        ]
+        unsupported_sort_types = ["cheese", "random"]
+
+        for type in unsupported_sort_types:
+            columns_to_gen[0]["order"] = type
+            dataset_generator.generate_dataset(
+                self.rng,
+                columns_to_generate=columns_to_gen,
+                dataset_length=self.dataset_length,
+            )
+            mock_warning.assert_called_with(
+                f"""{columns_to_gen[0]["name"]} is passed with sorting type of {columns_to_gen[0]["order"]}.
+                Ascending and descending are the only supported options.
+                No sorting action will be taken."""
+            )
+        self.assertEqual(mock_warning.call_count, 2)
+
+    @mock.patch("synthetic_data.dataset_generator.logging.warning")
+    def test_generate_dataset_with_valid_sorting_type(self, mock_warning):
+        columns_to_gen = [
+            {
+                "generator": "integer",
+                "name": "int",
+                "min_value": 4,
+                "max_value": 88,
+                "order": "ascending",
+            }
+        ]
+        supported_sort_types = ["ascending", "descending", None]
+
+        for type in supported_sort_types:
+            columns_to_gen[0]["order"] = type
+            dataset_generator.generate_dataset(
+                self.rng,
+                columns_to_generate=columns_to_gen,
+                dataset_length=self.dataset_length,
+            )
+
+        self.assertEqual(mock_warning.call_count, 0)
 
     @mock.patch("synthetic_data.dataset_generator.logging.warning")
     def test_generate_dataset_with_none_columns(self, mock_warning):
