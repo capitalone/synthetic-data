@@ -25,7 +25,7 @@ class TestDatetimeFunctions(unittest.TestCase):
         self.columns = dp.Profiler(
             data=self.data, profiler_type="structured", options=self.profile_options
         ).report()["data_stats"]
-    
+
     @mock.patch('synthetic_data.generators.make_data_from_report')
     def test_synthesize_correlated_method(self, mock_make_data):
         profile = dp.Profiler(
@@ -63,14 +63,14 @@ class TestDatetimeFunctions(unittest.TestCase):
     # def test_generate_dataset_columns_format_list(self):
     #     random_seed = 0
     #     rng = np.random.default_rng(seed=random_seed)
-    #     col_data = [] 
+    #     col_data = []
 
     #     for i, col in enumerate(self.columns):
     #         data_type = col[i].get("data_type", None)
     #         ordered = col[i].get("order", None)
-                
+
     #         if data_type == "datetime":
-    #             col_data.append({"data_type":data_type, "ordered":ordered, "date_format_list": "%m/%d/%Y, %H:%M:%S"}) 
+    #             col_data.append({"data_type":data_type, "ordered":ordered, "date_format_list": "%m/%d/%Y, %H:%M:%S"})
     #         else:
     #             col_data.append({"data_type":data_type, "ordered":ordered})
 

@@ -402,6 +402,7 @@ def make_data_from_report(
     n_samples: int = None,
     noise_level: float = 0.0,
     seed=None,
+    is_correlated: bool = True,
 ) -> pd.DataFrame:
     """Use a DataProfiler report to generate a synthetic data set to mimic the report.
 
@@ -429,7 +430,9 @@ def make_data_from_report(
     n_informative = len(report["data_stats"])
 
     # build covariance matrix
-    R = report["global_stats"]["correlation_matrix"]
+    R = np.eye(n_informative)
+    if is_correlated:
+        R = report["global_stats"]["correlation_matrix"]
 
     stddevs = [stat["statistics"]["stddev"] for stat in report["data_stats"]]
     D = np.diag(stddevs)
