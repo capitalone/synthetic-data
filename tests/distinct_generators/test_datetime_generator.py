@@ -30,7 +30,7 @@ class TestGenerateDatetime(unittest.TestCase):
             ["2006 10 02", datetime.strptime("2006 10 02", self.date_format_list[0])],
             self.generate_datetime_output,
         )
-        
+
 
 class TestRandomDatetimes(unittest.TestCase):
     def setUp(self):
