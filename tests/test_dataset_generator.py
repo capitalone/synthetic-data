@@ -391,7 +391,7 @@ class TestGetOrderedColumn(unittest.TestCase):
 
     def test_get_ordered_column(self):
 
-        data = OrderedDict(
+        actual_data = OrderedDict(
             {
                 "int": np.array([5, 4, 3, 2, 1]),
                 "float": np.array([5.0, 4.0, 3.0, 2.0, 1.0]),
@@ -452,9 +452,9 @@ class TestGetOrderedColumn(unittest.TestCase):
         expected = np.array(expected, dtype=object)
 
         actual = []
-        for data_type in data.keys():
+        for data_type in actual_data.keys():
             actual.append(
-                dataset_generator.get_ordered_column(data[data_type], data_type)
+                dataset_generator.get_ordered_column(actual_data[data_type], data_type)
             )
         actual = np.array(actual)
 
