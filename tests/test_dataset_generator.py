@@ -3,13 +3,15 @@ from collections import OrderedDict
 from datetime import datetime
 from unittest import mock
 
+pass
+
 import dataprofiler as dp
 import numpy as np
 import pandas as pd
 from numpy.random import PCG64, Generator
 
-from synthetic_data import dataset_generator as dg
-from synthetic_data.distinct_generators import datetime_generator as dategen
+from synthetic_data import dataset_generator
+from synthetic_data.distinct_generators import datetime_generator
 
 
 class TestDatasetGenerator(unittest.TestCase):
@@ -47,12 +49,88 @@ class TestDatasetGenerator(unittest.TestCase):
             },
         ]
 
+    def test_get_ordered_column_integration(self):
+        columns_to_gen = [
+            {
+                "generator": "integer",
+                "name": "int",
+                "min_value": 4,
+                "max_value": 88,
+                "ordered": "ascending",
+            },
+            {
+                "generator": "datetime",
+                "name": "dat",
+                "date_format_list": ["%Y-%m-%d"],
+                "start_date": pd.Timestamp(2001, 12, 22),
+                "end_date": pd.Timestamp(2022, 12, 22),
+                "ordered": "ascending",
+            },
+            {
+                "generator": "text",
+                "name": "txt",
+                "chars": ["0", "1"],
+                "str_len_min": 2,
+                "str_len_max": 5,
+                "ordered": "ascending",
+            },
+            {
+                "generator": "categorical",
+                "name": "cat",
+                "categories": ["X", "Y", "Z"],
+                "probabilities": [0.1, 0.5, 0.4],
+                "ordered": "ascending",
+            },
+            {
+                "generator": "float",
+                "name": "flo",
+                "min_value": 3,
+                "max_value": 10,
+                "sig_figs": 3,
+                "ordered": "ascending",
+            },
+        ]
+        expected_data = [
+            np.array([21, 23, 30, 36, 57, 60, 62, 70, 70, 87]),
+            np.array(
+                [
+                    "2003-12-27",
+                    "2005-11-23",
+                    "2007-03-10",
+                    "2008-12-17",
+                    "2011-04-02",
+                    "2014-07-16",
+                    "2015-12-26",
+                    "2016-02-07",
+                    "2021-10-01",
+                    "2021-11-24",
+                ]
+            ),
+            np.array(
+                ["00", "000", "0001", "01", "0100", "10", "10", "100", "1110", "1111"]
+            ),
+            np.array(["Y", "Y", "Y", "Y", "Y", "Y", "Z", "Z", "Z", "Z"]),
+            np.array(
+                [3.035, 3.477, 4.234, 4.812, 4.977, 5.131, 5.379, 5.488, 7.318, 7.4]
+            ),
+        ]
+        expected_df = pd.DataFrame.from_dict(
+            dict(zip(["int", "dat", "txt", "cat", "flo"], expected_data))
+        )
+        df = dataset_generator.generate_dataset(
+            self.rng,
+            columns_to_generate=columns_to_gen,
+            dataset_length=self.dataset_length,
+        )
+
+        self.assertTrue(df.equals(expected_df))
+
     def test_generate_dataset_with_invalid_generator(self):
         columns_to_gen = [{"generator": "non existent generator"}]
         with self.assertRaisesRegex(
             ValueError, "generator: non existent generator is not a valid generator."
         ):
-            dg.generate_dataset(
+            dataset_generator.generate_dataset(
                 self.rng,
                 columns_to_generate=columns_to_gen,
                 dataset_length=self.dataset_length,
@@ -61,7 +139,7 @@ class TestDatasetGenerator(unittest.TestCase):
     @mock.patch("synthetic_data.dataset_generator.logging.warning")
     def test_generate_dataset_with_none_columns(self, mock_warning):
         empty_dataframe = pd.DataFrame()
-        df = dg.generate_dataset(self.rng, None, self.dataset_length)
+        df = dataset_generator.generate_dataset(self.rng, None, self.dataset_length)
         mock_warning.assert_called_once_with(
             "columns_to_generate is empty, empty dataframe will be returned."
         )
@@ -95,7 +173,7 @@ class TestDatasetGenerator(unittest.TestCase):
         expected_df = pd.DataFrame.from_dict(
             dict(zip(["int", "dat", "txt", "cat", "flo"], expected_data))
         )
-        df = dg.generate_dataset(
+        df = dataset_generator.generate_dataset(
             self.rng,
             columns_to_generate=self.columns_to_gen,
             dataset_length=self.dataset_length,
@@ -111,11 +189,11 @@ class TestGetOrderedColumn(unittest.TestCase):
         self.date_format_list = ["%B %d %Y %H:%M:%S"]
 
     def test_get_ordered_column_datetime_ascending(self):
-        data = dategen.random_datetimes(
+        data = datetime_generator.random_datetimes(
             rng=self.rng, start_date=self.start_date, end_date=self.end_date, num_rows=5
         )
 
-        ordered_data = np.array(
+        expected = np.array(
             [
                 [
                     "October 02 2006 22:34:32",
@@ -150,17 +228,16 @@ class TestGetOrderedColumn(unittest.TestCase):
             ]
         )
 
-        ordered_data = ordered_data[:, 0]
-        output_data = dg.get_ordered_column(data, "datetime", "ascending")
+        actual = dataset_generator.get_ordered_column(data, "datetime", "ascending")
 
-        np.testing.assert_array_equal(output_data, ordered_data)
+        np.testing.assert_array_equal(actual, expected[:, 0])
 
     def test_get_ordered_column_datetime_descending(self):
-        data = dategen.random_datetimes(
+        data = datetime_generator.random_datetimes(
             rng=self.rng, start_date=self.start_date, end_date=self.end_date, num_rows=5
         )
 
-        ordered_data = np.array(
+        expected = np.array(
             [
                 [
                     "September 27 2018 18:24:03",
@@ -195,14 +272,13 @@ class TestGetOrderedColumn(unittest.TestCase):
             ]
         )
 
-        ordered_data = ordered_data[:, 0]
-        output_data = dg.get_ordered_column(data, "datetime", "descending")
+        actual = dataset_generator.get_ordered_column(data, "datetime", "descending")
 
-        np.testing.assert_array_equal(output_data, ordered_data)
+        np.testing.assert_array_equal(actual, expected[:, 0])
 
     def test_get_ordered_column_custom_datetime_ascending(self):
-        custom_date_format = ["%Y %m %d"]
-        data = dategen.random_datetimes(
+        custom_date_format = ["%Y %m %d", "%B %d %Y %H:%M:%S"]
+        data = datetime_generator.random_datetimes(
             rng=self.rng,
             date_format_list=custom_date_format,
             start_date=self.start_date,
@@ -210,39 +286,23 @@ class TestGetOrderedColumn(unittest.TestCase):
             num_rows=5,
         )
 
-        ordered_data = np.array(
+        expected = np.array(
             [
-                [
-                    "2006 10 02",
-                    datetime.strptime("2006 10 02", custom_date_format[0]),
-                ],
-                [
-                    "2008 08 19",
-                    datetime.strptime("2008 08 19", custom_date_format[0]),
-                ],
-                [
-                    "2010 03 13",
-                    datetime.strptime("2010 03 13", custom_date_format[0]),
-                ],
-                [
-                    "2016 03 11",
-                    datetime.strptime("2016 03 11", custom_date_format[0]),
-                ],
-                [
-                    "2018 09 27",
-                    datetime.strptime("2018 09 27", custom_date_format[0]),
-                ],
+                "November 25 2005 02:50:42",
+                "August 19 2008 16:53:49",
+                "December 21 2008 00:15:47",
+                "March 13 2010 17:18:44",
+                "2018 09 27",
             ]
         )
 
-        ordered_data = ordered_data[:, 0]
-        output_data = dg.get_ordered_column(data, "datetime", "ascending")
+        actual = dataset_generator.get_ordered_column(data, "datetime", "ascending")
 
-        np.testing.assert_array_equal(output_data, ordered_data)
+        np.testing.assert_array_equal(actual, expected)
 
     def test_get_ordered_column_custom_datetime_descending(self):
         custom_date_format = ["%Y %m %d"]
-        data = dategen.random_datetimes(
+        data = datetime_generator.random_datetimes(
             rng=self.rng,
             date_format_list=custom_date_format,
             start_date=self.start_date,
@@ -250,7 +310,7 @@ class TestGetOrderedColumn(unittest.TestCase):
             num_rows=5,
         )
 
-        ordered_data = np.array(
+        expected = np.array(
             [
                 [
                     "2018 09 27",
@@ -275,10 +335,9 @@ class TestGetOrderedColumn(unittest.TestCase):
             ]
         )
 
-        ordered_data = ordered_data[:, 0]
-        output_data = dg.get_ordered_column(data, "datetime", "descending")
+        actual = dataset_generator.get_ordered_column(data, "datetime", "descending")
 
-        np.testing.assert_array_equal(output_data, ordered_data)
+        np.testing.assert_array_equal(actual, expected[:, 0])
 
     def test_get_ordered_column(self):
 
@@ -325,7 +384,7 @@ class TestGetOrderedColumn(unittest.TestCase):
             }
         )
 
-        ordered_data = [
+        expected = [
             np.array([1, 2, 3, 4, 5]),
             np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
             np.array(["abcde", "bcdea", "cdeab", "deabc", "eabcd"]),
@@ -340,11 +399,13 @@ class TestGetOrderedColumn(unittest.TestCase):
                 ]
             ),
         ]
-        ordered_data = np.array(ordered_data, dtype=object)
+        expected = np.array(expected, dtype=object)
 
-        output_data = []
+        actual = []
         for data_type in data.keys():
-            output_data.append(dg.get_ordered_column(data[data_type], data_type))
-        output_data = np.array(output_data)
+            actual.append(
+                dataset_generator.get_ordered_column(data[data_type], data_type)
+            )
+        actual = np.array(actual)
 
-        np.testing.assert_array_equal(output_data, ordered_data)
+        np.testing.assert_array_equal(actual, expected)
