@@ -38,6 +38,30 @@ def convert_data_to_df(
     return dataframe
 
 
+def get_ordered_column(
+    data: np.array,
+    data_type: str,
+    order: str = "ascending",
+) -> np.array:
+    """Sort a numpy array based on data type.
+
+    :param data: numpy array to be sorted
+    :type data: np.array
+
+    :return: sorted numpy array
+    """
+    if data_type == "datetime":
+        sorted_data = np.array(sorted(data, key=lambda x: x[1]))
+        sorted_data = sorted_data[:, 0]
+
+    else:
+        sorted_data = np.sort(data)
+
+    if order == "descending":
+        return sorted_data[::-1]
+    return sorted_data
+
+
 def generate_dataset(
     rng: Generator,
     columns_to_generate: List[dict],
@@ -81,6 +105,24 @@ def generate_dataset(
         else:
             name = col_generator
         col_generator_function = gen_funcs.get(col_generator)
-        dataset.append(col_generator_function(**col_, rng=rng, num_rows=dataset_length))
+        generated_data = col_generator_function(
+            **col_, num_rows=dataset_length, rng=rng
+        )
+        sort = col_.get("ordered", None)
+
+        if sort in ["ascending", "descending"]:
+            dataset.append(
+                get_ordered_column(
+                    generated_data,
+                    col_generator,
+                    sort,
+                )
+            )
+        else:
+            if col_generator == "datetime":
+                date = generated_data[:, 0]
+                dataset.append(date)
+            else:
+                dataset.append(generated_data)
         column_names.append(name)
     return convert_data_to_df(dataset, column_names=column_names)

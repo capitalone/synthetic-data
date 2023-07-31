@@ -1,4 +1,5 @@
 """Contains a datetime generator."""
+from datetime import datetime
 from typing import Optional
 
 import numpy as np
@@ -36,8 +37,8 @@ def generate_datetime(
         end_date: pd.Timestamp = pd.Timestamp(2049, 12, 31)
     t = rng.random()
     ptime = start_date + t * (end_date - start_date)
-
-    return ptime.strftime(date_format)
+    date_string = ptime.strftime(date_format)
+    return [date_string, datetime.strptime(date_string, date_format)]
 
 
 def random_datetimes(
