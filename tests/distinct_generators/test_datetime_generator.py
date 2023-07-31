@@ -36,6 +36,13 @@ class TestGenerateDatetime(unittest.TestCase):
         self.assertIsInstance(self.generate_datetime_output, list)
         self.assertIsInstance(self.generate_datetime_output[0], str)
         self.assertIsInstance(self.generate_datetime_output[1], datetime)
+        self.assertTrue(self.generate_datetime_output[0] == "2006 10 02")
+        self.assertTrue(
+            self.generate_datetime_output[1]
+            == datetime.strptime(
+                self.generate_datetime_output[0], self.date_format_list[0]
+            )
+        )
 
     def test_generate_datetime_format(self):
         try:
@@ -94,12 +101,3 @@ class TestGenerateDatetime(unittest.TestCase):
         ]
         for i in range(len(self.random_datetimes_output)):
             np.testing.assert_array_equal(self.random_datetimes_output[i], outputs[i])
-
-    def test_generate_datetime_output(self):
-        self.assertTrue(self.generate_datetime_output[0] == "2006 10 02")
-        self.assertTrue(
-            self.generate_datetime_output[1]
-            == datetime.strptime(
-                self.generate_datetime_output[0], self.date_format_list[0]
-            )
-        )
