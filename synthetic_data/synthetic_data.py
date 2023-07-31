@@ -403,6 +403,7 @@ def make_data_from_report(
     noise_level: float = 0.0,
     is_correlated: bool = True,
     seed=None,
+    is_correlated: bool = True,
 ) -> pd.DataFrame:
     """Use a DataProfiler report to generate a synthetic data set to mimic the report.
 
