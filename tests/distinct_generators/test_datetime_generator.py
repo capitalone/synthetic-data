@@ -44,7 +44,7 @@ class TestDatetimeFunctions(unittest.TestCase):
                 format=self.generate_datetime_output[0],
             )
         except ValueError:
-            self.fail("pd.to_datetime() raised ValueError unexpectedly")
+            self.fail("pd.to_datetime() raised ValueError for custom formatting")
 
     def test_generate_datetime_range(self):
         date_obj = pd.to_datetime(
