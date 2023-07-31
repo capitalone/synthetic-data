@@ -111,12 +111,12 @@ def generate_dataset(
         else:
             name = col_generator
         col_generator_function = gen_funcs.get(col_generator)
-        sort = col_.pop("order", None)
         generated_data = col_generator_function(
             **col_, num_rows=dataset_length, rng=rng
         )
+        sort = col_.get("ordered", None)
 
-        if sort in sorting_types:
+        if sort in ["ascending", "descending"]:
             dataset.append(
                 get_ordered_column(
                     generated_data,
