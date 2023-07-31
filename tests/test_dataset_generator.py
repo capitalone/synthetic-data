@@ -115,13 +115,13 @@ class TestDatasetGenerator(unittest.TestCase):
         expected_df = pd.DataFrame.from_dict(
             dict(zip(["int", "dat", "txt", "cat", "flo"], expected_data))
         )
-        df = dataset_generator.generate_dataset(
+        actual_df = dataset_generator.generate_dataset(
             self.rng,
             columns_to_generate=columns_to_gen,
             dataset_length=self.dataset_length,
         )
 
-        self.assertTrue(df.equals(expected_df))
+        self.assertTrue(actual_df.equals(expected_df))
 
     def test_generate_dataset_with_invalid_generator(self):
         columns_to_gen = [{"generator": "non existent generator"}]
@@ -221,12 +221,12 @@ class TestDatasetGenerator(unittest.TestCase):
         expected_df = pd.DataFrame.from_dict(
             dict(zip(["int", "dat", "txt", "cat", "flo"], expected_data))
         )
-        df = dataset_generator.generate_dataset(
+        actual_df = dataset_generator.generate_dataset(
             self.rng,
             columns_to_generate=self.columns_to_gen,
             dataset_length=self.dataset_length,
         )
-        self.assertTrue(df.equals(expected_df))
+        self.assertTrue(actual_df.equals(expected_df))
 
 
 class TestGetOrderedColumn(unittest.TestCase):
@@ -386,74 +386,3 @@ class TestGetOrderedColumn(unittest.TestCase):
         actual = dataset_generator.get_ordered_column(data, "datetime", "descending")
 
         np.testing.assert_array_equal(actual, expected[:, 0])
-
-    def test_get_ordered_column(self):
-
-        actual_data = OrderedDict(
-            {
-                "int": np.array([5, 4, 3, 2, 1]),
-                "float": np.array([5.0, 4.0, 3.0, 2.0, 1.0]),
-                "string": np.array(["abcde", "bcdea", "cdeab", "deabc", "eabcd"]),
-                "categorical": np.array(["E", "D", "C", "B", "A"]),
-                "datetime": np.array(
-                    [
-                        [
-                            "September 27 2018 18:24:03",
-                            datetime.strptime(
-                                "September 27 2018 18:24:03", self.date_format_list[0]
-                            ),
-                        ],
-                        [
-                            "March 11 2016 15:15:39",
-                            datetime.strptime(
-                                "March 11 2016 15:15:39", self.date_format_list[0]
-                            ),
-                        ],
-                        [
-                            "March 13 2010 17:18:44",
-                            datetime.strptime(
-                                "March 13 2010 17:18:44", self.date_format_list[0]
-                            ),
-                        ],
-                        [
-                            "August 19 2008 16:53:49",
-                            datetime.strptime(
-                                "August 19 2008 16:53:49", self.date_format_list[0]
-                            ),
-                        ],
-                        [
-                            "October 02 2006 22:34:32",
-                            datetime.strptime(
-                                "October 02 2006 22:34:32", self.date_format_list[0]
-                            ),
-                        ],
-                    ]
-                ),
-            }
-        )
-
-        expected = [
-            np.array([1, 2, 3, 4, 5]),
-            np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
-            np.array(["abcde", "bcdea", "cdeab", "deabc", "eabcd"]),
-            np.array(["A", "B", "C", "D", "E"]),
-            np.array(
-                [
-                    "October 02 2006 22:34:32",
-                    "August 19 2008 16:53:49",
-                    "March 13 2010 17:18:44",
-                    "March 11 2016 15:15:39",
-                    "September 27 2018 18:24:03",
-                ]
-            ),
-        ]
-        expected = np.array(expected, dtype=object)
-
-        actual = []
-        for data_type in actual_data.keys():
-            actual.append(
-                dataset_generator.get_ordered_column(actual_data[data_type], data_type)
-            )
-        actual = np.array(actual)
-
-        np.testing.assert_array_equal(actual, expected)
