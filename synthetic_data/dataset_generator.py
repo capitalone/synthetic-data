@@ -47,6 +47,10 @@ def get_ordered_column(
 
     :param data: numpy array to be sorted
     :type data: np.array
+    :param data_type: type of data to be sorted
+    :type data_type: str
+    :param order: order of sort. Options: ascending or descending
+    :type order: str
 
     :return: sorted numpy array
     """
@@ -95,6 +99,8 @@ def generate_dataset(
 
     dataset = []
     column_names = []
+    sorting_types = ["ascending", "descending"]
+
     for col in columns_to_generate:
         col_ = copy.deepcopy(col)
         col_generator = col_.pop("generator")
@@ -110,7 +116,14 @@ def generate_dataset(
             **col_, num_rows=dataset_length, rng=rng
         )
 
-        if sort in ["ascending", "descending"]:
+        if sort not in sorting_types:
+            logging.warning(
+                f"""{name} is passed with sorting type of {sort}.
+            Ascending and descending are the only supported options.
+            No sorting action will be taken."""
+            )
+
+        if sort in sorting_types:
             dataset.append(
                 get_ordered_column(
                     generated_data,
