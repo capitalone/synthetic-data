@@ -38,6 +38,34 @@ def convert_data_to_df(
     return dataframe
 
 
+def get_ordered_column(
+    data: np.array,
+    data_type: str,
+    order: str = "ascending",
+) -> np.array:
+    """Sort a numpy array based on data type.
+
+    :param data: numpy array to be sorted
+    :type data: np.array
+    :param data_type: type of data to be sorted
+    :type data_type: str
+    :param order: order of sort. Options: ascending or descending
+    :type order: str
+
+    :return: sorted numpy array
+    """
+    if data_type == "datetime":
+        sorted_data = np.array(sorted(data, key=lambda x: x[1]))
+        sorted_data = sorted_data[:, 0]
+
+    else:
+        sorted_data = np.sort(data)
+
+    if order == "descending":
+        return sorted_data[::-1]
+    return sorted_data
+
+
 def generate_dataset(
     rng: Generator,
     columns_to_generate: List[dict],
@@ -71,6 +99,8 @@ def generate_dataset(
 
     dataset = []
     column_names = []
+    sorting_types = ["ascending", "descending"]
+
     for col in columns_to_generate:
         col_ = copy.deepcopy(col)
         col_generator = col_.pop("generator")
@@ -81,6 +111,30 @@ def generate_dataset(
         else:
             name = col_generator
         col_generator_function = gen_funcs.get(col_generator)
-        dataset.append(col_generator_function(**col_, rng=rng, num_rows=dataset_length))
+        sort = col_.pop("order", None)
+        generated_data = col_generator_function(
+            **col_, num_rows=dataset_length, rng=rng
+        )
+
+        if sort in sorting_types:
+            dataset.append(
+                get_ordered_column(
+                    generated_data,
+                    col_generator,
+                    sort,
+                )
+            )
+        else:
+            if sort is not None:
+                logging.warning(
+                    f"""{name} is passed with sorting type of {sort}.
+                Ascending and descending are the only supported options.
+                No sorting action will be taken."""
+                )
+            if col_generator == "datetime":
+                date = generated_data[:, 0]
+                dataset.append(date)
+            else:
+                dataset.append(generated_data)
         column_names.append(name)
     return convert_data_to_df(dataset, column_names=column_names)
