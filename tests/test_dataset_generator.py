@@ -1,7 +1,7 @@
 import unittest
 
 pass
-from datetime import datetime
+pass
 from unittest import mock
 
 import dataprofiler as dp
@@ -245,42 +245,17 @@ class TestGetOrderedColumn(unittest.TestCase):
 
         expected = np.array(
             [
-                [
-                    "October 02 2006 22:34:32",
-                    datetime.strptime(
-                        "October 02 2006 22:34:32", self.date_format_list[0]
-                    ),
-                ],
-                [
-                    "August 19 2008 16:53:49",
-                    datetime.strptime(
-                        "August 19 2008 16:53:49", self.date_format_list[0]
-                    ),
-                ],
-                [
-                    "March 13 2010 17:18:44",
-                    datetime.strptime(
-                        "March 13 2010 17:18:44", self.date_format_list[0]
-                    ),
-                ],
-                [
-                    "March 11 2016 15:15:39",
-                    datetime.strptime(
-                        "March 11 2016 15:15:39", self.date_format_list[0]
-                    ),
-                ],
-                [
-                    "September 27 2018 18:24:03",
-                    datetime.strptime(
-                        "September 27 2018 18:24:03", self.date_format_list[0]
-                    ),
-                ],
+                "October 02 2006 22:34:32",
+                "August 19 2008 16:53:49",
+                "March 13 2010 17:18:44",
+                "March 11 2016 15:15:39",
+                "September 27 2018 18:24:03",
             ]
         )
 
         actual = dataset_generator.get_ordered_column(data, "datetime", "ascending")
 
-        np.testing.assert_array_equal(actual, expected[:, 0])
+        np.testing.assert_array_equal(actual, expected)
 
     def test_get_ordered_column_datetime_descending(self):
         data = datetime_generator.random_datetimes(
@@ -289,42 +264,17 @@ class TestGetOrderedColumn(unittest.TestCase):
 
         expected = np.array(
             [
-                [
-                    "September 27 2018 18:24:03",
-                    datetime.strptime(
-                        "September 27 2018 18:24:03", self.date_format_list[0]
-                    ),
-                ],
-                [
-                    "March 11 2016 15:15:39",
-                    datetime.strptime(
-                        "March 11 2016 15:15:39", self.date_format_list[0]
-                    ),
-                ],
-                [
-                    "March 13 2010 17:18:44",
-                    datetime.strptime(
-                        "March 13 2010 17:18:44", self.date_format_list[0]
-                    ),
-                ],
-                [
-                    "August 19 2008 16:53:49",
-                    datetime.strptime(
-                        "August 19 2008 16:53:49", self.date_format_list[0]
-                    ),
-                ],
-                [
-                    "October 02 2006 22:34:32",
-                    datetime.strptime(
-                        "October 02 2006 22:34:32", self.date_format_list[0]
-                    ),
-                ],
+                "September 27 2018 18:24:03",
+                "March 11 2016 15:15:39",
+                "March 13 2010 17:18:44",
+                "August 19 2008 16:53:49",
+                "October 02 2006 22:34:32",
             ]
         )
 
         actual = dataset_generator.get_ordered_column(data, "datetime", "descending")
 
-        np.testing.assert_array_equal(actual, expected[:, 0])
+        np.testing.assert_array_equal(actual, expected)
 
     def test_get_ordered_column_custom_datetime_ascending(self):
         custom_date_format = ["%Y %m %d", "%B %d %Y %H:%M:%S"]
@@ -338,36 +288,17 @@ class TestGetOrderedColumn(unittest.TestCase):
 
         expected = np.array(
             [
-                [
-                    "November 25 2005 02:50:42",
-                    datetime.strptime(
-                        "November 25 2005 02:50:42", custom_date_format[1]
-                    ),
-                ],
-                [
-                    "August 19 2008 16:53:49",
-                    datetime.strptime("August 19 2008 16:53:4", custom_date_format[1]),
-                ],
-                [
-                    "December 21 2008 00:15:47",
-                    datetime.strptime(
-                        "December 21 2008 00:15:47", custom_date_format[1]
-                    ),
-                ],
-                [
-                    "March 13 2010 17:18:44",
-                    datetime.strptime("March 13 2010 17:18:44", custom_date_format[1]),
-                ],
-                [
-                    "2018 09 27",
-                    datetime.strptime("2018 09 27", custom_date_format[0]),
-                ],
+                "November 25 2005 02:50:42",
+                "August 19 2008 16:53:49",
+                "December 21 2008 00:15:47",
+                "March 13 2010 17:18:44",
+                "2018 09 27",
             ]
         )
 
         actual = dataset_generator.get_ordered_column(data, "datetime", "ascending")
 
-        np.testing.assert_array_equal(actual, expected[:, 0])
+        np.testing.assert_array_equal(actual, expected)
 
     def test_get_ordered_column_custom_datetime_descending(self):
         custom_date_format = ["%Y %m %d"]
@@ -381,29 +312,14 @@ class TestGetOrderedColumn(unittest.TestCase):
 
         expected = np.array(
             [
-                [
-                    "2018 09 27",
-                    datetime.strptime("2018 09 27", custom_date_format[0]),
-                ],
-                [
-                    "2016 03 11",
-                    datetime.strptime("2016 03 11", custom_date_format[0]),
-                ],
-                [
-                    "2010 03 13",
-                    datetime.strptime("2010 03 13", custom_date_format[0]),
-                ],
-                [
-                    "2008 08 19",
-                    datetime.strptime("2008 08 19", custom_date_format[0]),
-                ],
-                [
-                    "2006 10 02",
-                    datetime.strptime("2006 10 02", custom_date_format[0]),
-                ],
+                "2018 09 27",
+                "2016 03 11",
+                "2010 03 13",
+                "2008 08 19",
+                "2006 10 02",
             ]
         )
 
         actual = dataset_generator.get_ordered_column(data, "datetime", "descending")
 
-        np.testing.assert_array_equal(actual, expected[:, 0])
+        np.testing.assert_array_equal(actual, expected)
