@@ -1,7 +1,4 @@
 import unittest
-
-pass
-pass
 from unittest import mock
 
 import dataprofiler as dp
@@ -121,7 +118,7 @@ class TestDatasetGenerator(unittest.TestCase):
             columns_to_generate=columns_to_gen,
             dataset_length=self.dataset_length,
         )
-        np.testing.assert_array_equal(actual_df, expected_df)
+        np.testing.assert_array_equal(actual_df.values, expected_df.values)
 
     def test_generate_dataset_with_invalid_generator(self):
         columns_to_gen = [{"generator": "non existent generator"}]
