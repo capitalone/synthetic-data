@@ -1,6 +1,7 @@
 import os
 import unittest
-from unittest import mock
+
+pass
 
 import dataprofiler as dp
 import numpy as np
@@ -8,10 +9,10 @@ import pandas as pd
 
 from synthetic_data import Generator
 from synthetic_data.generators import (
-    GraphGenerator, TabularGenerator, UnstructuredGenerator
+    GraphGenerator,
+    TabularGenerator,
+    UnstructuredGenerator,
 )
-
-
 
 test_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -49,9 +50,7 @@ class TestTabularGenerator(unittest.TestCase):
         np.testing.assert_array_equal(synthetic_data, synthetic_data_2)
 
     def test_is_not_correlated(self):
-        generator = Generator(
-            profile=self.tab_profile, is_correlated=False, seed=42
-        )
+        generator = Generator(profile=self.tab_profile, is_correlated=False, seed=42)
         self.assertFalse(generator.is_correlated)
         synthetic_data = generator.synthesize(100)
         self.assertEqual(len(synthetic_data), 100)
@@ -87,10 +86,9 @@ class TestTabularGenerator(unittest.TestCase):
             r"Profile object is invalid. The supported profile types are: \[.+\].",
         ):
             Generator(profile=1)
+
     def test_invalid_data(self):
         with self.assertRaisesRegex(
-            ValueError,
-            "data is not in an acceptable format for profiling."
+            ValueError, "data is not in an acceptable format for profiling."
         ):
             Generator(data=1)
-            
