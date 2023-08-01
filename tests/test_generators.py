@@ -26,6 +26,7 @@ class TestTabularGenerator(unittest.TestCase):
                 "multiprocess.is_enabled": False,
             }
         )
+        dp.set_seed(0)
 
         # create dataset and profile for tabular
         cls.tab_data = dp.Data(os.path.join(test_dir, "data/iris.csv"))

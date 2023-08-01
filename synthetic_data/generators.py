@@ -122,8 +122,8 @@ class TabularGenerator(BaseGenerator):
                             "name": "flo",
                             "min_value": min_value,
                             "max_value": max_value,
-                            "sig_figs": col_stats.get("precision", None).get(
-                                "max", None
+                            "sig_figs": int(
+                                col_stats.get("precision", None).get("max", None)
                             ),
                             "order": order,
                         }
