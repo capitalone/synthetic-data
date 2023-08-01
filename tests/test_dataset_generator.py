@@ -121,8 +121,7 @@ class TestDatasetGenerator(unittest.TestCase):
             columns_to_generate=columns_to_gen,
             dataset_length=self.dataset_length,
         )
-
-        self.assertTrue(actual_df.equals(expected_df))
+        np.testing.assert_array_equal(actual_df, expected_df)
 
     def test_generate_dataset_with_invalid_generator(self):
         columns_to_gen = [{"generator": "non existent generator"}]
@@ -339,17 +338,36 @@ class TestGetOrderedColumn(unittest.TestCase):
 
         expected = np.array(
             [
-                "November 25 2005 02:50:42",
-                "August 19 2008 16:53:49",
-                "December 21 2008 00:15:47",
-                "March 13 2010 17:18:44",
-                "2018 09 27",
+                [
+                    "November 25 2005 02:50:42",
+                    datetime.strptime(
+                        "November 25 2005 02:50:42", custom_date_format[1]
+                    ),
+                ],
+                [
+                    "August 19 2008 16:53:49",
+                    datetime.strptime("August 19 2008 16:53:4", custom_date_format[1]),
+                ],
+                [
+                    "December 21 2008 00:15:47",
+                    datetime.strptime(
+                        "December 21 2008 00:15:47", custom_date_format[1]
+                    ),
+                ],
+                [
+                    "March 13 2010 17:18:44",
+                    datetime.strptime("March 13 2010 17:18:44", custom_date_format[1]),
+                ],
+                [
+                    "2018 09 27",
+                    datetime.strptime("2018 09 27", custom_date_format[0]),
+                ],
             ]
         )
 
         actual = dataset_generator.get_ordered_column(data, "datetime", "ascending")
 
-        np.testing.assert_array_equal(actual, expected)
+        np.testing.assert_array_equal(actual, expected[:, 0])
 
     def test_get_ordered_column_custom_datetime_descending(self):
         custom_date_format = ["%Y %m %d"]
