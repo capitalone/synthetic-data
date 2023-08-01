@@ -1,13 +1,16 @@
-import unittest
-from unittest import mock
 import os
+import unittest
+from collections import OrderedDict
+from unittest import mock
+
+import dataprofiler as dp
 import numpy as np
 import pandas as pd
 from numpy.random import PCG64, Generator
-from collections import OrderedDict
-from synthetic_data.generators import TabularGenerator
+
 import synthetic_data.dataset_generator as dg
-import dataprofiler as dp
+from synthetic_data.generators import TabularGenerator
+
 
 class TestDatetimeFunctions(unittest.TestCase):
     def setUp(self):
@@ -19,17 +22,19 @@ class TestDatetimeFunctions(unittest.TestCase):
                 "multiprocess.is_enabled": False,
             }
         )
-        test_dir = os.path.abspath('tests')
+        test_dir = os.path.abspath("tests")
         # create dataset and profile for tabular
         self.data = dp.Data(os.path.join(test_dir, "data/iris.csv"))
         self.columns = dp.Profiler(
             data=self.data, profiler_type="structured", options=self.profile_options
         ).report()["data_stats"]
 
-    @mock.patch('synthetic_data.generators.make_data_from_report')
+    @mock.patch("synthetic_data.generators.make_data_from_report")
     def test_synthesize_correlated_method(self, mock_make_data):
         profile = dp.Profiler(
-            data=self.data, options=self.profile_options, samples_per_update=len(self.data)
+            data=self.data,
+            options=self.profile_options,
+            samples_per_update=len(self.data),
         )
         instance = TabularGenerator(profile)
         instance.method = "correlated"
@@ -37,28 +42,28 @@ class TestDatetimeFunctions(unittest.TestCase):
         mock_make_data.assert_called_once()
 
     def test_get_ordered_column_descending(self):
-            data = OrderedDict(
-                {
-                    "int": np.array([1, 2, 3, 4, 5]),
-                    "float": np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
-                    "string": np.array(["abc", "bca", "cab"]),
-                    "categorical": np.array(["A", "B", "C", "D", "E"]),
-                }
+        data = OrderedDict(
+            {
+                "int": np.array([1, 2, 3, 4, 5]),
+                "float": np.array([1.0, 2.0, 3.0, 4.0, 5.0]),
+                "string": np.array(["abc", "bca", "cab"]),
+                "categorical": np.array(["A", "B", "C", "D", "E"]),
+            }
+        )
+        ordered_data = [
+            np.array([5, 4, 3, 2, 1]),
+            np.array([5.0, 4.0, 3.0, 2.0, 1.0]),
+            np.array(["cab", "bca", "abc"]),
+            np.array(["E", "D", "C", "B", "A"]),
+        ]
+        output_data = []
+        for data_type in data.keys():
+            output_data.append(
+                dg.get_ordered_column(data[data_type], data_type, order="descending")
             )
-            ordered_data = [
-                np.array([5, 4, 3, 2, 1]),
-                np.array([5.0, 4.0, 3.0, 2.0, 1.0]),
-                np.array(["cab", "bca", "abc"]),
-                np.array(["E", "D", "C", "B", "A"]),
-            ]
-            output_data = []
-            for data_type in data.keys():
-                output_data.append(
-                    dg.get_ordered_column(data[data_type], data_type, order="descending")
-                )
 
-            for i in range(len(output_data)):
-                self.assertTrue(np.array_equal(output_data[i], ordered_data[i]))
+        for i in range(len(output_data)):
+            self.assertTrue(np.array_equal(output_data[i], ordered_data[i]))
 
     # def test_generate_dataset_columns_format_list(self):
     #     random_seed = 0
