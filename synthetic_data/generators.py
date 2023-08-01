@@ -2,6 +2,7 @@
 
 import dataprofiler as dp
 import numpy as np
+import pandas as pd
 from sklearn import preprocessing
 
 from synthetic_data.base_generator import BaseGenerator
@@ -14,12 +15,12 @@ class TabularGenerator(BaseGenerator):
     """Class for generating synthetic tabular data."""
 
     def __init__(
-        self, profile, seed=None, noise_level: float = 0.0, method: str = "correlated"
+        self, profile, seed=None, noise_level: float = 0.0, is_correlated: bool = True
     ):
         """Initialize tabular generator object."""
         super().__init__(profile, seed)
         self.noise_level = noise_level
-        self.method = method
+        self.is_correlated = is_correlated
 
     @classmethod
     def post_profile_processing_w_data(cls, data, profile):
@@ -53,7 +54,10 @@ class TabularGenerator(BaseGenerator):
         return profile
 
     def synthesize(
-        self, num_samples: int, seed=None, noise_level: float = None, **kwargs
+        self,
+        num_samples: int,
+        seed=None,
+        noise_level: float = None,
     ):
         """Generate synthetic tabular data."""
         if seed is None:
@@ -62,7 +66,7 @@ class TabularGenerator(BaseGenerator):
         if noise_level is None:
             noise_level = self.noise_level
 
-        if self.method == "correlated":
+        if self.is_correlated:
             return make_data_from_report(
                 report=self.profile.report(),
                 n_samples=num_samples,
@@ -70,30 +74,94 @@ class TabularGenerator(BaseGenerator):
                 seed=seed,
             )
         else:
-
             random_seed = 0
             rng = np.random.default_rng(seed=random_seed)
             columns = self.profile.report()["data_stats"]
             col_data = []
 
-            for i, col in enumerate(columns):
-                data_type = col[i].get("data_type", None)
-                ordered = col[i].get("order", None)
+            for col in columns:
+                generator = col.get("data_type", None)
+                order = col.get("order", None)
+                col_stats = col["statistics"]
+                min_value = col_stats.get("min", None)
+                max_value = col_stats.get("max", None)
 
-                if data_type == "datetime" and "date_format_list" in kwargs:
+                if generator == "datetime":
+                    date_format = col_stats["formats"]
+                    start_date = pd.to_datetime(
+                        col_stats.get("min", None), format=date_format
+                    )
+                    end_date = pd.to_datetime(
+                        col_stats.get("max", None), format=date_format
+                    )
                     col_data.append(
                         {
-                            "data_type": data_type,
-                            "ordered": ordered,
-                            "date_format_list": kwargs["date_format_list"],
+                            "generator": generator,
+                            "name": "dat",
+                            "date_format_list": [date_format],
+                            "start_date": start_date,
+                            "end_date": end_date,
+                            "order": order,
                         }
                     )
-                else:
-                    col_data.append({"data_type": data_type, "ordered": ordered})
+                elif generator == "int":
+                    col_data.append(
+                        {
+                            "generator": "integer",
+                            "name": generator,
+                            "min_value": min_value,
+                            "max_value": max_value,
+                            "order": order,
+                        }
+                    )
+
+                elif generator == "float":
+                    col_data.append(
+                        {
+                            "generator": generator,
+                            "name": "flo",
+                            "min_value": min_value,
+                            "max_value": max_value,
+                            "sig_figs": col_stats.get("precision", None).get(
+                                "max", None
+                            ),
+                            "order": order,
+                        }
+                    )
+
+                elif generator == "string":
+                    if col_stats.get("categorical", False):
+                        total = 0
+                        for count in col_stats["categorical_count"].values():
+                            total += count
+
+                        probabilities = []
+                        for count in col_stats["categorical_count"].values():
+                            probabilities.append(count / total)
+
+                        col_data.append(
+                            {
+                                "generator": "categorical",
+                                "name": "cat",
+                                "categories": col_stats.get("categories", None),
+                                "probabilities": probabilities,
+                                "order": order,
+                            }
+                        )
+                    else:
+                        col_data.append(
+                            {
+                                "generator": "text",
+                                "name": "txt",
+                                "chars": col_stats.get("vocab", None),
+                                "str_len_min": min_value,
+                                "str_len_max": max_value,
+                                "order": order,
+                            },
+                        )
 
             return generate_dataset(
-                rng=rng,
-                columns_to_generate=col_data,
+                rng=rng, columns_to_generate=col_data, dataset_length=num_samples
             )
 
 
