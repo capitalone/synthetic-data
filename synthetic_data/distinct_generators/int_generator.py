@@ -20,4 +20,6 @@ def random_integers(
 
     :return: np array of integers
     """
+    if max_value <= 0:
+        max_value = 1e6
     return rng.integers(min_value, max_value, (num_rows,))
