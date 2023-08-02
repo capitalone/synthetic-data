@@ -137,4 +137,5 @@ def generate_dataset(
             else:
                 dataset.append(generated_data)
         column_names.append(name)
+
     return convert_data_to_df(dataset, column_names=column_names)

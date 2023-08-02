@@ -39,6 +39,10 @@ def random_text(
         )
     text_list = []
 
+    # edge case
+    if str_len_min == str_len_max:
+        str_len_max += 1
+
     for _ in range(num_rows):
         length = rng.integers(str_len_min, str_len_max)
         string_entry = "".join(rng.choice(chars, (length,)))
