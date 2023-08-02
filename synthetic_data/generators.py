@@ -21,6 +21,10 @@ class TabularGenerator(BaseGenerator):
         super().__init__(profile, seed)
         self.noise_level = noise_level
         self.is_correlated = is_correlated
+        if not seed:
+            seed = self.seed
+        self.rng = np.random.default_rng(seed=seed)
+        self.col_data = []
 
     @classmethod
     def post_profile_processing_w_data(cls, data, profile):
@@ -60,7 +64,7 @@ class TabularGenerator(BaseGenerator):
         noise_level: float = None,
     ):
         """Generate synthetic tabular data."""
-        if seed is None:
+        if not seed:
             seed = self.seed
 
         if noise_level is None:
@@ -74,10 +78,7 @@ class TabularGenerator(BaseGenerator):
                 seed=seed,
             )
         else:
-            random_seed = 0
-            rng = np.random.default_rng(seed=random_seed)
             columns = self.profile.report()["data_stats"]
-            col_data = []
 
             for col in columns:
                 generator = col.get("data_type", None)
@@ -87,25 +88,25 @@ class TabularGenerator(BaseGenerator):
                 max_value = col_stats.get("max", None)
 
                 if generator == "datetime":
-                    date_format = col_stats["formats"]
+                    date_format = col_stats["format"]
                     start_date = pd.to_datetime(
-                        col_stats.get("min", None), format=date_format
+                        col_stats.get("min", None), format=date_format[0]
                     )
                     end_date = pd.to_datetime(
-                        col_stats.get("max", None), format=date_format
+                        col_stats.get("max", None), format=date_format[0]
                     )
-                    col_data.append(
+                    self.col_data.append(
                         {
                             "generator": generator,
                             "name": "dat",
-                            "date_format_list": [date_format],
+                            "date_format_list": [date_format[0]],
                             "start_date": start_date,
                             "end_date": end_date,
                             "order": order,
                         }
                     )
                 elif generator == "int":
-                    col_data.append(
+                    self.col_data.append(
                         {
                             "generator": "integer",
                             "name": generator,
@@ -116,7 +117,7 @@ class TabularGenerator(BaseGenerator):
                     )
 
                 elif generator == "float":
-                    col_data.append(
+                    self.col_data.append(
                         {
                             "generator": generator,
                             "name": "flo",
@@ -139,7 +140,7 @@ class TabularGenerator(BaseGenerator):
                         for count in col_stats["categorical_count"].values():
                             probabilities.append(count / total)
 
-                        col_data.append(
+                        self.col_data.append(
                             {
                                 "generator": "categorical",
                                 "name": "cat",
@@ -149,7 +150,7 @@ class TabularGenerator(BaseGenerator):
                             }
                         )
                     else:
-                        col_data.append(
+                        self.col_data.append(
                             {
                                 "generator": "text",
                                 "name": "txt",
@@ -159,9 +160,10 @@ class TabularGenerator(BaseGenerator):
                                 "order": order,
                             },
                         )
-
             return generate_dataset(
-                rng=rng, columns_to_generate=col_data, dataset_length=num_samples
+                rng=self.rng,
+                columns_to_generate=self.col_data,
+                dataset_length=num_samples,
             )
 
 
