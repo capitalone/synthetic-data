@@ -24,7 +24,7 @@ class TestTabularGenerator(unittest.TestCase):
             }
         )
         dp.set_seed(0)
-        
+
         # create dataset and profile for tabular
         cls.tab_csv_data = dp.Data(os.path.join(test_dir, "data/tabular.csv"))
         cls.profile = dp.Profiler(
