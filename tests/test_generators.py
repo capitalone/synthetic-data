@@ -33,6 +33,24 @@ class TestTabularGenerator(unittest.TestCase):
             samples_per_update=len(cls.data),
         )
 
+    def test_synthesize_tabular(self):
+        tab_data = dp.Data(os.path.join(test_dir, "data/iris.csv"))
+        tab_profile = dp.Profiler(
+            tab_data, profiler_type="structured", options=self.profile_options
+        )
+        generator = Generator(profile=tab_profile, seed=42)
+        self.assertIsInstance(generator, TabularGenerator)
+        synthetic_data = generator.synthesize(100)
+        self.assertEqual(len(synthetic_data), 100)
+
+        generator = Generator(data=tab_data, seed=42)
+        synthetic_data_2 = generator.synthesize(100)
+        self.assertEqual(len(synthetic_data_2), 100)
+
+        # asserts that both  methods create the same results
+        # if this ever fails may need to start setting seeds
+        np.testing.assert_array_equal(synthetic_data, synthetic_data_2)
+
     @mock.patch("synthetic_data.generators.make_data_from_report")
     def test_synthesize_correlated_method(self, mock_make_data):
         tab_data = dp.Data(os.path.join(test_dir, "data/iris.csv"))
