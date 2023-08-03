@@ -26,11 +26,11 @@ class TestTabularGenerator(unittest.TestCase):
         dp.set_seed(0)
 
         # create dataset and profile for tabular
-        cls.tab_csv_data = dp.Data(os.path.join(test_dir, "data/tabular.csv"))
+        cls.data = dp.Data(os.path.join(test_dir, "data/tabular.csv"))
         cls.profile = dp.Profiler(
-            data=cls.tab_csv_data,
+            data=cls.data,
             options=cls.profile_options,
-            samples_per_update=len(cls.tab_csv_data),
+            samples_per_update=len(cls.data),
         )
 
     @mock.patch("synthetic_data.generators.make_data_from_report")
