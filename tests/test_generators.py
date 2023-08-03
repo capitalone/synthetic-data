@@ -46,8 +46,13 @@ class TestTabularGenerator(unittest.TestCase):
         correlated_tabular_generator.synthesize(num_samples=10)
         mock_make_data.assert_called_once()
 
+    @mock.patch(
+        "synthetic_data.generators.TabularGenerator.generate_uncorrelated_column_data"
+    )
     @mock.patch("synthetic_data.generators.generate_dataset")
-    def test_uncorrelated_synthesize_columns_to_generate(self, mock_generate_dataset):
+    def test_uncorrelated_synthesize_columns_to_generate(
+        self, mock_generate_dataset, mock_col_data
+    ):
 
         generator = TabularGenerator(profile=self.profile, is_correlated=False, seed=42)
         self.assertFalse(generator.is_correlated)
@@ -202,16 +207,16 @@ class TestTabularGenerator(unittest.TestCase):
 
         mock_generate_dataset.assert_called_once()
         for i in range(len(expected_columns_to_generate)):
-            for key in generator.col_data[i].keys():
-                if isinstance(generator.col_data[i][key], list):
+            for key in mock_col_data[i].keys():
+                if isinstance(mock_col_data[i][key], list):
                     self.assertTrue(
-                        set(generator.col_data[i][key]).issubset(
+                        set(mock_col_data[i][key]).issubset(
                             expected_columns_to_generate[i][key]
                         )
                     )
                 else:
                     self.assertEqual(
-                        generator.col_data[i][key], expected_columns_to_generate[i][key]
+                        mock_col_data[i][key], expected_columns_to_generate[i][key]
                     )
 
     def test_uncorrelated_synthesize_output(self):

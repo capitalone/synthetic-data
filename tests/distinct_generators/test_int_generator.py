@@ -25,7 +25,7 @@ class TestIntGenerator(unittest.TestCase):
         self.assertEqual(result.shape[0], 1)
 
     def test_values_range(self):
-        ranges = [(-1, 1), (-10, 10), (-100, 100)]
+        ranges = [(-1, 1), (-10, 10), (-100, 100), (0, 0), (50, 50)]
         for range in ranges:
             result = random_integers(self.rng, range[0], range[1])
             for x in result:
