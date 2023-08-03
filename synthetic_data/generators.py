@@ -26,7 +26,6 @@ class TabularGenerator(BaseGenerator):
         else:
             self.tabular_generator_seed = seed
         self.rng = np.random.default_rng(seed=self.tabular_generator_seed)
-        self.col_data = []
 
     @classmethod
     def post_profile_processing_w_data(cls, data, profile):
@@ -76,17 +75,18 @@ class TabularGenerator(BaseGenerator):
                 seed=self.tabular_generator_seed,
             )
         else:
-            self.generate_uncorrelated_column_data()
+            col_data = self.generate_uncorrelated_column_data()
 
             return generate_dataset(
                 rng=self.rng,
-                columns_to_generate=self.col_data,
+                columns_to_generate=col_data,
                 dataset_length=num_samples,
             )
 
     def generate_uncorrelated_column_data(self):
         """Generate column data."""
         columns = self.profile.report()["data_stats"]
+        col_data = []
 
         for col in columns:
             generator = col.get("data_type", None)
@@ -103,7 +103,7 @@ class TabularGenerator(BaseGenerator):
                 end_date = pd.to_datetime(
                     col_stats.get("max", None), format=date_format[0]
                 )
-                self.col_data.append(
+                col_data.append(
                     {
                         "generator": generator,
                         "name": "dat",
@@ -114,7 +114,7 @@ class TabularGenerator(BaseGenerator):
                     }
                 )
             elif generator == "int":
-                self.col_data.append(
+                col_data.append(
                     {
                         "generator": "integer",
                         "name": generator,
@@ -125,7 +125,7 @@ class TabularGenerator(BaseGenerator):
                 )
 
             elif generator == "float":
-                self.col_data.append(
+                col_data.append(
                     {
                         "generator": generator,
                         "name": "flo",
@@ -148,7 +148,7 @@ class TabularGenerator(BaseGenerator):
                     for count in col_stats["categorical_count"].values():
                         probabilities.append(count / total)
 
-                    self.col_data.append(
+                    col_data.append(
                         {
                             "generator": "categorical",
                             "name": "cat",
@@ -158,7 +158,7 @@ class TabularGenerator(BaseGenerator):
                         }
                     )
                 else:
-                    self.col_data.append(
+                    col_data.append(
                         {
                             "generator": "text",
                             "name": "txt",
@@ -168,6 +168,7 @@ class TabularGenerator(BaseGenerator):
                             "order": order,
                         },
                     )
+        return col_data
 
 
 class UnstructuredGenerator(BaseGenerator):
