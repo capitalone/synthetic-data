@@ -33,6 +33,12 @@ class TestTabularGenerator(unittest.TestCase):
         cls.uncorrelated_generator = Generator(
             profile=cls.tab_profile, is_correlated=False, seed=42
         )
+        cls.tab_csv_data = dp.Data(os.path.join(test_dir, "data/tabular.csv"))
+        cls.profile = dp.Profiler(
+            data=cls.tab_csv_data,
+            options=cls.profile_options,
+            samples_per_update=len(cls.tab_csv_data),
+        )
 
     @mock.patch("synthetic_data.generators.make_data_from_report")
     def test_synthesize_correlated_method(self, mock_make_data):
@@ -48,13 +54,8 @@ class TestTabularGenerator(unittest.TestCase):
 
     @mock.patch("synthetic_data.generators.generate_dataset")
     def test_uncorrelated_synthesize_columns_to_generate(self, mock_generate_dataset):
-        data = dp.Data(os.path.join(test_dir, "data/tabular.csv"))
-        profile = dp.Profiler(
-            data=data,
-            options=self.profile_options,
-            samples_per_update=len(data),
-        )
-        generator = TabularGenerator(profile=profile, is_correlated=False, seed=42)
+
+        generator = TabularGenerator(profile=self.profile, is_correlated=False, seed=42)
         self.assertFalse(generator.is_correlated)
         expected_columns_to_generate = [
             {
@@ -66,30 +67,28 @@ class TestTabularGenerator(unittest.TestCase):
                 "order": "random",
             },
             {
-                "generator": "text",
-                "name": "txt",
-                "chars": [
-                    "o",
-                    "h",
-                    "n",
-                    "z",
-                    "k",
-                    "l",
-                    "t",
-                    "c",
-                    "-",
-                    "i",
-                    "a",
-                    "g",
-                    "p",
-                    "r",
-                    "s",
-                    "u",
-                    "y",
-                    "e",
+                "generator": "categorical",
+                "name": "cat",
+                "categories": [
+                    "groucho-oregon",
+                    "groucho-singapore",
+                    "groucho-tokyo",
+                    "groucho-sa",
+                    "zeppo-norcal",
+                    "groucho-norcal",
+                    "groucho-us-east",
+                    "groucho-eu",
                 ],
-                "str_len_min": 10.0,
-                "str_len_max": 17.0,
+                "probabilities": [
+                    0.3333333333333333,
+                    0.2,
+                    0.13333333333333333,
+                    0.06666666666666667,
+                    0.06666666666666667,
+                    0.06666666666666667,
+                    0.06666666666666667,
+                    0.06666666666666667,
+                ],
                 "order": "random",
             },
             {
@@ -100,11 +99,10 @@ class TestTabularGenerator(unittest.TestCase):
                 "order": "random",
             },
             {
-                "generator": "text",
-                "name": "txt",
-                "chars": ["D", "P", "U", "T", "C"],
-                "str_len_min": 3.0,
-                "str_len_max": 3.0,
+                "generator": "categorical",
+                "name": "cat",
+                "categories": ["TCP", "UDP"],
+                "probabilities": [0.8823529411764706, 0.11764705882352941],
                 "order": "random",
             },
             {
@@ -124,51 +122,55 @@ class TestTabularGenerator(unittest.TestCase):
             {
                 "generator": "text",
                 "name": "txt",
-                "chars": ["6", "2", "7", "5", "9", "3", "0", ".", "4", "1", "8"],
+                "chars": ["4", "3", "0", "7", ".", "5", "1", "8", "2", "6", "9"],
                 "str_len_min": 11.0,
                 "str_len_max": 15.0,
                 "order": "random",
             },
             {
-                "generator": "text",
-                "name": "txt",
-                "chars": [
-                    "o",
-                    "b",
-                    "x",
-                    "S",
-                    "h",
-                    "n",
-                    "W",
-                    "l",
-                    "I",
-                    "c",
-                    "T",
-                    "H",
-                    "t",
-                    "i",
-                    "a",
-                    "J",
-                    "g",
-                    "p",
-                    " ",
-                    "s",
-                    "r",
-                    "L",
-                    "u",
-                    "O",
-                    "e",
+                "generator": "categorical",
+                "name": "cat",
+                "categories": [
+                    "Seoul",
+                    "Jiangxi Sheng",
+                    "Taipei",
+                    "Oregon",
+                    "Illinois",
+                    "Henan Sheng",
+                    "Sichuan Sheng",
+                    "Hebei",
+                    "Liaoning",
+                    "Washington",
                 ],
-                "str_len_min": 5.0,
-                "str_len_max": 13.0,
+                "probabilities": [
+                    0.3333333333333333,
+                    0.13333333333333333,
+                    0.06666666666666667,
+                    0.06666666666666667,
+                    0.06666666666666667,
+                    0.06666666666666667,
+                    0.06666666666666667,
+                    0.06666666666666667,
+                    0.06666666666666667,
+                    0.06666666666666667,
+                ],
                 "order": "random",
             },
             {
-                "generator": "text",
-                "name": "txt",
-                "chars": ["6", "2", "R", "W", "5", "3", "A", "4", "1", "L", "I", "O"],
-                "str_len_min": 2.0,
-                "str_len_max": 2.0,
+                "generator": "categorical",
+                "name": "cat",
+                "categories": ["11", "36", "OR", "IL", "41", "51", "13", "21", "WA"],
+                "probabilities": [
+                    0.35714285714285715,
+                    0.14285714285714285,
+                    0.07142857142857142,
+                    0.07142857142857142,
+                    0.07142857142857142,
+                    0.07142857142857142,
+                    0.07142857142857142,
+                    0.07142857142857142,
+                    0.07142857142857142,
+                ],
                 "order": "random",
             },
             {
@@ -219,19 +221,14 @@ class TestTabularGenerator(unittest.TestCase):
                     )
 
     def test_uncorrelated_synthesize_output(self):
-        data = dp.Data(os.path.join(test_dir, "data/tabular.csv"))
-        profile = dp.Profiler(
-            data=data,
-            options=self.profile_options,
-            samples_per_update=len(data),
-        )
-        generator = TabularGenerator(profile=profile, is_correlated=False, seed=42)
+        generator = TabularGenerator(profile=self.profile, is_correlated=False, seed=42)
         self.assertFalse(generator.is_correlated)
         actual_synthetic_data = generator.synthesize(20)
 
         self.assertEqual(len(actual_synthetic_data), 20)
         self.assertIsInstance(actual_synthetic_data, pd.DataFrame)
+
         np.testing.assert_array_equal(
             actual_synthetic_data.columns.values,
-            np.array(["dat", "txt", "int", "flo"], dtype="object"),
+            np.array(["dat", "cat", "int", "txt", "flo"], dtype="object"),
         )

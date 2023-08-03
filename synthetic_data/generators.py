@@ -139,7 +139,7 @@ class TabularGenerator(BaseGenerator):
                 )
 
             elif generator == "string":
-                if col_stats.get("categorical", False):
+                if col.get("categorical", False):
                     total = 0
                     for count in col_stats["categorical_count"].values():
                         total += count
