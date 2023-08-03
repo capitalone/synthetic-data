@@ -24,15 +24,8 @@ class TestTabularGenerator(unittest.TestCase):
             }
         )
         dp.set_seed(0)
-
+        
         # create dataset and profile for tabular
-        cls.tab_data = dp.Data(os.path.join(test_dir, "data/iris.csv"))
-        cls.tab_profile = dp.Profiler(
-            cls.tab_data, profiler_type="structured", options=cls.profile_options
-        )
-        cls.uncorrelated_generator = Generator(
-            profile=cls.tab_profile, is_correlated=False, seed=42
-        )
         cls.tab_csv_data = dp.Data(os.path.join(test_dir, "data/tabular.csv"))
         cls.profile = dp.Profiler(
             data=cls.tab_csv_data,
@@ -42,10 +35,11 @@ class TestTabularGenerator(unittest.TestCase):
 
     @mock.patch("synthetic_data.generators.make_data_from_report")
     def test_synthesize_correlated_method(self, mock_make_data):
+        tab_data = dp.Data(os.path.join(test_dir, "data/iris.csv"))
         profile = dp.Profiler(
-            data=self.tab_data,
+            data=tab_data,
             options=self.profile_options,
-            samples_per_update=len(self.tab_data),
+            samples_per_update=len(tab_data),
         )
         correlated_tabular_generator = TabularGenerator(profile)
         self.assertTrue(correlated_tabular_generator.is_correlated)
