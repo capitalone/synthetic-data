@@ -22,8 +22,10 @@ class TabularGenerator(BaseGenerator):
         self.noise_level = noise_level
         self.is_correlated = is_correlated
         if not seed:
-            seed = self.seed
-        self.rng = np.random.default_rng(seed=seed)
+            self.tabular_generator_seed = self.seed
+        else:
+            self.tabular_generator_seed = seed
+        self.rng = np.random.default_rng(seed=self.tabular_generator_seed)
         self.col_data = []
 
     @classmethod
@@ -60,13 +62,9 @@ class TabularGenerator(BaseGenerator):
     def synthesize(
         self,
         num_samples: int,
-        seed=None,
         noise_level: float = None,
     ):
         """Generate synthetic tabular data."""
-        if not seed:
-            seed = self.seed
-
         if noise_level is None:
             noise_level = self.noise_level
 
@@ -75,96 +73,101 @@ class TabularGenerator(BaseGenerator):
                 report=self.profile.report(),
                 n_samples=num_samples,
                 noise_level=noise_level,
-                seed=seed,
+                seed=self.tabular_generator_seed,
             )
         else:
-            columns = self.profile.report()["data_stats"]
+            self.generate_column_data()
 
-            for col in columns:
-                generator = col.get("data_type", None)
-                order = col.get("order", None)
-                col_stats = col["statistics"]
-                min_value = col_stats.get("min", None)
-                max_value = col_stats.get("max", None)
-
-                if generator == "datetime":
-                    date_format = col_stats["format"]
-                    start_date = pd.to_datetime(
-                        col_stats.get("min", None), format=date_format[0]
-                    )
-                    end_date = pd.to_datetime(
-                        col_stats.get("max", None), format=date_format[0]
-                    )
-                    self.col_data.append(
-                        {
-                            "generator": generator,
-                            "name": "dat",
-                            "date_format_list": [date_format[0]],
-                            "start_date": start_date,
-                            "end_date": end_date,
-                            "order": order,
-                        }
-                    )
-                elif generator == "int":
-                    self.col_data.append(
-                        {
-                            "generator": "integer",
-                            "name": generator,
-                            "min_value": min_value,
-                            "max_value": max_value,
-                            "order": order,
-                        }
-                    )
-
-                elif generator == "float":
-                    self.col_data.append(
-                        {
-                            "generator": generator,
-                            "name": "flo",
-                            "min_value": min_value,
-                            "max_value": max_value,
-                            "sig_figs": int(
-                                col_stats.get("precision", None).get("max", None)
-                            ),
-                            "order": order,
-                        }
-                    )
-
-                elif generator == "string":
-                    if col_stats.get("categorical", False):
-                        total = 0
-                        for count in col_stats["categorical_count"].values():
-                            total += count
-
-                        probabilities = []
-                        for count in col_stats["categorical_count"].values():
-                            probabilities.append(count / total)
-
-                        self.col_data.append(
-                            {
-                                "generator": "categorical",
-                                "name": "cat",
-                                "categories": col_stats.get("categories", None),
-                                "probabilities": probabilities,
-                                "order": order,
-                            }
-                        )
-                    else:
-                        self.col_data.append(
-                            {
-                                "generator": "text",
-                                "name": "txt",
-                                "chars": col_stats.get("vocab", None),
-                                "str_len_min": min_value,
-                                "str_len_max": max_value,
-                                "order": order,
-                            },
-                        )
             return generate_dataset(
                 rng=self.rng,
                 columns_to_generate=self.col_data,
                 dataset_length=num_samples,
             )
+
+    def generate_column_data(self):
+        """Generate column data."""
+        columns = self.profile.report()["data_stats"]
+
+        for col in columns:
+            generator = col.get("data_type", None)
+            order = col.get("order", None)
+            col_stats = col["statistics"]
+            min_value = col_stats.get("min", None)
+            max_value = col_stats.get("max", None)
+
+            if generator == "datetime":
+                date_format = col_stats["format"]
+                start_date = pd.to_datetime(
+                    col_stats.get("min", None), format=date_format[0]
+                )
+                end_date = pd.to_datetime(
+                    col_stats.get("max", None), format=date_format[0]
+                )
+                self.col_data.append(
+                    {
+                        "generator": generator,
+                        "name": "dat",
+                        "date_format_list": [date_format[0]],
+                        "start_date": start_date,
+                        "end_date": end_date,
+                        "order": order,
+                    }
+                )
+            elif generator == "int":
+                self.col_data.append(
+                    {
+                        "generator": "integer",
+                        "name": generator,
+                        "min_value": min_value,
+                        "max_value": max_value,
+                        "order": order,
+                    }
+                )
+
+            elif generator == "float":
+                self.col_data.append(
+                    {
+                        "generator": generator,
+                        "name": "flo",
+                        "min_value": min_value,
+                        "max_value": max_value,
+                        "sig_figs": int(
+                            col_stats.get("precision", None).get("max", None)
+                        ),
+                        "order": order,
+                    }
+                )
+
+            elif generator == "string":
+                if col_stats.get("categorical", False):
+                    total = 0
+                    for count in col_stats["categorical_count"].values():
+                        total += count
+
+                    probabilities = []
+                    for count in col_stats["categorical_count"].values():
+                        probabilities.append(count / total)
+
+                    self.col_data.append(
+                        {
+                            "generator": "categorical",
+                            "name": "cat",
+                            "categories": col_stats.get("categories", None),
+                            "probabilities": probabilities,
+                            "order": order,
+                        }
+                    )
+                else:
+                    self.col_data.append(
+                        {
+                            "generator": "text",
+                            "name": "txt",
+                            "chars": col_stats.get("vocab", None),
+                            "str_len_min": min_value,
+                            "str_len_max": max_value,
+                            "order": order,
+                        },
+                    )
 
 
 class UnstructuredGenerator(BaseGenerator):
