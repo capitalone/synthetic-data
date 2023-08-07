@@ -6,12 +6,11 @@ import numpy as np
 import pandas as pd
 from numpy.random import PCG64, Generator
 
-from synthetic_data.generators import TabularGenerator
 from synthetic_data.distinct_generators import datetime_generator
+from synthetic_data.generators import TabularGenerator
 
 
-@mock.patch("generate_uncorrelated_column_data.TabularGenerator",
-            spec=TabularGenerator)
+@mock.patch("generate_uncorrelated_column_data.TabularGenerator", spec=TabularGenerator)
 class TestDatasetGenerator(unittest.TestCase):
     def setUp(self):
         self.rng = Generator(PCG64(12345))
