@@ -52,7 +52,7 @@ class TestRandomDatetimes(unittest.TestCase):
 
     def test_random_datetimes_default_format_usage(self):
         actual = date_generator.random_datetimes(
-            self.rng, start_date=self.start_date, end_date=self.end_date, num_rows=5
+            self.rng, min=self.start_date, max=self.end_date, num_rows=5
         )
         expected = np.array(
             [
@@ -79,8 +79,8 @@ class TestRandomDatetimes(unittest.TestCase):
         actual = date_generator.random_datetimes(
             self.rng,
             date_formats,
-            start_date=self.start_date,
-            end_date=self.end_date,
+            min=self.start_date,
+            max=self.end_date,
             num_rows=5,
         )
         np.testing.assert_array_equal(expected, actual)

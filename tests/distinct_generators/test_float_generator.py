@@ -27,24 +27,24 @@ class TestRandomFloats(unittest.TestCase):
             self.assertGreaterEqual(max_value, x)
 
     def test_sig_figs(self):
-        sig_figs = 1
+        precision = 1
         result = random_floats(
             self.rng,
             min_value=0.817236764,
             max_value=1.92847927,
-            sig_figs=sig_figs,
+            precision=precision,
             num_rows=10,
         )
         for x in result:
-            self.assertGreaterEqual(sig_figs, len(str(x).split(".")[1]))
+            self.assertGreaterEqual(precision, len(str(x).split(".")[1]))
 
-        sig_figs = 5
+        precision = 5
         result = random_floats(
             self.rng,
             min_value=0.817236764,
             max_value=1.92847927,
-            sig_figs=sig_figs,
+            precision=precision,
             num_rows=10,
         )
         for x in result:
-            self.assertGreaterEqual(sig_figs, len(str(x).split(".")[1]))
+            self.assertGreaterEqual(precision, len(str(x).split(".")[1]))
