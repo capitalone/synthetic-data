@@ -28,6 +28,7 @@ def random_text(
     :type str_len_max: int (one above the max), optional
 
     :return: numpy array of strings
+    :rtype: numpy array
     """
     if vocab is None:
         vocab = list(
