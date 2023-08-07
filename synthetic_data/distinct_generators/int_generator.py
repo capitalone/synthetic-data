@@ -20,7 +20,6 @@ def random_integers(
 
     :return: np array of integers
     """
-    if min_value == max_value:
-        max_value += 1
+    max_value += 1
 
     return rng.integers(min_value, max_value, (num_rows,))

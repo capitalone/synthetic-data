@@ -7,7 +7,7 @@ def random_floats(
     rng: Generator,
     min_value: int = -1e6,
     max_value: int = 1e6,
-    sig_figs: int = 3,
+    precision: int = 3,
     num_rows: int = 1,
 ) -> np.array:
     """
@@ -26,8 +26,8 @@ def random_floats(
 
     :return: np array of floats
     """
-    if sig_figs < 0:
-        raise ValueError("sig_figs should be greater than or equal to 0")
-    if not isinstance(sig_figs, int):
-        raise ValueError("sig_figs should be an int")
-    return np.around(rng.uniform(min_value, max_value, num_rows), sig_figs)
+    if precision < 0:
+        raise ValueError("precision should be greater than or equal to 0")
+    if not isinstance(precision, int):
+        raise ValueError("precision should be an int")
+    return np.around(rng.uniform(min_value, max_value, num_rows), precision)

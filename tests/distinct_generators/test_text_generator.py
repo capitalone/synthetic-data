@@ -24,8 +24,7 @@ class TestTextGeneratorFunctions(unittest.TestCase):
     def test_text_equal_length_range(self):
         text_arr = random_text(self.rng, str_len_min=5, str_len_max=5)
         for text in text_arr:
-            self.assertLessEqual(len(text), 5)
-            self.assertGreaterEqual(len(text), 5)
+            self.assertEqual(len(text), 5)
 
     def test_num_rows(self):
         num_rows = [1, 5, 10]
