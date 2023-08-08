@@ -3,7 +3,7 @@ name: Feature request
 about: Suggest an idea for this project
 title: ''
 labels: New Feature
-assignees: JGSweets, ksneab7, micdavis, taylorfturner
+assignees: ssharpe42, tazitoo, danielbarcklow, ksneab7, micdavis, taylorfturner
 
 ---
 

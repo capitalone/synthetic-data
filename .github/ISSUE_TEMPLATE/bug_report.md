@@ -3,7 +3,7 @@ name: Bug report
 about: Create a report to help us improve
 title: ''
 labels: Bug
-assignees: JGSweets, ksneab7, micdavis, taylorfturner
+assignees: ssharpe42, tazitoo, danielbarcklow, ksneab7, micdavis, taylorfturner
 
 ---
 
