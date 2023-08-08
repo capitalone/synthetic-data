@@ -67,7 +67,7 @@ class TestTabularGenerator(unittest.TestCase):
 
 
 # @mock.patch("generate_uncorrelated_column_data.TabularGenerator", spec=TabularGenerator)
-class TestDatasetGenerator(unittest.TestCase):
+class TestGenerateUncorrelatedColumnData(unittest.TestCase):
     # @staticmethod
     # def setup_tabular_generator_mock(mock_generator):
     # mock_DataLabeler = mock_generator.return_value
@@ -276,80 +276,80 @@ class TestDatasetGenerator(unittest.TestCase):
                 else:
                     self.assertEqual(call_args_list[key], expected_calls[j][key])
 
-    # def test_get_ordered_column_integration(self):
-    #     columns_to_gen = [
-    #         {
-    #             "generator": "integer",
-    #             "name": "int",
-    #             "min_value": 4,
-    #             "max_value": 88,
-    #             "order": "ascending",
-    #         },
-    #         {
-    #             "generator": "datetime",
-    #             "name": "dat",
-    #             "date_format_list": ["%Y-%m-%d"],
-    #             "start_date": pd.Timestamp(2001, 12, 22),
-    #             "end_date": pd.Timestamp(2022, 12, 22),
-    #             "order": "ascending",
-    #         },
-    #         {
-    #             "generator": "text",
-    #             "name": "txt",
-    #             "chars": ["0", "1"],
-    #             "str_len_min": 2,
-    #             "str_len_max": 5,
-    #             "order": "ascending",
-    #         },
-    #         {
-    #             "generator": "categorical",
-    #             "name": "cat",
-    #             "categories": ["X", "Y", "Z"],
-    #             "probabilities": [0.1, 0.5, 0.4],
-    #             "order": "ascending",
-    #         },
-    #         {
-    #             "generator": "float",
-    #             "name": "flo",
-    #             "min_value": 3,
-    #             "max_value": 10,
-    #             "sig_figs": 3,
-    #             "order": "ascending",
-    #         },
-    #     ]
-    #     expected_data = [
-    #         np.array([21, 23, 30, 36, 57, 60, 62, 70, 70, 87]),
-    #         np.array(
-    #             [
-    #                 "2003-12-27",
-    #                 "2005-11-23",
-    #                 "2007-03-10",
-    #                 "2008-12-17",
-    #                 "2011-04-02",
-    #                 "2014-07-16",
-    #                 "2015-12-26",
-    #                 "2016-02-07",
-    #                 "2021-10-01",
-    #                 "2021-11-24",
-    #             ]
-    #         ),
-    #         np.array(
-    #             ["00", "000", "0001", "01", "0100", "10", "10", "100", "1110", "1111"]
-    #         ),
-    #         np.array(["Y", "Y", "Y", "Y", "Y", "Y", "Z", "Z", "Z", "Z"]),
-    #         np.array(
-    #             [3.035, 3.477, 4.234, 4.812, 4.977, 5.131, 5.379, 5.488, 7.318, 7.4]
-    #         ),
-    #     ]
-    #     expected_df = pd.DataFrame.from_dict(
-    #         dict(zip(["int", "dat", "txt", "cat", "flo"], expected_data))
-    #     )
-    #     actual_df = dataset_generator.generate_dataset(
-    #         self.rng,
-    #         columns_to_generate=columns_to_gen,
-    #         dataset_length=self.dataset_length,
-    #     )
-    #     np.testing.assert_array_equal(actual_df.values, expected_df.values)
+    def test_get_ordered_column_integration(self):
+        columns_to_gen = [
+            {
+                "generator": "integer",
+                "name": "int",
+                "min_value": 4,
+                "max_value": 88,
+                "order": "ascending",
+            },
+            {
+                "generator": "datetime",
+                "name": "dat",
+                "date_format_list": ["%Y-%m-%d"],
+                "start_date": pd.Timestamp(2001, 12, 22),
+                "end_date": pd.Timestamp(2022, 12, 22),
+                "order": "ascending",
+            },
+            {
+                "generator": "text",
+                "name": "txt",
+                "chars": ["0", "1"],
+                "str_len_min": 2,
+                "str_len_max": 5,
+                "order": "ascending",
+            },
+            {
+                "generator": "categorical",
+                "name": "cat",
+                "categories": ["X", "Y", "Z"],
+                "probabilities": [0.1, 0.5, 0.4],
+                "order": "ascending",
+            },
+            {
+                "generator": "float",
+                "name": "flo",
+                "min_value": 3,
+                "max_value": 10,
+                "sig_figs": 3,
+                "order": "ascending",
+            },
+        ]
+        expected_data = [
+            np.array([21, 23, 30, 36, 57, 60, 62, 70, 70, 87]),
+            np.array(
+                [
+                    "2003-12-27",
+                    "2005-11-23",
+                    "2007-03-10",
+                    "2008-12-17",
+                    "2011-04-02",
+                    "2014-07-16",
+                    "2015-12-26",
+                    "2016-02-07",
+                    "2021-10-01",
+                    "2021-11-24",
+                ]
+            ),
+            np.array(
+                ["00", "000", "0001", "01", "0100", "10", "10", "100", "1110", "1111"]
+            ),
+            np.array(["Y", "Y", "Y", "Y", "Y", "Y", "Z", "Z", "Z", "Z"]),
+            np.array(
+                [3.035, 3.477, 4.234, 4.812, 4.977, 5.131, 5.379, 5.488, 7.318, 7.4]
+            ),
+        ]
+        expected_df = pd.DataFrame.from_dict(
+            dict(zip(["int", "dat", "txt", "cat", "flo"], expected_data))
+        )
+        actual_df = dataset_generator.generate_dataset(
+            self.rng,
+            columns_to_generate=columns_to_gen,
+            dataset_length=self.dataset_length,
+        )
+        np.testing.assert_array_equal(actual_df.values, expected_df.values)
 
 
 #     def test_generate_dataset_with_invalid_generator(self):
