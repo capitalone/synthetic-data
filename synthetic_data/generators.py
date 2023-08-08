@@ -36,10 +36,11 @@ class TabularGenerator(BaseGenerator):
             self.tabular_generator_seed = seed
         self.rng = np.random.default_rng(seed=self.tabular_generator_seed)
         self.gen_funcs = {
-            "integer": random_integers,
+            "int": random_integers,
             "float": random_floats,
             "categorical": random_categorical,
             "datetime": random_datetimes,
+            "string": random_text,
             "text": random_text,
         }
 
@@ -102,23 +103,23 @@ class TabularGenerator(BaseGenerator):
 
         for col in columns:
             col_ = copy.deepcopy(col)
+
             generator_name = col_.get("data_type", None)
             generator_func = self.gen_funcs.get(generator_name, None)
+            print(generator_name)
 
-            params_gen_func_list = inspect.signature(generator_func)
-
-            # edge cases for extracting data from profiler report.
-            if generator_name == "datetime":
-                col_["min"] = col_["statistics"].get("min", None)
-                col_["max"] = col_["statistics"].get("max", None)
-                col_["format"] = col_["statistics"].get("format", None)
-
-            elif generator_name == "float":
-                col_["precision"] = (
-                    col_["statistics"].get("precision", None).get("max", None)
+            if not generator_name:
+                logging.warning(
+                    f"Generator is {generator_name}. Null entries are not implemented."
                 )
+                continue
 
-            elif generator_name == "string":
+            params_gen_funcs = inspect.signature(generator_func)
+
+            col_["rng"] = self.rng
+            col_["num_rows"] = num_samples
+
+            if (generator_name == "string") or (generator_name == "text"):
                 if col_.get("categorical", False):
                     total = 0
                     for count in col["statistics"]["categorical_count"].values():
@@ -131,28 +132,44 @@ class TabularGenerator(BaseGenerator):
                     col_["probabilities"] = probabilities
                     col_["categories"] = (col_["statistics"].get("categories", None),)
 
-                else:
-                    col_["vocab"] = col_["statistics"].get("vocab", None)
+                col_["vocab"] = col_["statistics"].get("vocab", None)
+
+            col_["min"] = col_["statistics"].get("min", None)
+            col_["max"] = col_["statistics"].get("max", None)
+
+            # edge cases for extracting data from profiler report.
+            if generator_name == "datetime":
+                col_["format"] = col_["statistics"].get("format", None)
+                print(col_["format"], "SHOULD NOT BE EMPTY")
+                col_["min"] = pd.to_datetime(
+                    col_["statistics"].get("min", None), format=col_["format"][0]
+                )
+                col_["max"] = pd.to_datetime(
+                    col_["statistics"].get("max", None), format=col_["format"][0]
+                )
+
+            if generator_name == "float":
+                col_["precision"] = (
+                    col_["statistics"].get("precision", None).get("max", None)
+                )
 
             param_build = {}
-            for param in params_gen_func_list:
-                param_build[param] = col_[param]
+            for param in params_gen_funcs.parameters.items():
+                param_build[param[0]] = col_[param[0]]
 
-            generated_data = generator_func(
-                **param_build, num_rows=num_samples, rng=self.rng
-            )
-            if param_build["order"] in sorting_types:
+            generated_data = generator_func(**param_build)
+            if col_["order"] in sorting_types:
                 dataset.append(
                     self.get_ordered_column(
                         generated_data,
                         generator_func,
-                        param_build["order"],
+                        col_["order"],
                     )
                 )
             else:
-                if param_build["order"] is not None:
+                if col_["order"] is not None:
                     logging.warning(
-                        f"""{generator_name} is passed with sorting type of {param_build["order"]}.
+                        f"""{generator_name} is passed with sorting type of {col_["order"]}.
                         Ascending and descending are the only supported options.
                         No sorting action will be taken."""
                     )
@@ -161,6 +178,7 @@ class TabularGenerator(BaseGenerator):
                     dataset.append(date)
                 else:
                     dataset.append(generated_data)
+
             column_names.append(generator_name)
 
         return self.convert_data_to_df(dataset, column_names=column_names)

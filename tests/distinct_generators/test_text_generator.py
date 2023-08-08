@@ -16,13 +16,13 @@ class TestTextGeneratorFunctions(unittest.TestCase):
             self.assertIsInstance(x, np.str_)
 
     def test_text_length_range(self):
-        text_arr = random_text(self.rng, str_len_min=3, str_len_max=5)
+        text_arr = random_text(self.rng, min=3, max=5)
         for text in text_arr:
             self.assertLessEqual(len(text), 5)
             self.assertGreaterEqual(len(text), 3)
 
     def test_text_equal_length_range(self):
-        text_arr = random_text(self.rng, str_len_min=5, str_len_max=5)
+        text_arr = random_text(self.rng, min=5, max=5)
         for text in text_arr:
             self.assertEqual(len(text), 5)
 

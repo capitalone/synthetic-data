@@ -5,8 +5,8 @@ from numpy.random import Generator
 
 def random_floats(
     rng: Generator,
-    min_value: int = -1e6,
-    max_value: int = 1e6,
+    min: int = -1e6,
+    max: int = 1e6,
     precision: int = 3,
     num_rows: int = 1,
 ) -> np.array:
@@ -15,10 +15,10 @@ def random_floats(
 
     :param rng: the np rng object used to generate random values
     :type rng: numpy Generator
-    :param min_value: the minimum float that can be returned
-    :type min_value: int, optional
-    :param max_value: the maximum float that can be returned
-    :type max_value: int, optional
+    :param min: the minimum float that can be returned
+    :type min: int, optional
+    :param max: the maximum float that can be returned
+    :type max: int, optional
     :param sig_figs: restricts float to a number of sig_figs after decimal
     :type sig_figs: int, optional
     :param num_rows: the number of rows in np array generated
@@ -30,4 +30,4 @@ def random_floats(
         raise ValueError("precision should be greater than or equal to 0")
     if not isinstance(precision, int):
         raise ValueError("precision should be an int")
-    return np.around(rng.uniform(min_value, max_value, num_rows), precision)
+    return np.around(rng.uniform(min, max, num_rows), precision)
