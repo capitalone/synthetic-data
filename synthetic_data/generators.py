@@ -106,7 +106,6 @@ class TabularGenerator(BaseGenerator):
 
             generator_name = col_.get("data_type", None)
             generator_func = self.gen_funcs.get(generator_name, None)
-            print(generator_name)
 
             if not generator_name:
                 logging.warning(
@@ -140,7 +139,6 @@ class TabularGenerator(BaseGenerator):
             # edge cases for extracting data from profiler report.
             if generator_name == "datetime":
                 col_["format"] = col_["statistics"].get("format", None)
-                print(col_["format"], "SHOULD NOT BE EMPTY")
                 col_["min"] = pd.to_datetime(
                     col_["statistics"].get("min", None), format=col_["format"][0]
                 )
