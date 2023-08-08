@@ -92,9 +92,9 @@ class TabularGenerator(BaseGenerator):
                 seed=self.tabular_generator_seed,
             )
         else:
-            return self.generate_uncorrelated_column_data(num_samples)
+            return self._generate_uncorrelated_column_data(num_samples)
 
-    def generate_uncorrelated_column_data(self, num_samples):
+    def _generate_uncorrelated_column_data(self, num_samples):
         """Generate column data."""
         columns = self.profile.report()["data_stats"]
         dataset = []
@@ -106,7 +106,6 @@ class TabularGenerator(BaseGenerator):
 
             generator_name = col_.get("data_type", None)
             generator_func = self.gen_funcs.get(generator_name, None)
-            print(generator_name)
 
             if not generator_name:
                 logging.warning(
@@ -140,7 +139,6 @@ class TabularGenerator(BaseGenerator):
             # edge cases for extracting data from profiler report.
             if generator_name == "datetime":
                 col_["format"] = col_["statistics"].get("format", None)
-                print(col_["format"], "SHOULD NOT BE EMPTY")
                 col_["min"] = pd.to_datetime(
                     col_["statistics"].get("min", None), format=col_["format"][0]
                 )

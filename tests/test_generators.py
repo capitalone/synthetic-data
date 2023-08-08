@@ -251,7 +251,7 @@ class TestTabularGenerator(unittest.TestCase):
     @mock.patch("synthetic_data.generators.random_datetimes")
     @mock.patch("synthetic_data.generators.random_text")
     @mock.patch(
-        "synthetic_data.generators.TabularGenerator.generate_uncorrelated_column_data"
+        "synthetic_data.generators.TabularGenerator._generate_uncorrelated_column_data"
     )
     def test_generate_uncorrelated_column_data(
         self,
@@ -392,7 +392,7 @@ class TestTabularGenerator(unittest.TestCase):
             ],
         ]
 
-        actual_df = generator.synthesize(20)
+        generator.synthesize(20)
 
         # check to see if columns were generated
         mock_generate_uncorrelated_cols.assert_called_once()

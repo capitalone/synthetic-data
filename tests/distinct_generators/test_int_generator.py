@@ -11,7 +11,7 @@ class TestIntGenerator(unittest.TestCase):
         self.rng = np.random.default_rng(12345)
 
     def test_return_type(self):
-        result = random_integers(self.rng)
+        result = random_integers(self.rng, 1, 1)
         self.assertIsInstance(result, np.ndarray)
         for num in result:
             self.assertIsInstance(num, np.int64)
@@ -19,9 +19,9 @@ class TestIntGenerator(unittest.TestCase):
     def test_size(self):
         num_rows = [5, 20, 100]
         for nr in num_rows:
-            result = random_integers(self.rng, num_rows=nr)
+            result = random_integers(self.rng, min=1, max=1, num_rows=nr)
             self.assertEqual(result.shape[0], nr)
-        result = random_integers(self.rng)
+        result = random_integers(self.rng, min=1, max=1)
         self.assertEqual(result.shape[0], 1)
 
     def test_values_range(self):
