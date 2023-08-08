@@ -4,7 +4,7 @@ from numpy.random import Generator
 
 
 def random_integers(
-    rng: Generator, min: int, max: int, num_rows: int = 1
+    rng: Generator, min: int = -1e6, max: int = 1e6, num_rows: int = 1
 ) -> np.array:
     """
     Randomly generates an array of integers between the given min and max values.
@@ -20,9 +20,6 @@ def random_integers(
 
     :return: np array of integers
     """
-
-    # rng.integers has an exclusive max length.
-    # Need to ensure that the max of the data is n-1 the max param value.
     max += 1
 
     return rng.integers(min, max, (num_rows,))

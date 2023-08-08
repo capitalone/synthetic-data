@@ -8,9 +8,9 @@ from numpy.random import Generator
 
 def random_text(
     rng: Generator,
-    vocab: Optional[List[str]],
-    min: int,
-    max: int,
+    vocab: Optional[List[str]] = None,
+    min: int = 1,
+    max: int = 1000,
     num_rows: int = 1,
 ) -> np.array:
     """
@@ -40,8 +40,7 @@ def random_text(
         )
     text_list = []
 
-    # rng.integers has an exclusive max length.
-    # Need to ensure that the max of the data is n-1 the max param value.
+    # edge case
     max += 1
 
     for _ in range(num_rows):
