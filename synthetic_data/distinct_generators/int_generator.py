@@ -20,6 +20,8 @@ def random_integers(
 
     :return: np array of integers
     """
+    # rng.integers has an exclusive max length.
+    # Need to ensure that the max of the data is n-1 the max param value.
     max += 1
 
     return rng.integers(min, max, (num_rows,))

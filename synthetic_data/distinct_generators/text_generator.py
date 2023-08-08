@@ -40,7 +40,8 @@ def random_text(
         )
     text_list = []
 
-    # edge case
+    # rng.integers has an exclusive max length.
+    # Need to ensure that the max of the data is n-1 the max param value.
     max += 1
 
     for _ in range(num_rows):

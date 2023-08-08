@@ -92,9 +92,9 @@ class TabularGenerator(BaseGenerator):
                 seed=self.tabular_generator_seed,
             )
         else:
-            return self.generate_uncorrelated_column_data(num_samples)
+            return self._generate_uncorrelated_column_data(num_samples)
 
-    def generate_uncorrelated_column_data(self, num_samples):
+    def _generate_uncorrelated_column_data(self, num_samples):
         """Generate column data."""
         columns = self.profile.report()["data_stats"]
         dataset = []
