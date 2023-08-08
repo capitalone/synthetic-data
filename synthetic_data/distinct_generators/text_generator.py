@@ -9,8 +9,8 @@ from numpy.random import Generator
 def random_text(
     rng: Generator,
     vocab: Optional[List[str]] = None,
-    str_len_min: int = 1,
-    str_len_max: int = 1000,
+    min: int = 1,
+    max: int = 1000,
     num_rows: int = 1,
 ) -> np.array:
     """
@@ -22,10 +22,10 @@ def random_text(
     :type vocab: List[str], None
     :param num_rows: the number of rows in np array generated
     :type num_rows: int, optional
-    :param str_len_min: the minimum length a string can be
-    :type str_len_min: int, optional
-    :param str_len_max: the maximum length a string can be
-    :type str_len_max: int (one above the max), optional
+    :param min: the minimum length a string can be
+    :type min: int, optional
+    :param max: the maximum length a string can be
+    :type max: int (one above the max), optional
 
     :return: numpy array of strings
     :rtype: numpy array
@@ -41,10 +41,10 @@ def random_text(
     text_list = []
 
     # edge case
-    str_len_max += 1
+    max += 1
 
     for _ in range(num_rows):
-        length = rng.integers(str_len_min, str_len_max)
+        length = rng.integers(min, max)
         string_entry = "".join(rng.choice(vocab, (length,)))
         text_list.append(string_entry)
 
