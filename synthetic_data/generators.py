@@ -106,7 +106,6 @@ class TabularGenerator(BaseGenerator):
             col_ = copy.deepcopy(col)
 
             generator_name = col_.get("data_type", None)
-            generator_func = self.gen_funcs.get(generator_name, None)
 
             if not generator_name:
                 logging.warning(
@@ -114,14 +113,12 @@ class TabularGenerator(BaseGenerator):
                 )
                 continue
 
-            params_gen_funcs = inspect.signature(generator_func)
-
             col_["rng"] = self.rng
             col_["num_rows"] = num_samples
 
             if (generator_name == "string") or (generator_name == "text"):
                 if col_.get("categorical", False):
-                    print("ENTERED CATEGORICAL GEN")
+                    generator_name = "categorical"
                     total = 0
                     for count in col["statistics"]["categorical_count"].values():
                         total += count
@@ -131,7 +128,7 @@ class TabularGenerator(BaseGenerator):
                         probabilities.append(count / total)
 
                     col_["probabilities"] = probabilities
-                    col_["categories"] = (col_["statistics"].get("categories", None),)
+                    col_["categories"] = col_["statistics"].get("categories", None)
 
                 col_["vocab"] = col_["statistics"].get("vocab", None)
 
@@ -153,12 +150,15 @@ class TabularGenerator(BaseGenerator):
                     col_["statistics"].get("precision", None).get("max", None)
                 )
 
+            generator_func = self.gen_funcs.get(generator_name, None)
+            params_gen_funcs = inspect.signature(generator_func)
+
             param_build = {}
             for param in params_gen_funcs.parameters.items():
                 param_build[param[0]] = col_[param[0]]
 
             generated_data = generator_func(**param_build)
-            print(col_["order"])
+            print(generated_data)
             if col_["order"] in sorting_types:
                 dataset.append(
                     self.get_ordered_column(
