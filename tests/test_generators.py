@@ -79,7 +79,6 @@ class TestTabularGenerator(unittest.TestCase):
         )
 
 
-# @mock.patch("generate_uncorrelated_column_data.TabularGenerator", spec=TabularGenerator)
 class TestGenerateUncorrelatedColumnData(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -133,11 +132,6 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
             },
         ]
 
-    # @staticmethod
-    # def setup_tabular_generator_mock(mock_generator):
-    #     mock_DataLabeler = mock_generator.return_value
-
-    # TEST PARAM_BUILD
     @mock.patch("synthetic_data.generators.random_integers")
     @mock.patch("synthetic_data.generators.random_floats")
     @mock.patch("synthetic_data.generators.random_categorical")
@@ -394,205 +388,181 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
         actual_df = generator.synthesize(20)
         pd.testing.assert_frame_equal(expected_df, actual_df)
 
-    # def test_generate_uncorrelated_with_invalid_generator(self):
-    #     columns_to_gen = [{"generator": "non existent generator"}]
-    #     with self.assertRaisesRegex(
-    #         ValueError, "generator: non existent generator is not a valid generator."
-    #     ):
-    #         TabularGenerator.generate_dataset(
-    #             self.rng,
-    #             columns_to_generate=columns_to_gen,
-    #             dataset_length=self.dataset_length,
-    #         )
+    @mock.patch("dataprofiler.profilers.StructuredProfiler.report")
+    @mock.patch("synthetic_data.generators.logging.warning")
+    def test_generate_dataset_with_invalid_sorting_type(
+        self, mock_warning, mock_report
+    ):
+        mock_report.return_value = {
+            "data_stats": [
+                {
+                    "data_type": "int",
+                    "order": "cheese",
+                    "statistics": {
+                        "min": 1.0,
+                        "max": 4.0,
+                    },
+                },
+                {
+                    "data_type": "int",
+                    "order": "random",
+                    "statistics": {
+                        "min": 1.0,
+                        "max": 4.0,
+                    },
+                },
+            ]
+        }
+        generator = TabularGenerator(profile=self.profile, is_correlated=False, seed=42)
+        self.assertFalse(generator.is_correlated)
+        generator._generate_uncorrelated_column_data(num_samples=20)
+        self.assertEqual(mock_warning.call_count, 2)
+
+    @mock.patch("dataprofiler.profilers.StructuredProfiler.report")
+    @mock.patch("synthetic_data.generators.logging.warning")
+    def test_generate_dataset_with_valid_sorting_type(self, mock_warning, mock_report):
+        mock_report.return_value = {
+            "data_stats": [
+                {
+                    "data_type": "int",
+                    "order": "ascending",
+                    "statistics": {
+                        "min": 1.0,
+                        "max": 4.0,
+                    },
+                },
+                {
+                    "data_type": "int",
+                    "order": "descending",
+                    "statistics": {
+                        "min": 1.0,
+                        "max": 4.0,
+                    },
+                },
+            ]
+        }
+        generator = TabularGenerator(profile=self.profile, is_correlated=False, seed=42)
+        self.assertFalse(generator.is_correlated)
+        generator._generate_uncorrelated_column_data(num_samples=20)
+
+        self.assertEqual(mock_warning.call_count, 0)
+
+    @mock.patch("dataprofiler.profilers.StructuredProfiler.report")
+    def test_generate_dataset_with_none_columns(self, mock_report):
+        expected_dataframe = pd.DataFrame()
+        mock_report.return_value = {"data_stats": []}
+        generator = TabularGenerator(profile=self.profile, is_correlated=False, seed=42)
+        self.assertFalse(generator.is_correlated)
+        actual_df = generator._generate_uncorrelated_column_data(num_samples=20)
+        self.assertEqual(expected_dataframe.empty, actual_df.empty)
 
 
-#     @mock.patch("synthetic_data.dataset_generator.logging.warning")
-#     def test_generate_dataset_with_invalid_sorting_type(self, mock_warning):
-#         columns_to_gen = [
-#             {
-#                 "generator": "integer",
-#                 "name": "int",
-#                 "min_value": 4,
-#                 "max_value": 88,
-#                 "order": "random",
-#             }
-#         ]
-#         unsupported_sort_types = ["cheese", "random"]
+class TestGetOrderedColumn(unittest.TestCase):
+    def setUp(self):
+        self.rng = np.random.Generator(np.random.PCG64(12345))
+        self.start_date = pd.Timestamp(2001, 12, 22)
+        self.end_date = pd.Timestamp(2023, 1, 1)
+        self.date_format_list = ["%B %d %Y %H:%M:%S"]
+        self.profile_options = dp.ProfilerOptions()
+        self.profile_options.set(
+            {
+                "data_labeler.is_enabled": False,
+                "correlation.is_enabled": True,
+                "multiprocess.is_enabled": False,
+            }
+        )
+        dp.set_seed(0)
+        self.data = dp.Data(os.path.join(test_dir, "data/tabular.csv"))
+        self.profile = dp.Profiler(
+            data=self.data,
+            options=self.profile_options,
+            samples_per_update=len(self.data),
+        )
+        self.generator = TabularGenerator(
+            profile=self.profile, is_correlated=False, seed=42
+        )
 
-#         for type in unsupported_sort_types:
-#             columns_to_gen[0]["order"] = type
-#             dataset_generator.generate_dataset(
-#                 self.rng,
-#                 columns_to_generate=columns_to_gen,
-#                 dataset_length=self.dataset_length,
-#             )
-#             mock_warning.assert_called_with(
-#                 f"""{columns_to_gen[0]["name"]} is passed with sorting type of {columns_to_gen[0]["order"]}.
-#                 Ascending and descending are the only supported options.
-#                 No sorting action will be taken."""
-#             )
-#         self.assertEqual(mock_warning.call_count, 2)
+    def test_get_ordered_column_datetime_ascending(self):
+        data = datetime_generator.random_datetimes(
+            rng=self.rng, min=self.start_date, max=self.end_date, num_rows=5
+        )
 
-#     @mock.patch("synthetic_data.dataset_generator.logging.warning")
-#     def test_generate_dataset_with_valid_sorting_type(self, mock_warning):
-#         columns_to_gen = [
-#             {
-#                 "generator": "integer",
-#                 "name": "int",
-#                 "min_value": 4,
-#                 "max_value": 88,
-#                 "order": "ascending",
-#             }
-#         ]
-#         supported_sort_types = ["ascending", "descending", None]
+        expected = np.array(
+            [
+                "October 02 2006 22:34:32",
+                "August 19 2008 16:53:49",
+                "March 13 2010 17:18:44",
+                "March 11 2016 15:15:39",
+                "September 27 2018 18:24:03",
+            ]
+        )
 
-#         for type in supported_sort_types:
-#             columns_to_gen[0]["order"] = type
-#             dataset_generator.generate_dataset(
-#                 self.rng,
-#                 columns_to_generate=columns_to_gen,
-#                 dataset_length=self.dataset_length,
-#             )
+        actual = self.generator.get_ordered_column(data, "datetime", "ascending")
+        np.testing.assert_array_equal(actual, expected)
 
-#         self.assertEqual(mock_warning.call_count, 0)
+    def test_get_ordered_column_datetime_descending(self):
+        data = datetime_generator.random_datetimes(
+            rng=self.rng, min=self.start_date, max=self.end_date, num_rows=5
+        )
 
-#     @mock.patch("synthetic_data.dataset_generator.logging.warning")
-#     def test_generate_dataset_with_none_columns(self, mock_warning):
-#         expected_dataframe = pd.DataFrame()
-#         actual_df = dataset_generator.generate_dataset(
-#             self.rng, None, self.dataset_length
-#         )
-#         mock_warning.assert_called_once_with(
-#             "columns_to_generate is empty, empty dataframe will be returned."
-#         )
-#         self.assertEqual(expected_dataframe.empty, actual_df.empty)
+        expected = np.array(
+            [
+                "September 27 2018 18:24:03",
+                "March 11 2016 15:15:39",
+                "March 13 2010 17:18:44",
+                "August 19 2008 16:53:49",
+                "October 02 2006 22:34:32",
+            ]
+        )
 
-#     def test_generate_custom_dataset(self):
-#         expected_data = [
-#             np.array([62, 23, 70, 30, 21, 70, 57, 60, 87, 36]),
-#             np.array(
-#                 [
-#                     "2008-12-17",
-#                     "2014-07-16",
-#                     "2005-11-23",
-#                     "2016-02-07",
-#                     "2021-10-01",
-#                     "2007-03-10",
-#                     "2021-11-24",
-#                     "2015-12-26",
-#                     "2003-12-27",
-#                     "2011-04-02",
-#                 ]
-#             ),
-#             np.array(
-#                 ["10", "0001", "0100", "10", "000", "100", "00", "01", "1110", "1111"]
-#             ),
-#             np.array(["Z", "Y", "Z", "Y", "Y", "Y", "Z", "Y", "Z", "Y"]),
-#             np.array(
-#                 [5.379, 4.812, 5.488, 3.035, 7.4, 4.977, 3.477, 7.318, 4.234, 5.131]
-#             ),
-#         ]
-#         expected_df = pd.DataFrame.from_dict(
-#             dict(zip(["int", "dat", "txt", "cat", "flo"], expected_data))
-#         )
-#         actual_df = dataset_generator.generate_dataset(
-#             self.rng,
-#             columns_to_generate=self.columns_to_gen,
-#             dataset_length=self.dataset_length,
-#         )
-#         self.assertTrue(actual_df.equals(expected_df))
+        actual = self.generator.get_ordered_column(data, "datetime", "descending")
 
+        np.testing.assert_array_equal(actual, expected)
 
-# class TestGetOrderedColumn(unittest.TestCase):
-#     def setUp(self):
-#         self.rng = Generator(PCG64(12345))
-#         self.start_date = pd.Timestamp(2001, 12, 22)
-#         self.end_date = pd.Timestamp(2023, 1, 1)
-#         self.date_format_list = ["%B %d %Y %H:%M:%S"]
+    def test_get_ordered_column_custom_datetime_ascending(self):
+        custom_date_format = ["%Y %m %d", "%B %d %Y %H:%M:%S"]
+        data = datetime_generator.random_datetimes(
+            rng=self.rng,
+            format=custom_date_format,
+            min=self.start_date,
+            max=self.end_date,
+            num_rows=5,
+        )
 
-#     def test_get_ordered_column_datetime_ascending(self):
-#         data = datetime_generator.random_datetimes(
-#             rng=self.rng, start_date=self.start_date, end_date=self.end_date, num_rows=5
-#         )
+        expected = np.array(
+            [
+                "November 25 2005 02:50:42",
+                "August 19 2008 16:53:49",
+                "December 21 2008 00:15:47",
+                "March 13 2010 17:18:44",
+                "2018 09 27",
+            ]
+        )
 
-#         expected = np.array(
-#             [
-#                 "October 02 2006 22:34:32",
-#                 "August 19 2008 16:53:49",
-#                 "March 13 2010 17:18:44",
-#                 "March 11 2016 15:15:39",
-#                 "September 27 2018 18:24:03",
-#             ]
-#         )
+        actual = self.generator.get_ordered_column(data, "datetime", "ascending")
 
-#         actual = dataset_generator.get_ordered_column(data, "datetime", "ascending")
+        np.testing.assert_array_equal(actual, expected)
 
-#         np.testing.assert_array_equal(actual, expected)
+    def test_get_ordered_column_custom_datetime_descending(self):
+        custom_date_format = ["%Y %m %d"]
+        data = datetime_generator.random_datetimes(
+            rng=self.rng,
+            format=custom_date_format,
+            min=self.start_date,
+            max=self.end_date,
+            num_rows=5,
+        )
 
-#     def test_get_ordered_column_datetime_descending(self):
-#         data = datetime_generator.random_datetimes(
-#             rng=self.rng, start_date=self.start_date, end_date=self.end_date, num_rows=5
-#         )
+        expected = np.array(
+            [
+                "2018 09 27",
+                "2016 03 11",
+                "2010 03 13",
+                "2008 08 19",
+                "2006 10 02",
+            ]
+        )
 
-#         expected = np.array(
-#             [
-#                 "September 27 2018 18:24:03",
-#                 "March 11 2016 15:15:39",
-#                 "March 13 2010 17:18:44",
-#                 "August 19 2008 16:53:49",
-#                 "October 02 2006 22:34:32",
-#             ]
-#         )
+        actual = self.generator.get_ordered_column(data, "datetime", "descending")
 
-#         actual = dataset_generator.get_ordered_column(data, "datetime", "descending")
-
-#         np.testing.assert_array_equal(actual, expected)
-
-#     def test_get_ordered_column_custom_datetime_ascending(self):
-#         custom_date_format = ["%Y %m %d", "%B %d %Y %H:%M:%S"]
-#         data = datetime_generator.random_datetimes(
-#             rng=self.rng,
-#             date_format_list=custom_date_format,
-#             start_date=self.start_date,
-#             end_date=self.end_date,
-#             num_rows=5,
-#         )
-
-#         expected = np.array(
-#             [
-#                 "November 25 2005 02:50:42",
-#                 "August 19 2008 16:53:49",
-#                 "December 21 2008 00:15:47",
-#                 "March 13 2010 17:18:44",
-#                 "2018 09 27",
-#             ]
-#         )
-
-#         actual = dataset_generator.get_ordered_column(data, "datetime", "ascending")
-
-#         np.testing.assert_array_equal(actual, expected)
-
-# @mock.patch("synthetic_data.generators.TabularGenerator")
-# def test_get_ordered_column_custom_datetime_descending(self, mock_tabular_generator):
-#     custom_date_format = ["%Y %m %d"]
-#     data = datetime_generator.random_datetimes(
-#         rng=self.rng,
-#         date_format_list=custom_date_format,
-#         start_date=self.start_date,
-#         end_date=self.end_date,
-#         num_rows=5,
-#     )
-
-#     expected = np.array(
-#         [
-#             "2018 09 27",
-#             "2016 03 11",
-#             "2010 03 13",
-#             "2008 08 19",
-#             "2006 10 02",
-#         ]
-#     )
-
-#     actual = mock_tabular_generator.get_ordered_column(data, "datetime", "descending")
-
-#     np.testing.assert_array_equal(actual, expected)
+        np.testing.assert_array_equal(actual, expected)
