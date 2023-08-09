@@ -105,11 +105,9 @@ class TabularGenerator(BaseGenerator):
             col_ = copy.deepcopy(col)
 
             generator_name = col_.get("data_type", None)
-
+            print(generator_name)
             if not generator_name:
-                logging.warning(
-                    f"Generator is {generator_name}. Null entries are not implemented."
-                )
+                logging.warning("Generator is None. Null entries are not implemented.")
                 continue
 
             col_["rng"] = self.rng
