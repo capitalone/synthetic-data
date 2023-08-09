@@ -107,7 +107,9 @@ class TabularGenerator(BaseGenerator):
             generator_name = col_.get("data_type", None)
 
             if not generator_name:
-                logging.warning("Generator is None. Null entries are not implemented.")
+                logging.warning(
+                    f"Generator of type {generator_name} is not implemented."
+                )
                 continue
 
             col_["rng"] = self.rng
