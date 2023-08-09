@@ -73,8 +73,11 @@ class TestTabularGenerator(unittest.TestCase):
 
         np.testing.assert_array_equal(
             actual_synthetic_data.columns.values,
-            np.array(['datetime', 'string', 'int', 'float', 'text'], dtype="object"),
+            np.array(
+                ["datetime", "categorical", "int", "string", "float"], dtype="object"
+            ),
         )
+
 
 # @mock.patch("generate_uncorrelated_column_data.TabularGenerator", spec=TabularGenerator)
 class TestGenerateUncorrelatedColumnData(unittest.TestCase):
@@ -129,11 +132,10 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
                 "sig_figs": 3,
             },
         ]
-        
+
     # @staticmethod
     # def setup_tabular_generator_mock(mock_generator):
     #     mock_DataLabeler = mock_generator.return_value
-    
 
     # TEST PARAM_BUILD
     @mock.patch("synthetic_data.generators.random_integers")
@@ -305,118 +307,101 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
                 else:
                     self.assertEqual(call_args_list[key], expected_calls[j][key])
 
-
     # mock the report to have to columns and then check to see if the (output of synthesize).values == the expected_df.values containing have the sorted expected stuff
     @mock.patch("dataprofiler.profilers.StructuredProfiler.report")
     def test_get_ordered_column_integration(self, mock_report):
-        mock_report.return_value = {"data_stats": [
-            {
-                "data_type": "int",
-                "order": "ascending",
-                "statistics": {
-                    "min": 1.0,
-                    "max": 4.0,
+        mock_report.return_value = {
+            "data_stats": [
+                {
+                    "data_type": "int",
+                    "order": "ascending",
+                    "statistics": {
+                        "min": 1.0,
+                        "max": 4.0,
+                    },
                 },
-            },
-            {
-                "data_type": "string",
-                "categorical": False,
-                "order": "ascending",
-                "statistics": {
-                    "min": 4.0,
-                    "max": 5.0,
-                    "vocab": ['q', 'p', 'a', 'w', 'e', 'r', 'i', 's', 'd', 'f']
+                {
+                    "data_type": "string",
+                    "categorical": False,
+                    "order": "ascending",
+                    "statistics": {
+                        "min": 4.0,
+                        "max": 5.0,
+                        "vocab": ["q", "p", "a", "w", "e", "r", "i", "s", "d", "f"],
+                    },
                 },
-            },
-            {
-                "data_type": "string",
-                "categorical": True,
-                "order": "ascending",
-                "statistics": {
-                    "min": 10,
-                    "max": 13,
-                    "categorical_count": {"red": 1, "blue": 2, "yellow": 1, "orange": 3},
-                    "categories": ["blue", "yellow", "red", "orange"]
-                }
-            },
-            {
-                "data_type": "float",
-                "order": "ascending",
-                "statistics": {
-                    "min": 2.11234,
-                    "max": 8.0,
-                    "precision": {"max": 6}
+                {
+                    "data_type": "string",
+                    "categorical": True,
+                    "order": "ascending",
+                    "statistics": {
+                        "min": 10,
+                        "max": 13,
+                        "categorical_count": {
+                            "red": 1,
+                            "blue": 2,
+                            "yellow": 1,
+                            "orange": 3,
+                        },
+                        "categories": ["blue", "yellow", "red", "orange"],
+                    },
                 },
-            },
-            {
-                "data_type": "datetime",
-                "order": "ascending",
-                "statistics": {
-                    "format": ['%Y-%m-%d'],
-                    "min": '2000-12-09',
-                    "max": '2030-04-23'
-                }
-            }
+                {
+                    "data_type": "float",
+                    "order": "ascending",
+                    "statistics": {"min": 2.11234, "max": 8.0, "precision": {"max": 6}},
+                },
+                {
+                    "data_type": "datetime",
+                    "order": "ascending",
+                    "statistics": {
+                        "format": ["%Y-%m-%d"],
+                        "min": "2000-12-09",
+                        "max": "2030-04-23",
+                    },
+                },
             ]
         }
         generator = TabularGenerator(profile=self.profile, is_correlated=False, seed=42)
         self.assertFalse(generator.is_correlated)
 
-        expected_array = [[1, 'arif', 'blue', 2.246061, '2003-06-02'],
-                        [1, 'daips', 'blue', 2.628393, '2003-10-08'],
-                        [1, 'dree', 'orange', 2.642511, '2006-02-17'],
-                        [1, 'drqs', 'orange', 2.807119, '2006-11-18'],
-                        [1, 'dwdaa', 'orange', 3.009102, '2008-12-07'],
-                        [2, 'fswfe', 'orange', 3.061853, '2009-12-03'],
-                        [2, 'fwqe', 'orange', 3.677692, '2013-02-24'],
-                        [2, 'ipdpd', 'orange', 3.887541, '2013-08-18'],
-                        [3, 'pdis', 'red', 4.24257, '2014-02-19'],
-                        [3, 'peii', 'red', 4.355663, '2014-04-29'],
-                        [3, 'pepie', 'red', 4.739156, '2017-12-13'],
-                        [3, 'qrdq', 'red', 4.831716, '2018-02-03'],
-                        [3, 'qrps', 'yellow', 5.062321, '2019-05-13'],
-                        [3, 'rrqp', 'yellow', 5.82323, '2020-01-09'],
-                        [4, 'sasr', 'yellow', 6.212038, '2021-12-29'],
-                        [4, 'sspwe', 'yellow', 6.231978, '2022-01-25'],
-                        [4, 'sssi', 'yellow', 6.365346, '2023-03-20'],
-                        [4, 'wpfsi', 'yellow', 7.461754, '2023-10-23'],
-                        [4, 'wqfed', 'yellow', 7.775666, '2026-02-04'],
-                        [4, 'wsde', 'yellow', 7.818521, '2027-06-13']]
-        
+        expected_array = [
+            [1, "arif", "blue", 2.246061, "2003-06-02"],
+            [1, "daips", "blue", 2.628393, "2003-10-08"],
+            [1, "dree", "orange", 2.642511, "2006-02-17"],
+            [1, "drqs", "orange", 2.807119, "2006-11-18"],
+            [1, "dwdaa", "orange", 3.009102, "2008-12-07"],
+            [2, "fswfe", "orange", 3.061853, "2009-12-03"],
+            [2, "fwqe", "orange", 3.677692, "2013-02-24"],
+            [2, "ipdpd", "orange", 3.887541, "2013-08-18"],
+            [3, "pdis", "red", 4.24257, "2014-02-19"],
+            [3, "peii", "red", 4.355663, "2014-04-29"],
+            [3, "pepie", "red", 4.739156, "2017-12-13"],
+            [3, "qrdq", "red", 4.831716, "2018-02-03"],
+            [3, "qrps", "yellow", 5.062321, "2019-05-13"],
+            [3, "rrqp", "yellow", 5.82323, "2020-01-09"],
+            [4, "sasr", "yellow", 6.212038, "2021-12-29"],
+            [4, "sspwe", "yellow", 6.231978, "2022-01-25"],
+            [4, "sssi", "yellow", 6.365346, "2023-03-20"],
+            [4, "wpfsi", "yellow", 7.461754, "2023-10-23"],
+            [4, "wqfed", "yellow", 7.775666, "2026-02-04"],
+            [4, "wsde", "yellow", 7.818521, "2027-06-13"],
+        ]
+        categories = ["int", "string", "categorical", "float", "datetime"]
+
+        expected_data = [dict(zip(categories, item)) for item in expected_array]
+        expected_df = pd.DataFrame(expected_data)
         # expected_df = pd.DataFrame.from_dict(
-        #     dict(zip(["int", "dat", "txt", "cat", "flo"], expected_array))
+        #     dict(zip(["int", "string", "categorical", "float", "datetime"], expected_array))
         # )
         actual_df = generator.synthesize(20)
-        # print(expected_array)
-        # print("midway")
-        # # print(expected_df.values)
-        # print(actual_df.values)
-        # print("Sheesh")
-        # for item in actual_df.values:
-        #     print(item)
-
-        # print("SHEEEEESH")
-        # print(type(expected_df.values))
-        # for item in expected_df.values:
-        #     print(type(item))
-        #     print(item)
-        np.testing.assert_array_equal(actual_df.values, expected_array)
-
-
-
+        print(expected_df)
+        print("midway")
+        print(actual_df)
+        pd.testing.assert_frame_equal(expected_df, actual_df)
 
 
 # unit test for get_ordered_column
-
-
-
-
-
-
-
-
-
-
 
 #     def test_generate_dataset_with_invalid_generator(self):
 #         columns_to_gen = [{"generator": "non existent generator"}]
@@ -595,27 +580,27 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
 
 #         np.testing.assert_array_equal(actual, expected)
 
-    # @mock.patch("synthetic_data.generators.TabularGenerator")
-    # def test_get_ordered_column_custom_datetime_descending(self, mock_tabular_generator):
-    #     custom_date_format = ["%Y %m %d"]
-    #     data = datetime_generator.random_datetimes(
-    #         rng=self.rng,
-    #         date_format_list=custom_date_format,
-    #         start_date=self.start_date,
-    #         end_date=self.end_date,
-    #         num_rows=5,
-    #     )
+# @mock.patch("synthetic_data.generators.TabularGenerator")
+# def test_get_ordered_column_custom_datetime_descending(self, mock_tabular_generator):
+#     custom_date_format = ["%Y %m %d"]
+#     data = datetime_generator.random_datetimes(
+#         rng=self.rng,
+#         date_format_list=custom_date_format,
+#         start_date=self.start_date,
+#         end_date=self.end_date,
+#         num_rows=5,
+#     )
 
-    #     expected = np.array(
-    #         [
-    #             "2018 09 27",
-    #             "2016 03 11",
-    #             "2010 03 13",
-    #             "2008 08 19",
-    #             "2006 10 02",
-    #         ]
-    #     )
+#     expected = np.array(
+#         [
+#             "2018 09 27",
+#             "2016 03 11",
+#             "2010 03 13",
+#             "2008 08 19",
+#             "2006 10 02",
+#         ]
+#     )
 
-    #     actual = mock_tabular_generator.get_ordered_column(data, "datetime", "descending")
+#     actual = mock_tabular_generator.get_ordered_column(data, "datetime", "descending")
 
-    #     np.testing.assert_array_equal(actual, expected)
+#     np.testing.assert_array_equal(actual, expected)
