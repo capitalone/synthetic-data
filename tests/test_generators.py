@@ -301,8 +301,9 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
                 else:
                     self.assertEqual(call_args_list[key], expected_calls[j][key])
 
+    @mock.patch("synthetic_data.generators.logging.warning")
     @mock.patch("dataprofiler.profilers.StructuredProfiler.report")
-    def test_get_ordered_column_integration(self, mock_report):
+    def test_get_ordered_column_integration(self, mock_report, mock_warning):
         mock_report.return_value = {
             "data_stats": [
                 {
@@ -353,6 +354,9 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
                         "max": "2030-04-23",
                     },
                 },
+                {
+                    "data_type": None,
+                },
             ]
         }
         generator = TabularGenerator(profile=self.profile, is_correlated=False, seed=42)
@@ -386,6 +390,9 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
         expected_df = pd.DataFrame(expected_data)
 
         actual_df = generator.synthesize(20)
+
+        self.assertEqual(mock_warning.call_count, 1)
+        mock_warning.assert_called_with(f"Generator of type None is not implemented.")
         pd.testing.assert_frame_equal(expected_df, actual_df)
 
     @mock.patch("dataprofiler.profilers.StructuredProfiler.report")

@@ -108,7 +108,7 @@ class TabularGenerator(BaseGenerator):
 
             if not generator_name:
                 logging.warning(
-                    f"Generator is {generator_name}. Null entries are not implemented."
+                    f"Generator of type {generator_name} is not implemented."
                 )
                 continue
 
