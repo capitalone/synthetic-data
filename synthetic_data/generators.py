@@ -145,7 +145,7 @@ class TabularGenerator(BaseGenerator):
                 )
 
             if generator_name == "float":
-                col_["precision"] = (
+                col_["precision"] = int(
                     col_["statistics"].get("precision", None).get("max", None)
                 )
 
