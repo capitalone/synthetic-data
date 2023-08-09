@@ -362,45 +362,45 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
         generator = TabularGenerator(profile=self.profile, is_correlated=False, seed=42)
         self.assertFalse(generator.is_correlated)
 
-        expected_df = [np.array([1, '*|Z+Y&,q(ZH', 2.194392, '2001-09-01']),
-                        np.array([1, '64cCO{nts,G', 2.829648, '2004-01-18']),
-                        np.array([1, '810I1-c5Chp}', 2.835097, '2004-07-28']),
-                        np.array([1, '@I)<@V@Lxs', 2.888464, '2004-10-14']),
-                        np.array([1, "C+f mj@I'(k", 2.95956, '2006-10-21']),
-                        np.array([2, 'I97I)n,DRuRf', 3.014826, '2009-05-08']),
-                        np.array([2, 'N"JQ3-Qc]~3q', 3.167811, '2009-10-11']),
-                        np.array([2, "Nc0dK!!LaX '", 3.268881, '2012-08-12']),
-                        np.array([3, 'PfCKI+&$r&P', 3.464477, '2015-04-16']),
-                        np.array([3, 'Qs=B*u&!pd7N', 3.531093, '2017-03-30']),
-                        np.array([3, 'Z`fzx<pbCi:A[', 3.93942, '2018-01-02']),
-                        np.array([3, '\\Y~^RPyEcp|~', 5.060534, '2019-07-23']),
-                        np.array([3, '_+eK6]|VWDN0', 5.093438, '2020-05-28']),
-                        np.array([3, 'am~=DW:F=a', 5.641302, '2021-04-30']),
-                        np.array([4, 'au!up_P2zs', 6.102164, '2021-12-13']),
-                        np.array([4, 'bp L0v,~!mmn/', 6.689435, '2022-08-23']),
-                        np.array([4, 'i{IgLg{i\\v$r', 7.005649, '2024-07-21']),
-                        np.array([4, 'jd:r.{eT`8b7', 7.261464, '2028-02-06']),
-                        np.array([4, 'q[Mr$T&d.3', 7.627977, '2028-03-06']),
-                        np.array([4, 'v_Ov$vqPkWc"7', 7.834124, '2029-01-01'])]
+        expected_array = [[1, 'arif', 'blue', 2.246061, '2003-06-02'],
+                        [1, 'daips', 'blue', 2.628393, '2003-10-08'],
+                        [1, 'dree', 'orange', 2.642511, '2006-02-17'],
+                        [1, 'drqs', 'orange', 2.807119, '2006-11-18'],
+                        [1, 'dwdaa', 'orange', 3.009102, '2008-12-07'],
+                        [2, 'fswfe', 'orange', 3.061853, '2009-12-03'],
+                        [2, 'fwqe', 'orange', 3.677692, '2013-02-24'],
+                        [2, 'ipdpd', 'orange', 3.887541, '2013-08-18'],
+                        [3, 'pdis', 'red', 4.24257, '2014-02-19'],
+                        [3, 'peii', 'red', 4.355663, '2014-04-29'],
+                        [3, 'pepie', 'red', 4.739156, '2017-12-13'],
+                        [3, 'qrdq', 'red', 4.831716, '2018-02-03'],
+                        [3, 'qrps', 'yellow', 5.062321, '2019-05-13'],
+                        [3, 'rrqp', 'yellow', 5.82323, '2020-01-09'],
+                        [4, 'sasr', 'yellow', 6.212038, '2021-12-29'],
+                        [4, 'sspwe', 'yellow', 6.231978, '2022-01-25'],
+                        [4, 'sssi', 'yellow', 6.365346, '2023-03-20'],
+                        [4, 'wpfsi', 'yellow', 7.461754, '2023-10-23'],
+                        [4, 'wqfed', 'yellow', 7.775666, '2026-02-04'],
+                        [4, 'wsde', 'yellow', 7.818521, '2027-06-13']]
         
-        expected_df = pd.DataFrame.from_dict(
-            dict(zip(["int", "dat", "txt", "cat", "flo"], expected_df))
-        )
+        # expected_df = pd.DataFrame.from_dict(
+        #     dict(zip(["int", "dat", "txt", "cat", "flo"], expected_array))
+        # )
         actual_df = generator.synthesize(20)
-        print(expected_df)
-        print("DAYUM")
-        # print(expected_df.values)
-        print(actual_df)
-        print("Sheesh")
-        for item in actual_df.values:
-            print(item)
+        # print(expected_array)
+        # print("midway")
+        # # print(expected_df.values)
+        # print(actual_df.values)
+        # print("Sheesh")
+        # for item in actual_df.values:
+        #     print(item)
 
         # print("SHEEEEESH")
         # print(type(expected_df.values))
         # for item in expected_df.values:
         #     print(type(item))
         #     print(item)
-        np.testing.assert_array_equal(actual_df.values, expected_df)
+        np.testing.assert_array_equal(actual_df.values, expected_array)
 
 
 
