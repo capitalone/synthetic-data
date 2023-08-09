@@ -392,9 +392,7 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
         actual_df = generator.synthesize(20)
 
         self.assertEqual(mock_warning.call_count, 1)
-        mock_warning.assert_called_with(
-            "Generator is None. Null entries are not implemented."
-        )
+        mock_warning.assert_called_with(f"Generator of type None is not implemented.")
         pd.testing.assert_frame_equal(expected_df, actual_df)
 
     @mock.patch("dataprofiler.profilers.StructuredProfiler.report")
