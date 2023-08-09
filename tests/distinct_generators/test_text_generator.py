@@ -15,10 +15,16 @@ class TestTextGeneratorFunctions(unittest.TestCase):
         for x in text_arr:
             self.assertIsInstance(x, np.str_)
 
-    def test_text_length(self):
-        text_arr = random_text(self.rng, str_len_min=4, str_len_max=5)
-        self.assertLessEqual(len(text_arr[0]), 5)
-        self.assertGreaterEqual(len(text_arr[0]), 4)
+    def test_text_length_range(self):
+        text_arr = random_text(self.rng, min=3, max=5)
+        for text in text_arr:
+            self.assertLessEqual(len(text), 5)
+            self.assertGreaterEqual(len(text), 3)
+
+    def test_text_equal_length_range(self):
+        text_arr = random_text(self.rng, min=5, max=5)
+        for text in text_arr:
+            self.assertEqual(len(text), 5)
 
     def test_num_rows(self):
         num_rows = [1, 5, 10]
@@ -27,8 +33,8 @@ class TestTextGeneratorFunctions(unittest.TestCase):
             self.assertEqual(text_arr.size, nr)
 
     def test_chars(self):
-        chars_set = {"0", "1"}
-        text_arr = random_text(self.rng, chars=["0", "1"])
+        vocab_set = {"0", "1"}
+        text_arr = random_text(self.rng, vocab=["0", "1"])
         for t in text_arr:
             for char in t:
-                self.assertIn(char, chars_set)
+                self.assertIn(char, vocab_set)

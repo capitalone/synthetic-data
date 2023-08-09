@@ -43,19 +43,19 @@ def generate_datetime(
 
 def random_datetimes(
     rng: Generator,
-    date_format_list: Optional[str] = None,
-    start_date: pd.Timestamp = None,
-    end_date: pd.Timestamp = None,
+    format: Optional[str] = None,
+    min: pd.Timestamp = None,
+    max: pd.Timestamp = None,
     num_rows: int = 1,
 ) -> np.array:
     """
-    Generate datetime given the random_state, date_format, and start/end dates.
+    Generate datetime given the random_state, format, and start/end dates.
 
     :param rng: the np rng object used to generate random values
     :type rng: numpy Generator
-    :param date_format: the format that the generated datatime will follow,
+    :param format: the format that the generated datatime will follow,
         defaults to None
-    :type date_format: str, None, optional
+    :type format: str, None, optional
     :param start_date: the earliest date that datetimes can be generated at,
         defaults to pd.Timestamp(1920, 1, 1)
     :type start_date: pd.Timestamp, None, optional
@@ -67,13 +67,13 @@ def random_datetimes(
     :rtype: numpy array
     """
     date_list = [""] * num_rows
-    if not date_format_list:
-        date_format_list = ["%B %d %Y %H:%M:%S"]
+    if not format:
+        format = ["%B %d %Y %H:%M:%S"]
 
     for i in range(num_rows):
-        date_format = rng.choice(date_format_list)
+        date_format = rng.choice(format)
         datetime = generate_datetime(
-            rng, date_format=date_format, start_date=start_date, end_date=end_date
+            rng, date_format=date_format, start_date=min, end_date=max
         )
         date_list[i] = datetime
 
