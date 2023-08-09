@@ -96,6 +96,7 @@ class TabularGenerator(BaseGenerator):
 
     def _generate_uncorrelated_column_data(self, num_samples):
         """Generate column data."""
+        print(type(self.profile), "SHEEEEEESH WOW")
         columns = self.profile.report()["data_stats"]
         dataset = []
         column_names = []
@@ -120,6 +121,7 @@ class TabularGenerator(BaseGenerator):
 
             if (generator_name == "string") or (generator_name == "text"):
                 if col_.get("categorical", False):
+                    print("ENTERED CATEGORICAL GEN")
                     total = 0
                     for count in col["statistics"]["categorical_count"].values():
                         total += count
@@ -156,11 +158,12 @@ class TabularGenerator(BaseGenerator):
                 param_build[param[0]] = col_[param[0]]
 
             generated_data = generator_func(**param_build)
+            print(col_["order"])
             if col_["order"] in sorting_types:
                 dataset.append(
                     self.get_ordered_column(
                         generated_data,
-                        generator_func,
+                        generator_name,
                         col_["order"],
                     )
                 )
@@ -221,6 +224,7 @@ class TabularGenerator(BaseGenerator):
 
         :return: sorted numpy array
         """
+        print(data_type)
         if data_type == "datetime":
             sorted_data = np.array(sorted(data, key=lambda x: x[1]))
             sorted_data = sorted_data[:, 0]

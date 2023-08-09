@@ -48,8 +48,6 @@ class TestTabularGenerator(unittest.TestCase):
         synthetic_data_2 = generator.synthesize(100)
         self.assertEqual(len(synthetic_data_2), 100)
 
-        # asserts that both  methods create the same results
-        # if this ever fails may need to start setting seeds
         np.testing.assert_array_equal(synthetic_data, synthetic_data_2)
 
     @mock.patch("synthetic_data.generators.make_data_from_report")
@@ -65,17 +63,43 @@ class TestTabularGenerator(unittest.TestCase):
         correlated_tabular_generator.synthesize(num_samples=10)
         mock_make_data.assert_called_once()
 
+    def test_synthesize_uncorrelated_output(self):
+        generator = TabularGenerator(profile=self.profile, is_correlated=False, seed=42)
+        self.assertFalse(generator.is_correlated)
+        actual_synthetic_data = generator.synthesize(20)
+
+        self.assertEqual(len(actual_synthetic_data), 20)
+        self.assertIsInstance(actual_synthetic_data, pd.DataFrame)
+
+        np.testing.assert_array_equal(
+            actual_synthetic_data.columns.values,
+            np.array(['datetime', 'string', 'int', 'float', 'text'], dtype="object"),
+        )
 
 # @mock.patch("generate_uncorrelated_column_data.TabularGenerator", spec=TabularGenerator)
 class TestGenerateUncorrelatedColumnData(unittest.TestCase):
-    # @staticmethod
-    # def setup_tabular_generator_mock(mock_generator):
-    # mock_DataLabeler = mock_generator.return_value
+    @classmethod
+    def setUpClass(cls):
+        cls.profile_options = dp.ProfilerOptions()
+        cls.profile_options.set(
+            {
+                "data_labeler.is_enabled": False,
+                "correlation.is_enabled": True,
+                "multiprocess.is_enabled": False,
+            }
+        )
+        dp.set_seed(0)
 
-    def setUp(self):
-        self.dataset_length = 10
-        self.rng = np.random.Generator(np.random.PCG64(12345))
-        self.columns_to_gen = [
+        # create dataset and profile for tabular
+        cls.data = dp.Data(os.path.join(test_dir, "data/tabular.csv"))
+        cls.profile = dp.Profiler(
+            data=cls.data,
+            options=cls.profile_options,
+            samples_per_update=len(cls.data),
+        )
+        cls.dataset_length = 10
+        cls.rng = np.random.Generator(np.random.PCG64(12345))
+        cls.columns_to_gen = [
             {"generator": "integer", "name": "int", "min_value": 4, "max_value": 88},
             {
                 "generator": "datetime",
@@ -105,7 +129,13 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
                 "sig_figs": 3,
             },
         ]
+        
+    # @staticmethod
+    # def setup_tabular_generator_mock(mock_generator):
+    #     mock_DataLabeler = mock_generator.return_value
+    
 
+    # TEST PARAM_BUILD
     @mock.patch("synthetic_data.generators.random_integers")
     @mock.patch("synthetic_data.generators.random_floats")
     @mock.patch("synthetic_data.generators.random_categorical")
@@ -123,7 +153,6 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
         mock_random_floats,
         mock_random_integers,
     ):
-        """Test the param_build"""
         generator = TabularGenerator(profile=self.profile, is_correlated=False, seed=42)
         self.assertFalse(generator.is_correlated)
         expected_calls = [
@@ -276,80 +305,117 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
                 else:
                     self.assertEqual(call_args_list[key], expected_calls[j][key])
 
-    def test_get_ordered_column_integration(self):
-        columns_to_gen = [
+
+    # mock the report to have to columns and then check to see if the (output of synthesize).values == the expected_df.values containing have the sorted expected stuff
+    @mock.patch("dataprofiler.profilers.StructuredProfiler.report")
+    def test_get_ordered_column_integration(self, mock_report):
+        mock_report.return_value = {"data_stats": [
             {
-                "generator": "integer",
-                "name": "int",
-                "min_value": 4,
-                "max_value": 88,
+                "data_type": "int",
                 "order": "ascending",
+                "statistics": {
+                    "min": 1.0,
+                    "max": 4.0,
+                },
             },
             {
-                "generator": "datetime",
-                "name": "dat",
-                "date_format_list": ["%Y-%m-%d"],
-                "start_date": pd.Timestamp(2001, 12, 22),
-                "end_date": pd.Timestamp(2022, 12, 22),
+                "data_type": "string",
+                "categorical": False,
                 "order": "ascending",
+                "statistics": {
+                    "min": 4.0,
+                    "max": 5.0,
+                    "vocab": ['q', 'p', 'a', 'w', 'e', 'r', 'i', 's', 'd', 'f']
+                },
             },
             {
-                "generator": "text",
-                "name": "txt",
-                "chars": ["0", "1"],
-                "str_len_min": 2,
-                "str_len_max": 5,
+                "data_type": "string",
+                "categorical": True,
                 "order": "ascending",
+                "statistics": {
+                    "min": 10,
+                    "max": 13,
+                    "categorical_count": {"red": 1, "blue": 2, "yellow": 1, "orange": 3},
+                    "categories": ["blue", "yellow", "red", "orange"]
+                }
             },
             {
-                "generator": "categorical",
-                "name": "cat",
-                "categories": ["X", "Y", "Z"],
-                "probabilities": [0.1, 0.5, 0.4],
+                "data_type": "float",
                 "order": "ascending",
+                "statistics": {
+                    "min": 2.11234,
+                    "max": 8.0,
+                    "precision": {"max": 6}
+                },
             },
             {
-                "generator": "float",
-                "name": "flo",
-                "min_value": 3,
-                "max_value": 10,
-                "sig_figs": 3,
+                "data_type": "datetime",
                 "order": "ascending",
-            },
-        ]
-        expected_data = [
-            np.array([21, 23, 30, 36, 57, 60, 62, 70, 70, 87]),
-            np.array(
-                [
-                    "2003-12-27",
-                    "2005-11-23",
-                    "2007-03-10",
-                    "2008-12-17",
-                    "2011-04-02",
-                    "2014-07-16",
-                    "2015-12-26",
-                    "2016-02-07",
-                    "2021-10-01",
-                    "2021-11-24",
-                ]
-            ),
-            np.array(
-                ["00", "000", "0001", "01", "0100", "10", "10", "100", "1110", "1111"]
-            ),
-            np.array(["Y", "Y", "Y", "Y", "Y", "Y", "Z", "Z", "Z", "Z"]),
-            np.array(
-                [3.035, 3.477, 4.234, 4.812, 4.977, 5.131, 5.379, 5.488, 7.318, 7.4]
-            ),
-        ]
+                "statistics": {
+                    "format": ['%Y-%m-%d'],
+                    "min": '2000-12-09',
+                    "max": '2030-04-23'
+                }
+            }
+            ]
+        }
+        generator = TabularGenerator(profile=self.profile, is_correlated=False, seed=42)
+        self.assertFalse(generator.is_correlated)
+
+        expected_df = [np.array([1, '*|Z+Y&,q(ZH', 2.194392, '2001-09-01']),
+                        np.array([1, '64cCO{nts,G', 2.829648, '2004-01-18']),
+                        np.array([1, '810I1-c5Chp}', 2.835097, '2004-07-28']),
+                        np.array([1, '@I)<@V@Lxs', 2.888464, '2004-10-14']),
+                        np.array([1, "C+f mj@I'(k", 2.95956, '2006-10-21']),
+                        np.array([2, 'I97I)n,DRuRf', 3.014826, '2009-05-08']),
+                        np.array([2, 'N"JQ3-Qc]~3q', 3.167811, '2009-10-11']),
+                        np.array([2, "Nc0dK!!LaX '", 3.268881, '2012-08-12']),
+                        np.array([3, 'PfCKI+&$r&P', 3.464477, '2015-04-16']),
+                        np.array([3, 'Qs=B*u&!pd7N', 3.531093, '2017-03-30']),
+                        np.array([3, 'Z`fzx<pbCi:A[', 3.93942, '2018-01-02']),
+                        np.array([3, '\\Y~^RPyEcp|~', 5.060534, '2019-07-23']),
+                        np.array([3, '_+eK6]|VWDN0', 5.093438, '2020-05-28']),
+                        np.array([3, 'am~=DW:F=a', 5.641302, '2021-04-30']),
+                        np.array([4, 'au!up_P2zs', 6.102164, '2021-12-13']),
+                        np.array([4, 'bp L0v,~!mmn/', 6.689435, '2022-08-23']),
+                        np.array([4, 'i{IgLg{i\\v$r', 7.005649, '2024-07-21']),
+                        np.array([4, 'jd:r.{eT`8b7', 7.261464, '2028-02-06']),
+                        np.array([4, 'q[Mr$T&d.3', 7.627977, '2028-03-06']),
+                        np.array([4, 'v_Ov$vqPkWc"7', 7.834124, '2029-01-01'])]
+        
         expected_df = pd.DataFrame.from_dict(
-            dict(zip(["int", "dat", "txt", "cat", "flo"], expected_data))
+            dict(zip(["int", "dat", "txt", "cat", "flo"], expected_df))
         )
-        actual_df = dataset_generator.generate_dataset(
-            self.rng,
-            columns_to_generate=columns_to_gen,
-            dataset_length=self.dataset_length,
-        )
-        np.testing.assert_array_equal(actual_df.values, expected_df.values)
+        actual_df = generator.synthesize(20)
+        print(expected_df)
+        print("DAYUM")
+        # print(expected_df.values)
+        print(actual_df)
+        print("Sheesh")
+        for item in actual_df.values:
+            print(item)
+
+        # print("SHEEEEESH")
+        # print(type(expected_df.values))
+        # for item in expected_df.values:
+        #     print(type(item))
+        #     print(item)
+        np.testing.assert_array_equal(actual_df.values, expected_df)
+
+
+
+
+
+# unit test for get_ordered_column
+
+
+
+
+
+
+
+
+
 
 
 #     def test_generate_dataset_with_invalid_generator(self):
@@ -529,26 +595,27 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
 
 #         np.testing.assert_array_equal(actual, expected)
 
-#     def test_get_ordered_column_custom_datetime_descending(self):
-#         custom_date_format = ["%Y %m %d"]
-#         data = datetime_generator.random_datetimes(
-#             rng=self.rng,
-#             date_format_list=custom_date_format,
-#             start_date=self.start_date,
-#             end_date=self.end_date,
-#             num_rows=5,
-#         )
+    # @mock.patch("synthetic_data.generators.TabularGenerator")
+    # def test_get_ordered_column_custom_datetime_descending(self, mock_tabular_generator):
+    #     custom_date_format = ["%Y %m %d"]
+    #     data = datetime_generator.random_datetimes(
+    #         rng=self.rng,
+    #         date_format_list=custom_date_format,
+    #         start_date=self.start_date,
+    #         end_date=self.end_date,
+    #         num_rows=5,
+    #     )
 
-#         expected = np.array(
-#             [
-#                 "2018 09 27",
-#                 "2016 03 11",
-#                 "2010 03 13",
-#                 "2008 08 19",
-#                 "2006 10 02",
-#             ]
-#         )
+    #     expected = np.array(
+    #         [
+    #             "2018 09 27",
+    #             "2016 03 11",
+    #             "2010 03 13",
+    #             "2008 08 19",
+    #             "2006 10 02",
+    #         ]
+    #     )
 
-#         actual = dataset_generator.get_ordered_column(data, "datetime", "descending")
+    #     actual = mock_tabular_generator.get_ordered_column(data, "datetime", "descending")
 
-#         np.testing.assert_array_equal(actual, expected)
+    #     np.testing.assert_array_equal(actual, expected)
