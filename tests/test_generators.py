@@ -394,7 +394,6 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
         actual_df = generator.synthesize(20)
         pd.testing.assert_frame_equal(expected_df, actual_df)
 
-
     # def test_generate_uncorrelated_with_invalid_generator(self):
     #     columns_to_gen = [{"generator": "non existent generator"}]
     #     with self.assertRaisesRegex(
@@ -405,6 +404,7 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
     #             columns_to_generate=columns_to_gen,
     #             dataset_length=self.dataset_length,
     #         )
+
 
 #     @mock.patch("synthetic_data.dataset_generator.logging.warning")
 #     def test_generate_dataset_with_invalid_sorting_type(self, mock_warning):
