@@ -307,7 +307,6 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
                 else:
                     self.assertEqual(call_args_list[key], expected_calls[j][key])
 
-    # mock the report to have to columns and then check to see if the (output of synthesize).values == the expected_df.values containing have the sorted expected stuff
     @mock.patch("dataprofiler.profilers.StructuredProfiler.report")
     def test_get_ordered_column_integration(self, mock_report):
         mock_report.return_value = {
@@ -391,28 +390,21 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
 
         expected_data = [dict(zip(categories, item)) for item in expected_array]
         expected_df = pd.DataFrame(expected_data)
-        # expected_df = pd.DataFrame.from_dict(
-        #     dict(zip(["int", "string", "categorical", "float", "datetime"], expected_array))
-        # )
+
         actual_df = generator.synthesize(20)
-        print(expected_df)
-        print("midway")
-        print(actual_df)
         pd.testing.assert_frame_equal(expected_df, actual_df)
 
 
-# unit test for get_ordered_column
-
-#     def test_generate_dataset_with_invalid_generator(self):
-#         columns_to_gen = [{"generator": "non existent generator"}]
-#         with self.assertRaisesRegex(
-#             ValueError, "generator: non existent generator is not a valid generator."
-#         ):
-#             dataset_generator.generate_dataset(
-#                 self.rng,
-#                 columns_to_generate=columns_to_gen,
-#                 dataset_length=self.dataset_length,
-#             )
+    # def test_generate_uncorrelated_with_invalid_generator(self):
+    #     columns_to_gen = [{"generator": "non existent generator"}]
+    #     with self.assertRaisesRegex(
+    #         ValueError, "generator: non existent generator is not a valid generator."
+    #     ):
+    #         TabularGenerator.generate_dataset(
+    #             self.rng,
+    #             columns_to_generate=columns_to_gen,
+    #             dataset_length=self.dataset_length,
+    #         )
 
 #     @mock.patch("synthetic_data.dataset_generator.logging.warning")
 #     def test_generate_dataset_with_invalid_sorting_type(self, mock_warning):

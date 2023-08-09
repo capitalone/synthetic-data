@@ -96,7 +96,6 @@ class TabularGenerator(BaseGenerator):
 
     def _generate_uncorrelated_column_data(self, num_samples):
         """Generate column data."""
-        print(type(self.profile), "SHEEEEEESH WOW")
         columns = self.profile.report()["data_stats"]
         dataset = []
         column_names = []
@@ -223,7 +222,6 @@ class TabularGenerator(BaseGenerator):
 
         :return: sorted numpy array
         """
-        print(data_type)
         if data_type == "datetime":
             sorted_data = np.array(sorted(data, key=lambda x: x[1]))
             sorted_data = sorted_data[:, 0]
