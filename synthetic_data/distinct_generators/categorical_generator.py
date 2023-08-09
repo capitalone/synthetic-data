@@ -28,7 +28,6 @@ def random_categorical(
     :return: np array of categories
     """
     if categories is None:
-        print("ENTERED NONE")
         categories = ["A", "B", "C", "D", "E"]
     if probabilities is None:
         return rng.choice(categories, size=num_rows)

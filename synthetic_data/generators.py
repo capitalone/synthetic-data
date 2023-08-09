@@ -158,7 +158,6 @@ class TabularGenerator(BaseGenerator):
                 param_build[param[0]] = col_[param[0]]
 
             generated_data = generator_func(**param_build)
-            print(generated_data)
             if col_["order"] in sorting_types:
                 dataset.append(
                     self.get_ordered_column(
