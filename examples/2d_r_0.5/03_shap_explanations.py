@@ -11,17 +11,15 @@ NOTE: this had issues running in ipython, runs fine from CLI
 
 """
 import os
+import pathlib
 import pickle
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import shap
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import load_model
-
-import shap
-
-import pathlib
 
 from synthetic_data.utils import resolve_output_path
 

@@ -14,7 +14,6 @@ NOTE: this had issues running in ipython, runs fine from CLI
 import os
 import pathlib
 import pickle
-import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -75,7 +74,7 @@ background = np.vstack([m_grid[0].ravel(), m_grid[1].ravel()]).T
 
 class LRPredictor(QIIPredictor):
     def __init__(self, predictor):
-        super(LRPredictor, self).__init__(predictor)
+        super().__init__(predictor)
 
     def predict(self, x):
         # predict the label for instance x
@@ -86,7 +85,7 @@ lr_predictor = LRPredictor(model)
 quantity_of_interest = QuantityOfInterest()
 
 n_features = 2
-#qii = QII(background, n_features, quantity_of_interest)
+# qii = QII(background, n_features, quantity_of_interest)
 qii = QII(x_train, n_features, quantity_of_interest)
 
 # pick one sample

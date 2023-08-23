@@ -1,3 +1,5 @@
+"""Setup.py File."""
+
 # SPDX-Copyright: Copyright (c) Capital One Services, LLC
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2018 Capital One Services, LLC
@@ -14,31 +16,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 
 def parse_requirements(filename):
-    """Loads requirements file and outputs an array of dependencies"""
+    """Load requirements file and outputs an array of dependencies."""
     lineiter = (line.strip() for line in open(filename))
-    return [line for line in lineiter if line and not line.startswith('#')]
+    return [line for line in lineiter if line and not line.startswith("#")]
 
 
-with open('README.md', 'r') as readme:
+with open("README.md") as readme:
     long_description = readme.read()
 
 setup(
-    name='synthetic-data',
-    version='1.2.0',
-    maintainer='Brian Barr',
-    maintainer_email='brian.barr@capitalone.com',
-    license='Apache License 2.0',
-    description='Generates complex, nonlinear datasets for use \
-        with deep learning/black box models',
+    name="synthetic-data",
+    version="1.2.0",
+    maintainer="Brian Barr",
+    maintainer_email="brian.barr@capitalone.com",
+    license="Apache License 2.0",
+    description="Generates complex, nonlinear datasets for use \
+        with deep learning/black box models",
     long_description=long_description,
-    long_description_content_type='text/markdown',
-    install_requires=parse_requirements('requirements.txt'),
-    url='https://github.com/capitalone/synthetic-data',
+    long_description_content_type="text/markdown",
+    install_requires=parse_requirements("requirements.txt"),
+    url="https://github.com/capitalone/synthetic-data",
     packages=find_packages(),
     include_package_data=True,
-    python_requires=">=3.8"
+    python_requires=">=3.8",
 )

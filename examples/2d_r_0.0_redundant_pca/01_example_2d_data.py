@@ -4,8 +4,8 @@
 Test mapping y = f(X)
 """
 
+import pathlib
 import pickle
-from math import pi
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,8 +14,6 @@ import seaborn as sns
 from sklearn.decomposition import PCA
 
 from synthetic_data.synthetic_data import make_tabular_data
-import pathlib
-
 from synthetic_data.utils import resolve_output_path
 
 output_path = resolve_output_path(pathlib.Path(__file__).parent.absolute())

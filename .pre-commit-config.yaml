@@ -1,0 +1,58 @@
+repos:
+  # Black: format Python code
+  # https://github.com/psf/black/blob/master/.pre-commit-hooks.yaml
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black
+        types: [file, python]
+        language_version: python3
+  # Isort: sort import statements
+  # https://github.com/timothycrosley/isort/blob/develop/.pre-commit-hooks.yaml
+  # The setup.cfg holds the compatible config for use with black
+  # https://github.com/psf/black/blob/master/docs/compatible_configs.md#isort
+  - repo: https://github.com/timothycrosley/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        language_version: python3
+  # Flake8: complexity and style checking
+  # https://flake8.pycqa.org/en/latest/user/using-hooks.html
+  - repo: https://github.com/pycqa/flake8
+    rev: 4.0.1
+    hooks:
+      - id: flake8
+        additional_dependencies: [flake8-docstrings]
+        exclude: (^examples/|^tests/|^.*/__init__.py)
+        language_version: python3
+  # Check-manifest: ensures required non-Python files are included in MANIFEST.in
+  # https://github.com/mgedmin/check-manifest/blob/master/.pre-commit-hooks.yaml
+  - repo: https://github.com/mgedmin/check-manifest
+    rev: "0.48"
+    hooks:
+      - id: check-manifest
+        additional_dependencies: ['scikit-learn', 'dataprofiler', 'numpy','scipy']
+  # General fixers: format files for white spaces and trailing new lines, warn on debug statements
+  # https://github.com/pre-commit/pre-commit-hooks#hooks-available
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: trailing-whitespace
+        exclude: (^tests/data/|^examples/sample_datasets)
+      - id: debug-statements
+      - id: end-of-file-fixer
+        exclude: (^tests/data/|^examples/sample_datasets)
+  # Pyupgrade - standardize and modernize Python syntax for newer versions of the language
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.3.0
+    hooks:
+      - id: pyupgrade
+        args: ["--py38-plus"]
+  # Autoflake - cleanup unused variables and imports
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.0.0
+    hooks:
+      - id: autoflake
+        args:
+          - "--in-place"
+          - "--ignore-pass-statements"

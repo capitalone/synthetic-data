@@ -20,3 +20,7 @@ test_local: ## Runs unit tests with coverage and opens results in the browser
 
 examples_list: ## List all available examples
 	ls examples | egrep -v .py
+
+pre_commit: ## Run pre-commit
+	pre-commit install
+	pre-commit run
