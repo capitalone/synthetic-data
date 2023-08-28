@@ -115,7 +115,7 @@ class TabularGenerator(BaseGenerator):
             col_["rng"] = self.rng
             col_["num_rows"] = num_samples
 
-            if (generator_name == "string") or (generator_name == "text"):
+            if generator_name in ["string", "text"]:
                 if col_.get("categorical", False):
                     generator_name = "categorical"
                     total = 0

@@ -1,6 +1,6 @@
 """Contains a datetime generator."""
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 import numpy as np
 import pandas as pd
@@ -43,7 +43,7 @@ def generate_datetime(
 
 def random_datetimes(
     rng: Generator,
-    format: Optional[str] = None,
+    format: Optional[List[str]] = None,
     min: pd.Timestamp = None,
     max: pd.Timestamp = None,
     num_rows: int = 1,
@@ -69,6 +69,9 @@ def random_datetimes(
     date_list = [""] * num_rows
     if not format:
         format = ["%B %d %Y %H:%M:%S"]
+
+    if not isinstance(format, list):
+        raise Exception("format must be of type `list`")
 
     for i in range(num_rows):
         date_format = rng.choice(format)
