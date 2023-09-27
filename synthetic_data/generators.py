@@ -15,6 +15,7 @@ from synthetic_data.distinct_generators.categorical_generator import random_cate
 from synthetic_data.distinct_generators.datetime_generator import random_datetimes
 from synthetic_data.distinct_generators.float_generator import random_floats
 from synthetic_data.distinct_generators.int_generator import random_integers
+from synthetic_data.distinct_generators.null_generator import null_generation
 from synthetic_data.distinct_generators.text_generator import random_text
 from synthetic_data.graph_synthetic_data import GraphDataGenerator
 from synthetic_data.synthetic_data import make_data_from_report
@@ -42,6 +43,7 @@ class TabularGenerator(BaseGenerator):
             "datetime": random_datetimes,
             "string": random_text,
             "text": random_text,
+            "null_generator": null_generation,
         }
 
     @classmethod
@@ -105,49 +107,46 @@ class TabularGenerator(BaseGenerator):
             col_ = copy.deepcopy(col)
 
             generator_name = col_.get("data_type", None)
-
-            if not generator_name:
-                logging.warning(
-                    f"Generator of type {generator_name} is not implemented."
-                )
-                continue
+            column_header = col_.get("column_name", None)
 
             col_["rng"] = self.rng
             col_["num_rows"] = num_samples
+            if generator_name:
+                if generator_name in ["string", "text"]:
+                    if col_.get("categorical", False):
+                        generator_name = "categorical"
+                        total = 0
+                        for count in col["statistics"]["categorical_count"].values():
+                            total += count
 
-            if generator_name in ["string", "text"]:
-                if col_.get("categorical", False):
-                    generator_name = "categorical"
-                    total = 0
-                    for count in col["statistics"]["categorical_count"].values():
-                        total += count
+                        probabilities = []
+                        for count in col["statistics"]["categorical_count"].values():
+                            probabilities.append(count / total)
 
-                    probabilities = []
-                    for count in col["statistics"]["categorical_count"].values():
-                        probabilities.append(count / total)
+                        col_["probabilities"] = probabilities
+                        col_["categories"] = col_["statistics"].get("categories", None)
 
-                    col_["probabilities"] = probabilities
-                    col_["categories"] = col_["statistics"].get("categories", None)
+                    col_["vocab"] = col_["statistics"].get("vocab", None)
 
-                col_["vocab"] = col_["statistics"].get("vocab", None)
+                col_["min"] = col_["statistics"].get("min", None)
+                col_["max"] = col_["statistics"].get("max", None)
 
-            col_["min"] = col_["statistics"].get("min", None)
-            col_["max"] = col_["statistics"].get("max", None)
+                # edge cases for extracting data from profiler report.
+                if generator_name == "datetime":
+                    col_["format"] = col_["statistics"].get("format", None)
+                    col_["min"] = pd.to_datetime(
+                        col_["statistics"].get("min", None), format=col_["format"][0]
+                    )
+                    col_["max"] = pd.to_datetime(
+                        col_["statistics"].get("max", None), format=col_["format"][0]
+                    )
 
-            # edge cases for extracting data from profiler report.
-            if generator_name == "datetime":
-                col_["format"] = col_["statistics"].get("format", None)
-                col_["min"] = pd.to_datetime(
-                    col_["statistics"].get("min", None), format=col_["format"][0]
-                )
-                col_["max"] = pd.to_datetime(
-                    col_["statistics"].get("max", None), format=col_["format"][0]
-                )
-
-            if generator_name == "float":
-                col_["precision"] = int(
-                    col_["statistics"].get("precision", None).get("max", None)
-                )
+                if generator_name == "float":
+                    col_["precision"] = int(
+                        col_["statistics"].get("precision", None).get("max", None)
+                    )
+            elif not generator_name:
+                generator_name = "null_generator"
 
             generator_func = self.gen_funcs.get(generator_name, None)
             params_gen_funcs = inspect.signature(generator_func)
@@ -157,7 +156,9 @@ class TabularGenerator(BaseGenerator):
                 param_build[param[0]] = col_[param[0]]
 
             generated_data = generator_func(**param_build)
-            if col_["order"] in sorting_types:
+            if (not generator_name == "null_generator") and col_[
+                "order"
+            ] in sorting_types:
                 dataset.append(
                     self.get_ordered_column(
                         generated_data,
@@ -166,7 +167,9 @@ class TabularGenerator(BaseGenerator):
                     )
                 )
             else:
-                if col_["order"] is not None:
+                if (not generator_name == "null_generator") and col_[
+                    "order"
+                ] is not None:
                     logging.warning(
                         f"""{generator_name} is passed with sorting type of {col_["order"]}.
                         Ascending and descending are the only supported options.
@@ -178,7 +181,7 @@ class TabularGenerator(BaseGenerator):
                 else:
                     dataset.append(generated_data)
 
-            column_names.append(generator_name)
+            column_names.append(column_header)
 
         return self.convert_data_to_df(dataset, column_names=column_names)
 
