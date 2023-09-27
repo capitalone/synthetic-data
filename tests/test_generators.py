@@ -405,7 +405,7 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
             [4, "wqfed", "yellow", 7.775666, "2026-02-04"],
             [4, "wsde", "yellow", 7.818521, "2027-06-13"],
         ]
-        categories = [
+        expected_column_names = [
             "test_column_1",
             "test_column_2",
             "test_column_3",
@@ -413,7 +413,9 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
             "test_column_5",
         ]
 
-        expected_data = [dict(zip(categories, item)) for item in expected_array]
+        expected_data = [
+            dict(zip(expected_column_names, item)) for item in expected_array
+        ]
         expected_df = pd.DataFrame(expected_data)
 
         actual_df = generator.synthesize(20)
