@@ -105,7 +105,7 @@ class TabularGenerator(BaseGenerator):
             col_ = copy.deepcopy(col)
 
             generator_name = col_.get("data_type", None)
-
+            column_header = col_.get("column_name", None)
             if not generator_name:
                 logging.warning(
                     f"Generator of type {generator_name} is not implemented."
@@ -178,7 +178,7 @@ class TabularGenerator(BaseGenerator):
                 else:
                     dataset.append(generated_data)
 
-            column_names.append(generator_name)
+            column_names.append(column_header)
 
         return self.convert_data_to_df(dataset, column_names=column_names)
 
