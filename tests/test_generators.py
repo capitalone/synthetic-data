@@ -74,7 +74,23 @@ class TestTabularGenerator(unittest.TestCase):
         np.testing.assert_array_equal(
             actual_synthetic_data.columns.values,
             np.array(
-                ["datetime", "categorical", "int", "string", "float"], dtype="object"
+                [
+                    "datetime",
+                    "host",
+                    "src",
+                    "proto",
+                    "srcport",
+                    "destport",
+                    "srcip",
+                    "locale",
+                    "localeabbr",
+                    "postalcode",
+                    "latitude",
+                    "longitude",
+                    "comment",
+                    "int_col",
+                ],
+                dtype="object",
             ),
         )
 
@@ -308,6 +324,7 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
             "data_stats": [
                 {
                     "data_type": "int",
+                    "column_name": "test_column_1",
                     "order": "ascending",
                     "statistics": {
                         "min": 1.0,
@@ -316,6 +333,7 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
                 },
                 {
                     "data_type": "string",
+                    "column_name": "test_column_2",
                     "categorical": False,
                     "order": "ascending",
                     "statistics": {
@@ -326,6 +344,7 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
                 },
                 {
                     "data_type": "string",
+                    "column_name": "test_column_3",
                     "categorical": True,
                     "order": "ascending",
                     "statistics": {
@@ -342,11 +361,13 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
                 },
                 {
                     "data_type": "float",
+                    "column_name": "test_column_4",
                     "order": "ascending",
                     "statistics": {"min": 2.11234, "max": 8.0, "precision": {"max": 6}},
                 },
                 {
                     "data_type": "datetime",
+                    "column_name": "test_column_5",
                     "order": "ascending",
                     "statistics": {
                         "format": ["%Y-%m-%d"],
@@ -384,7 +405,13 @@ class TestGenerateUncorrelatedColumnData(unittest.TestCase):
             [4, "wqfed", "yellow", 7.775666, "2026-02-04"],
             [4, "wsde", "yellow", 7.818521, "2027-06-13"],
         ]
-        categories = ["int", "string", "categorical", "float", "datetime"]
+        categories = [
+            "test_column_1",
+            "test_column_2",
+            "test_column_3",
+            "test_column_4",
+            "test_column_5",
+        ]
 
         expected_data = [dict(zip(categories, item)) for item in expected_array]
         expected_df = pd.DataFrame(expected_data)
