@@ -30,7 +30,7 @@ with open("README.md", encoding="utf8") as readme:
 
 setup(
     name="synthetic-data",
-    version="1.2.2",
+    version="1.2.3",
     maintainer="Brian Barr",
     maintainer_email="brian.barr@capitalone.com",
     license="Apache License 2.0",
